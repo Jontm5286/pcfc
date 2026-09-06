@@ -1,0 +1,44 @@
+---
+/**
+ * SectionHeader — PCFC
+ * Encabezado reutilizable para secciones (eyebrow + título + subtítulo opcional).
+ *
+ * Props:
+ *   - eyebrow: string               Texto superior corto (Inter SemiBold 12px, uppercase, sky)
+ *   - title: string                 Título principal (admite HTML, e.g. <br/>)
+ *   - subtitle?: string             Párrafo descriptivo opcional
+ *   - onDark?: boolean              Si true, texto blanco (sección navy)
+ *   - align?: "left" | "center"     Default "left"
+ */
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  onDark?: boolean;
+  align?: "left" | "center";
+}
+
+const {
+  eyebrow,
+  title,
+  subtitle,
+  onDark = false,
+  align = "left",
+} = Astro.props;
+
+const alignment = align === "center" ? "text-center mx-auto" : "text-left";
+const maxWidth = align === "center" ? "max-w-[720px]" : "max-w-[720px]";
+---
+
+<header class={`${alignment} ${maxWidth} mb-[clamp(2.5rem,5vw,4rem)]`}>
+  <p class={`eyebrow ${onDark ? "eyebrow--on-navy" : ""}`}>{eyebrow}</p>
+  <h2 class={`h-section ${onDark ? "h-section--on-navy" : ""}`}>
+    <Fragment set:html={title} />
+  </h2>
+  {
+    subtitle && (
+      <p class={`lede mt-4 ${onDark ? "lede--on-navy" : ""}`}>{subtitle}</p>
+    )
+  }
+</header>

@@ -1,0 +1,664 @@
+---
+/**
+ * /dev/guia — Showcase de componentes y sistema de diseño PCFC (desarrollo)
+ * Renderiza todos los componentes reales para verlos juntos.
+ * NO es una página de producción — es para desarrollo interno.
+ */
+import "../../styles/global.css";
+import Base from "../../layouts/Base.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import CategoryCard from "../../components/CategoryCard.astro";
+import PostCard from "../../components/PostCard.astro";
+import MatchListItem from "../../components/MatchListItem.astro";
+import CalendarFilters from "../../components/CalendarFilters.astro";
+import GalleryGrid from "../../components/GalleryGrid.astro";
+import Lightbox from "../../components/Lightbox.astro";
+import FixturesBar from "../../components/FixturesBar.astro";
+import FaqSection from "../../components/FaqSection.astro";
+import HomeCategories from "../../components/HomeCategories.astro";
+import WhyPcfc from "../../components/WhyPcfc.astro";
+import ValuePillars from "../../components/ValuePillars.astro";
+import CommunityMosaic from "../../components/CommunityMosaic.astro";
+import PathwayCards from "../../components/PathwayCards.astro";
+import Sponsors from "../../components/Sponsors.astro";
+import EnrollmentCta from "../../components/EnrollmentCta.astro";
+
+import {
+  getCategoriesData,
+  getPillarsData,
+  getStatsData,
+  getGalleryImagesData,
+  getValuePillarsData,
+  getPathwayCardsData,
+  getSponsorsData,
+} from "../../data/homeData";
+
+const samplePhotos = [
+  {
+    src: "https://picsum.photos/seed/pcfc-1/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 1",
+    caption: "El once inicial",
+    downloadName: "pcfc-atlantico-01.jpg",
+  },
+  {
+    src: "https://picsum.photos/seed/pcfc-2/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 2",
+    downloadName: "pcfc-atlantico-02.jpg",
+  },
+  {
+    src: "https://picsum.photos/seed/pcfc-3/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 3",
+    caption: "Celebración del primer gol",
+    downloadName: "pcfc-atlantico-03.jpg",
+  },
+  {
+    src: "https://picsum.photos/seed/pcfc-4/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 4",
+    downloadName: "pcfc-atlantico-04.jpg",
+  },
+  {
+    src: "https://picsum.photos/seed/pcfc-5/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 5",
+    downloadName: "pcfc-atlantico-05.jpg",
+  },
+  {
+    src: "https://picsum.photos/seed/pcfc-6/600/400",
+    alt: "PCFC vs Atlántico FC — Foto 6",
+    downloadName: "pcfc-atlantico-06.jpg",
+  },
+];
+
+const categories = getCategoriesData();
+const pillars = getPillarsData();
+const stats = getStatsData();
+const galleryImages = getGalleryImagesData();
+const valuePillars = getValuePillarsData();
+const pathwayCards = getPathwayCardsData();
+const sponsors = getSponsorsData();
+---
+
+<Base title="Showcase de componentes y sistema de diseño">
+  <Lightbox />
+
+  <!-- HERO -->
+  <section class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]">
+    <div class="container-x">
+      <p class="eyebrow eyebrow--on-navy">SISTEMA DE DISEÑO</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
+        Showcase de Componentes
+      </h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Todos los componentes reales del sistema de diseño PCFC reunidos en una guía interactiva.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── SectionHeader ─── -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="SECTIONHEADER"
+        subtitle="Encabezado reutilizable con eyebrow + título + subtítulo y soporte onDark."
+      />
+
+      <div class="max-w-3xl mb-12">
+        <SectionHeader
+          eyebrow="Ejemplo de uso"
+          title="Encabezado con onDark"
+          subtitle="Este es un SectionHeader con align=center y onDark=true, sobre fondo navy."
+        />
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface Props &#123;
+  eyebrow:  string;               <span class="text-navy-30">// texto superior (Inter SemiBold, uppercase, sky)</span>
+  title:    string;               <span class="text-navy-30">// título principal (admite HTML, ej. &lt;br/&gt;)</span>
+  subtitle?: string;              <span class="text-navy-30">// párrafo descriptivo opcional</span>
+  onDark?:  boolean;             <span class="text-navy-30">// true = texto blanco (sección navy)</span>
+  align?:   "left" | "center";   <span class="text-navy-30">// default "left"</span>
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;SectionHeader
+  eyebrow="CATEGORÍAS"
+  title="Todas las edades &lt;br/&gt;un solo club"
+  subtitle="De 4 a 19 años, cada etapa tiene su programa formativo."
+  align="center"
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- HomeCategories -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="HOMECATEGORIES"
+        subtitle="Sección de roadmap por categorías de 4 a 19 años."
+      />
+    </div>
+    <HomeCategories categories={categories} />
+  </section>
+
+  <!-- WhyPcfc -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="WHYPCFC"
+        subtitle="Estadísticas clave y pilares diferenciadores del club."
+      />
+    </div>
+    <WhyPcfc stats={stats} pillars={pillars} />
+  </section>
+
+  <!-- ValuePillars -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="VALUEPILLARS"
+        subtitle="Tarjetas de beneficios en navy-dark con icono enmarcado."
+      />
+    </div>
+    <ValuePillars
+      eyebrow="Beneficios"
+      title="¿POR QUÉ UNIRSE A PCFC?"
+      pillars={valuePillars}
+    />
+  </section>
+
+  <!-- CommunityMosaic -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="COMMUNITYMOSAIC"
+        subtitle="Mosaico de fotos para la sección de comunidad."
+      />
+    </div>
+    <CommunityMosaic images={galleryImages} />
+  </section>
+
+  <!-- PathwayCards -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="PATHWAYCARDS"
+        subtitle="Tarjetas de doble vía para padres y jugadores."
+      />
+    </div>
+    <PathwayCards cards={pathwayCards} />
+  </section>
+
+  <!-- Sponsors -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="SPONSORS"
+        subtitle="Grid de aliados y marcas patrocinadoras del club."
+      />
+    </div>
+    <Sponsors
+      eyebrow="Aliados"
+      title="PATROCINADORES Y ALIADOS"
+      sponsors={sponsors}
+    />
+  </section>
+
+  <!-- EnrollmentCta -->
+  <section class="border-t border-navy/10">
+    <div class="container-x py-6">
+      <SectionHeader
+        eyebrow="Home Component"
+        title="ENROLLMENTCTA"
+        subtitle="Llamada a la acción principal para inscripciones y WhatsApp."
+      />
+    </div>
+    <EnrollmentCta />
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       SECCIÓN DE DOCUMENTACIÓN DE COMPONENTES
+  ═══════════════════════════════════════════════════ -->
+
+  <!-- ─── CategoryCard ─── -->
+  <section class="section bg-pure-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="CATEGORYCARD"
+        subtitle="Card de categoría formativa con badge, rango etario, foco metodológico, formato, horario y CTA."
+      />
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <CategoryCard
+          slug="pre"
+          title="Pre-Formativas"
+          ageRange="4–8 años"
+          focus="Movilidad y coordinación"
+          format="Sesiones lúdicas"
+          schedule="Mar / Jue 4–5:30pm"
+          description="Fundamentos del juego con diversión y trabajo de motricidad fina."
+          ageMin={4}
+          ageMax={8}
+        />
+        <CategoryCard
+          slug="form-baja"
+          title="Formativas Bajas"
+          ageRange="9–12 años"
+          focus="Técnica individual"
+          format="Partidos 7v7"
+          schedule="Lun / Mié / Vie 4–6pm"
+          description="Técnica básica, primeros conceptos tácticos e inicio de competencia federada."
+          ageMin={9}
+          ageMax={12}
+        />
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface Props &#123;
+  slug:       "pre" | "form-baja" | "form-alta" | "elite";
+  title:      string;
+  ageRange:   string;              <span class="text-navy-30">// "4–8 años"</span>
+  focus:      string;              <span class="text-navy-30">// "Movilidad y coordinación"</span>
+  format:     string;              <span class="text-navy-30">// "Partidos 7v7"</span>
+  schedule:   string;             <span class="text-navy-30">// "Mar / Jue 4–5:30pm"</span>
+  description: string;
+  ageMin:     number;
+  ageMax:     number;
+  ctaHref?:   string;             <span class="text-navy-30">// default "/inscribete"</span>
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;CategoryCard
+  slug="form-alta"
+  title="Formativas Altas"
+  ageRange="13–15 años"
+  focus="Táctica y contexto"
+  format="Partidos 11v11"
+  schedule="Lun / Mié / Vie 5–7pm"
+  description="Desarrollo táctico avanzado y preparación para la categoría elite."
+  ageMin=&#123;13&#125;
+  ageMax=&#123;15&#125;
+  ctaHref="/categorias/formativas-altas"
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PostCard ─── -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="POSTCARD"
+        subtitle="Card de post fotográfico con thumbnail 4:3, badge de categoría, fecha y conteo de fotos."
+      />
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+        <PostCard
+          href="#gallery-demo"
+          thumbnail="https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80"
+          thumbnailAlt="PCFC vs Atlántico FC — Partido Elite"
+          categorySlug="elite"
+          categoryLabel="Elite / Reserva"
+          team1="PCFC"
+          team2="Atlántico FC"
+          date="6 sep 2026"
+          photoCount={24}
+        />
+        <PostCard
+          href="#gallery-demo"
+          thumbnail="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80"
+          thumbnailAlt="PCFC Sub-15 vs Santiago FC — Formativas Altas"
+          categorySlug="form-alta"
+          categoryLabel="Formativas Altas"
+          team1="PCFC Sub-15"
+          team2="Santiago FC"
+          date="30 ago 2026"
+          photoCount={18}
+        />
+        <PostCard
+          href="#gallery-demo"
+          thumbnail="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80"
+          thumbnailAlt="PCFC Sub-10 vs Escuela Bavaro — Formativas Bajas"
+          categorySlug="form-baja"
+          categoryLabel="Formativas Bajas"
+          team1="PCFC Sub-10"
+          team2="Escuela Bavaro"
+          date="22 ago 2026"
+        />
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface Props &#123;
+  href:           string;            <span class="text-navy-30">// enlace al post individual</span>
+  thumbnail:      string;            <span class="text-navy-30">// URL de la imagen</span>
+  thumbnailAlt:   string;
+  categorySlug:   "pre" | "form-baja" | "form-alta" | "elite";
+  categoryLabel:  string;           <span class="text-navy-30">// "Formativas Bajas"</span>
+  team1:          string;           <span class="text-navy-30">// equipo PCFC</span>
+  team2:          string;           <span class="text-navy-30">// equipo rival</span>
+  date:           string;           <span class="text-navy-30">// "6 sep 2026"</span>
+  photoCount?:    number;           <span class="text-navy-30">// opcional</span>
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;PostCard
+  href="/fotos/pcfc-vs-atlantico"
+  thumbnail="https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800"
+  thumbnailAlt="PCFC vs Atlántico FC"
+  categorySlug="elite"
+  categoryLabel="Elite / Reserva"
+  team1="PCFC"
+  team2="Atlántico FC"
+  date="6 sep 2026"
+  photoCount=&#123;24&#125;
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- GalleryGrid + Lightbox -->
+  <section id="gallery-demo" class="section bg-pure-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Galería interactiva"
+        title="GALLERYGRID + LIGHTBOX"
+        subtitle="Haz click en cualquier miniatura para abrir el visor de fotos."
+      />
+      <GalleryGrid photos={samplePhotos} galleryId="showcase" />
+    </div>
+  </section>
+
+  <!-- ─── MatchListItem ─── -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="MATCHLISTITEM"
+        subtitle="Fila horizontal de partido con badge, fecha, rival, ubicación y enlace a fotos."
+      />
+
+      <div class="max-w-4xl mx-auto mb-12">
+        <ul
+          id="match-list"
+          class="list-none bg-white border border-navy/10 rounded-lg overflow-hidden"
+          role="list"
+          aria-label="Próximos partidos"
+        >
+          <MatchListItem
+            categorySlug="elite"
+            categoryLabel="Elite / Reserva"
+            date="Sáb 13 sep"
+            time="10:00 AM"
+            team1="PCFC Reserva"
+            team2="Higüey United"
+            venue="Cancha Principal · PCFC"
+            photosHref="/fotos#pcfc-reserva-vs-higuey"
+          />
+          <MatchListItem
+            categorySlug="form-alta"
+            categoryLabel="Formativas Altas"
+            date="Mié 17 sep"
+            time="5:30 PM"
+            team1="PCFC Sub-15"
+            team2="San Cristóbal FC"
+            venue="Cancha 1 · PCFC"
+          />
+          <MatchListItem
+            categorySlug="pre"
+            categoryLabel="Pre-Formativas"
+            date="Dom 21 sep"
+            time="10:30 AM"
+            team1="PCFC Sub-8"
+            team2="Escuela Bavaro"
+            venue="Cancha 3 · PCFC"
+          />
+          <MatchListItem
+            categorySlug="form-baja"
+            categoryLabel="Formativas Bajas"
+            date="Sáb 6 sep"
+            time="4:00 PM"
+            team1="PCFC Sub-12"
+            team2="Moca FC"
+            venue="Cancha 2 · PCFC"
+            photosHref="/fotos#pcfc-sub12-vs-moca"
+            past
+          />
+        </ul>
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto max-w-4xl mx-auto">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface Props &#123;
+  categorySlug:  "pre" | "form-baja" | "form-alta" | "elite";
+  categoryLabel: string;            <span class="text-navy-30">// "Pre-Formativas"</span>
+  date:          string;           <span class="text-navy-30">// "Sáb 13 sep"</span>
+  time?:         string;           <span class="text-navy-30">// opcional, ej "10:00 AM"</span>
+  team1:         string;           <span class="text-navy-30">// equipo PCFC</span>
+  team2:         string;           <span class="text-navy-30">// equipo rival</span>
+  venue:         string;
+  photosHref?:   string;           <span class="text-navy-30">// habilita el botón "Ver fotos"</span>
+  past?:         boolean;          <span class="text-navy-30">// true = partido jugado</span>
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;MatchListItem
+  categorySlug="form-alta"
+  categoryLabel="Formativas Altas"
+  date="Mié 17 sep"
+  time="5:30 PM"
+  team1="PCFC Sub-15"
+  team2="San Cristóbal FC"
+  venue="Cancha 1 · PCFC"
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FaqSection ─── -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="FAQSECTION"
+        subtitle="Accordion nativo de preguntas frecuentes sobre navy-dark con enlace a contacto."
+      />
+
+      <div class="max-w-3xl mb-12">
+        <FaqSection
+          eyebrow="DUDAS FRECUENTES"
+          title="Preguntas antes de inscribirte"
+          subtitle="Si no encuentras la respuesta que buscas, escríbenos directamente."
+          faqs={[
+            {
+              question: "¿Cuál es la edad mínima para inscribir a mi hijo?",
+              answer: "Aceptamos niños desde los 4 años en nuestra categoría Pre-Formativas, donde el trabajo se enfoca en motricidad y coordinación a través del juego.",
+            },
+            {
+              question: "¿Qué incluye la inscripción mensual?",
+              answer: "La mensualidad cubre los entrenamientos programados, uniforme base (camiseta), acceso a nuestras instalaciones y seguro deportivo básico.",
+            },
+            {
+              question: "¿Puedo probar una clase antes de inscribirme?",
+              answer: "Sí. Ofrecemos una sesión de prueba gratuita para todas las categorías. Agenda tu cita por WhatsApp al +1 809-652-9450.",
+            },
+            {
+              question: "¿Qué formatos de partido manejan según la edad?",
+              answer: "Pre-Formativas (4–8): sesiones lúdicas. Formativas Bajas (9–12): partidos 7v7. Formativas Altas (13–15): partidos 11v11. Elite/Reserva: competencia federada completa.",
+            },
+          ]}
+          contactEmail="admisiones@puntacanafc.com"
+          contactPhone="+1 809-652-9450"
+        />
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto max-w-3xl">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface FaqItem &#123;
+  question: string;
+  answer:   string;
+&#125;
+
+interface Props &#123;
+  eyebrow?:      string;            <span class="text-navy-30">// default "DUDAS FRECUENTES"</span>
+  title?:        string;           <span class="text-navy-30">// "Preguntas antes de inscribirte"</span>
+  subtitle?:     string;
+  faqs:          FaqItem[];
+  contactEmail?: string;          <span class="text-navy-30">// default admisiones@puntacanafc.com</span>
+  contactPhone?: string;          <span class="text-navy-30">// default +1 809-652-9450</span>
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;FaqSection
+  eyebrow="INSCRIPCIONES"
+  title="Todo lo que necesitas saber"
+  faqs=&#123;[
+    &#123; question: "¿Cuánto cuesta la mensualidad?", answer: "..." &#125;,
+    &#123; question: "¿Qué incluye el uniforme?", answer: "..." &#125;,
+  ]&#125;
+  contactPhone="+1 809-652-9450"
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FixturesBar ─── -->
+  <section class="section bg-navy">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="FIXTURESBAR"
+        subtitle="Barra animada de partidos futuros con scroll infinito (marquee). Sin props — datos internos."
+        onDark
+      />
+      <FixturesBar />
+      <div class="bg-navy-05 border border-navy-10/20 rounded-lg p-6 mt-12 overflow-x-auto">
+        <p class="eyebrow mb-4">Sin props — datos internos en el componente</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-white font-mono">// Datos internos (reemplazar con CMS / EmDash)
+<span class="text-navy-30">// FixturesBar.astro — líneas 3–44</span>
+const fixtures = [
+  &#123; category: 'U-14',   team1: &#123;name:'PCFC',color:'#2563eb'&#125;, team2: &#123;name:'Selección Federativa',color:'#dc2626'&#125;, date:'Sáb 15 sep.', time:'13:03' &#125;,
+  &#123; category: 'Prueba', team1: &#123;name:'Casa España',color:'#2563eb'&#125;,  team2: &#123;name:'Prueba',color:'#10b981'&#125;,       date:'Miér 4 sep.',time:'9:11'  &#125;,
+  &#123; category: 'U-10',   team1: &#123;name:'Acto Rendimiento',color:'#f59e0b'&#125;,team2:&#123;name:'Canay FC',color:'#0891b2'&#125;,    date:'Sáb 7 sep.', time:'16:00' &#125;,
+  &#123; category: 'Casa 1', team1: &#123;name:'Punta Cana FC',color:'#2563eb'&#125;,  team2: &#123;name:'San Cristóbal',color:'#64748b'&#125;, date:'8 sep.',     time:'10:30' &#125;,
+&#125;;
+
+<span class="text-navy-30">// Color mapping por categoría</span>
+const categoryColors: Record&lt;string,string&gt; = &#123;
+  'U-14':   '#2563eb',
+  'Prueba': '#10b981',
+  'U-10':   '#f59e0b',
+  'Casa 1': '#64748b',
+&#125;;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ValuePillars ─── -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Componentes"
+        title="VALUEPILLARS"
+        subtitle="Tarjetas de pilares de valor con icono sky en fondo navy-dark."
+      />
+
+      <div class="max-w-4xl mx-auto mb-12">
+        <ValuePillars
+          eyebrow="BENEFICIOS"
+          title="¿POR QUÉ ELEGIR PCFC?"
+          pillars={[
+            {
+              icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+              title: "Metodología profesional",
+              copy: "Entrenamientos diseñados por profesionales del fútbol juvenil con enfoque en desarrollo integral.",
+            },
+            {
+              icon: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 0a4 4 0 0 1 0 8m-7-3h10M9 14l2 2 4-4",
+              title: "Comunidad y convivencia",
+              copy: "Un club donde cada jugador es parte de una familia que celebra el progreso y el fair play.",
+            },
+            {
+              icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0 1 12 2.944a11.955 11.955 0 0 1-8.618 3.04A12.02 12.02 0 0 0 3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+              title: "Seguridad garantizada",
+              copy: "Instalaciones vigiladas, personal certificado y protocolos claros para cada actividad.",
+            },
+          ]}
+        />
+      </div>
+
+      <div class="bg-navy-05 border border-navy/10 rounded-lg p-6 overflow-x-auto max-w-4xl mx-auto">
+        <p class="eyebrow mb-4">Props</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">interface Pillar &#123;
+  icon:        string;             <span class="text-navy-30">// path SVG d=""</span>
+  title:       string;
+  copy:        string;
+  iconViewBox?: string;            <span class="text-navy-30">// default "0 0 24 24"</span>
+&#125;
+
+interface Props &#123;
+  eyebrow?:  string;             <span class="text-navy-30">// texto superpuesto (opcional)</span>
+  title:     string;
+  pillars:   Pillar[];
+&#125;</pre>
+        <p class="eyebrow mt-6 mb-4">Ejemplo</p>
+        <pre class="text-[0.8125rem] leading-[1.7] text-navy font-mono">&lt;ValuePillars
+  eyebrow="NUESTROS PILARES"
+  title="VALORES QUE NOS DEFINEN"
+  pillars=&#123;[
+    &#123;
+      icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+      title: "Excelencia",
+      copy: "Buscamos la mejora continua en cada entrenamiento y partido.",
+    &#125;,
+    &#123;
+      icon: "M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0z",
+      title: "Pasión",
+      copy: "Cada jugador representa al club con compromiso y orgullo.",
+    &#125;,
+  ]&#125;
+/&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Botones -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="UI"
+        title="BOTONES"
+        subtitle="Primary, Sky, Outline, Outline-on-navy, Ghost."
+      />
+      <div class="flex flex-wrap gap-4 items-center">
+        <a href="#" class="btn btn--primary">Inscribirse</a>
+        <a href="#" class="btn btn--sky">Ver calendario</a>
+        <a href="#" class="btn btn--outline">Más información</a>
+        <button type="button" class="btn btn--primary btn--lg">INSCRIBIRSE AHORA</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Badges -->
+  <section class="section bg-pure-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="UI"
+        title="BADGES"
+        subtitle="Todos los badges de categoría + estado."
+      />
+      <div class="flex flex-wrap gap-3">
+        <span class="badge badge--pre">Pre-Formativas</span>
+        <span class="badge badge--form-baja">Formativas Bajas</span>
+        <span class="badge badge--form-alta">Formativas Altas</span>
+        <span class="badge badge--elite">Elite / Reserva</span>
+        <span class="badge badge--sky">Próximo</span>
+      </div>
+    </div>
+  </section>
+</Base>

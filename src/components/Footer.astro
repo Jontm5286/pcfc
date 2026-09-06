@@ -1,0 +1,167 @@
+---
+/**
+ * Footer — PCFC
+ * Grid de 4 columnas: logo + descripción, Club, Categorías, Contacto.
+ * Diseño: tokens del design system (bg-navy-dark, text-white/70, hover:text-sky).
+ */
+---
+
+<footer class="bg-navy-dark text-white/70 py-16 border-t border-white/5">
+  <div
+    class="container-x grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_repeat(3,1fr)] gap-8 lg:gap-12 mb-12"
+  >
+    <!-- Columna: Logo + descripción -->
+    <div>
+      <a
+        href="/"
+        class="flex items-center gap-3 no-underline"
+        aria-label="Punta Cana FC — Inicio"
+      >
+        <img
+          src="/Logo-PCFC.svg"
+          alt="Punta Cana FC"
+          class="h-[52px] w-auto object-contain"
+        />
+      </a>
+      <p class="mt-4 max-w-[320px] text-[0.9rem] leading-[1.6]">
+        Academia premium de alto rendimiento en el Caribe dominicano.
+        Formando jugadores desde los 4 hasta los 19 años con metodología
+        profesional.
+      </p>
+    </div>
+
+    <!-- Columna: Club -->
+    <div>
+      <h4 class="font-body text-xs font-semibold text-sky-30 tracking-[0.15em] uppercase mb-5">
+        Club
+      </h4>
+      <ul class="list-none flex flex-col gap-2.5">
+        <li>
+          <a
+            href="/club"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Sobre nosotros</a
+          >
+        </li>
+        <li>
+          <a
+            href="/club#historia"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Historia</a
+          >
+        </li>
+        <li>
+          <a
+            href="/club#mision"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Misión y visión</a
+          >
+        </li>
+        <li>
+          <a
+            href="/club#equipo-directivo"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Equipo directivo</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Columna: Categorías -->
+    <div>
+      <h4 class="font-body text-xs font-semibold text-sky-30 tracking-[0.15em] uppercase mb-5">
+        Deportes
+      </h4>
+      <ul class="list-none flex flex-col gap-2.5">
+        <li>
+          <a
+            href="/area-deportiva"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Categorías</a
+          >
+        </li>
+        <li>
+          <a
+            href="/area-deportiva#entrenadores"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Entrenadores</a
+          >
+        </li>
+        <li>
+          <a
+            href="/area-deportiva#instalaciones"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Instalaciones</a
+          >
+        </li>
+        <li>
+          <a
+            href="/calendario"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Calendario</a
+          >
+        </li>
+        <li>
+          <a
+            href="/fotos"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Fotos</a
+          >
+        </li>
+        <li>
+          <a
+            href="/inscribete"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Inscríbete</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- Columna: Contacto -->
+    <div>
+      <h4 class="font-body text-xs font-semibold text-sky-30 tracking-[0.15em] uppercase mb-5">
+        Contacto
+      </h4>
+      <ul class="list-none flex flex-col gap-2.5">
+        <li>
+          <a
+            href="tel:+18096529450"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >+1 809-652-9450</a
+          >
+        </li>
+        <li>
+          <a
+            href="mailto:info@puntacanafc.com"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >info@puntacanafc.com</a
+          >
+        </li>
+        <li>
+          <a
+            href="/objetos-perdidos"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >Objetos perdidos</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://wa.me/18096529450"
+            target="_blank"
+            rel="noopener"
+            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+            >WhatsApp directo</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div
+    class="container-x flex flex-col md:flex-row md:justify-between md:items-center gap-2 pt-6 border-t border-white/10 text-[0.8rem] text-white/60 text-center md:text-left"
+  >
+    <span>© 2026 Punta Cana FC · Todos los derechos reservados</span>
+    <span>Hecho en Punta Cana ·</span>
+  </div>
+</footer>

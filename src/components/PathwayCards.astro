@@ -1,0 +1,92 @@
+---
+/**
+ * PathwayCards — PCFC
+ * Sección "Dedicated Pathways" — 2 cards lado a lado:
+ *   - Parents Pathway (familia, seguridad, valores)
+ *   - Players Pathway (competición, crecimiento, scouting)
+ *
+ * Cada card tiene: eyebrow, heading, subtitle, copy, CTA y una imagen.
+ *
+ * Props:
+ *   - cards: PathwayCard[]
+ *
+ * PathwayCard = {
+ *   eyebrow: string,
+ *   heading: string,
+ *   subtitle: string,
+ *   copy: string,
+ *   cta: { label: string, href: string },
+ *   image: string,    // URL de la imagen
+ *   imageAlt: string,
+ * }
+ */
+
+export interface PathwayCard {
+  eyebrow: string;
+  heading: string;
+  subtitle: string;
+  copy: string;
+  cta: { label: string; href: string };
+  image: string;
+  imageAlt: string;
+}
+
+interface Props {
+  cards: PathwayCard[];
+}
+
+const { cards } = Astro.props;
+---
+
+<section
+  class="relative w-full py-12 md:py-14 overflow-hidden bg-navy-dark"
+>
+  <div class="container-x">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {cards.map((card) => (
+        <article class="flex flex-col md:flex-row gap-6 p-8 bg-navy/80 border-2 border-navy-60 rounded-2xl shadow-[0_8px_24px_rgba(0,40,92,0.25)] h-full">
+          <!-- Contenido de texto -->
+          <div class="flex-1 flex flex-col items-start justify-between h-full">
+            <div>
+            <span class="eyebrow eyebrow--on-navy" style="color: var(--c-sky-30); opacity: 0.85">
+              {card.eyebrow}
+            </span>
+
+            <h3 class="h-card h-card--on-navy text-[1.5rem] md:text-[1.375rem] mb-1">
+              {card.heading}
+            </h3>
+
+            <p class="text-[1rem] font-semibold text-navy-10 mb-3">
+              {card.subtitle}
+            </p>
+
+            <p class="lede lede--on-navy text-[0.875rem] mb-6">
+              {card.copy}
+            </p>
+            </div>
+
+            <a
+              href={card.cta.href}
+              class="btn btn--sky btn--on-navy text-[0.75rem] font-bold mt-auto transition-opacity duration-200 hover:opacity-90"
+            >
+              {card.cta.label}
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <!-- Imagen -->
+          <div class="w-full md:w-44 shrink-0 h-48 md:h-auto aspect-[176/192]">
+            <div class="w-full h-full border border-sky-30/40 rounded-xl overflow-hidden bg-navy-30">
+              <img
+                src={card.image}
+                alt={card.imageAlt}
+                loading="lazy"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,116 @@
+---
+/**
+ * GalleryGrid — PCFC
+ * Grid responsive de fotos para un post individual de la galería.
+ * Sigue DESIGN.md §7 (GaleríaGrid): 4 cols desktop, 3 tablet, 2 mobile,
+ * gap 12px, aspect-ratio 4:3, object-fit cover, hover sombra sutil.
+ *
+ * Props:
+ *   - photos: Photo[]        Lista de fotos del partido
+ *   - galleryId: string      Identificador único del grid (para lightbox)
+ *
+ * Photo = {
+ *   src: string,
+ *   alt: string,
+ *   width?: number,
+ *   height?: number,
+ *   caption?: string,
+ *   downloadName?: string
+ * }
+ *
+ * Emite un evento `photo:open` en document con { galleryId, index, photos }
+ * para que <Lightbox /> lo escuche y abra la foto correspondiente.
+ */
+
+export interface Photo {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+  downloadName?: string;
+}
+
+interface Props {
+  photos: Photo[];
+  galleryId: string;
+}
+
+const { photos, galleryId } = Astro.props;
+---
+
+<div
+  class="gallery-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+  data-component="gallery-grid"
+  data-gallery-id={galleryId}
+>
+  {
+    photos.map((photo, index) => (
+      <button
+        type="button"
+        class="gallery-item group relative aspect-[4/3] overflow-hidden bg-navy-05 border border-navy/10 rounded-md cursor-pointer transition-shadow duration-200 hover:shadow-[0_4px_20px_rgba(0,40,92,0.12)] hover:border-navy/25"
+        data-photo-index={index}
+        aria-label={`Abrir foto ${index + 1} de ${photos.length}: ${photo.alt}`}
+      >
+        <img
+          src={photo.src}
+          alt={photo.alt}
+          loading={index < 4 ? "eager" : "lazy"}
+          class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+        />
+        {photo.caption && (
+          <span class="absolute bottom-2 left-2 px-2 py-0.5 bg-navy/80 text-white text-[0.7rem] font-semibold rounded max-w-[calc(100%-1rem)] truncate">
+            {photo.caption}
+          </span>
+        )}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  type PhotoEventDetail = {
+    galleryId: string;
+    index: number;
+    photos: Array<{
+      src: string;
+      alt: string;
+      caption?: string;
+      downloadName?: string;
+    }>;
+  };
+
+  document
+    .querySelectorAll<HTMLElement>('[data-component="gallery-grid"]')
+    .forEach((grid) => {
+      const galleryId = grid.dataset.galleryId;
+      if (!galleryId) return;
+
+      const photos: PhotoEventDetail["photos"] = [];
+      grid.querySelectorAll<HTMLButtonElement>(".gallery-item").forEach((btn) => {
+        const img = btn.querySelector("img");
+        if (!img) return;
+        const captionEl = btn.querySelector<HTMLElement>(
+          "span.absolute.bottom-2.left-2",
+        );
+        photos.push({
+          src: img.getAttribute("src") ?? "",
+          alt: img.getAttribute("alt") ?? "",
+          caption: captionEl?.textContent?.trim() || undefined,
+          downloadName: img.getAttribute("download") || undefined,
+        });
+      });
+
+      grid.addEventListener("click", (event) => {
+        const target = (event.target as HTMLElement).closest<HTMLButtonElement>(
+          ".gallery-item",
+        );
+        if (!target) return;
+        const index = Number(target.dataset.photoIndex ?? "0");
+        const detail: PhotoEventDetail = { galleryId, index, photos };
+        document.dispatchEvent(
+          new CustomEvent<PhotoEventDetail>("photo:open", { detail }),
+        );
+      });
+    });
+</script>

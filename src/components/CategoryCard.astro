@@ -1,0 +1,110 @@
+---
+/**
+ * CategoryCard — PCFC
+ * Card para /categorias: una categoría formativa con badge, nombre,
+ * rango de edad, foco metodológico, formato de partido y horarios.
+ *
+ * Props:
+ *   - slug: "pre" | "form-baja" | "form-alta" | "elite"
+ *   - title: string              Nombre visible de la categoría
+ *   - ageRange: string           Rango etario, ej. "4–8 años"
+ *   - focus: string              Foco metodológico (línea corta)
+ *   - format: string             Formato de partido, ej. "Partidos 7v7"
+ *   - schedule: string           Horario semanal
+ *   - description: string        Párrafo descriptivo
+ *   - ageMin: number             Edad mínima (atributo de orden)
+ *   - ageMax: number             Edad máxima
+ *   - ctaHref: string            Enlace del CTA (default "/inscribete")
+ *
+ * Decorado por categoría:
+ *   - Elemento numérico grande de fondo (#E8F0F5) como marca del club
+ *   - Borde navy 10%, hover navy 25% + sombra sutil (nunca scale)
+ */
+
+interface Props {
+  slug: "pre" | "form-baja" | "form-alta" | "elite";
+  title: string;
+  ageRange: string;
+  focus: string;
+  format: string;
+  schedule: string;
+  description: string;
+  ageMin: number;
+  ageMax: number;
+  ctaHref?: string;
+}
+
+const {
+  slug,
+  title,
+  ageRange,
+  focus,
+  format,
+  schedule,
+  description,
+  ageMin,
+  ageMax,
+  ctaHref = "/inscribete",
+} = Astro.props;
+
+const badgeClass = `badge badge--${slug}`;
+---
+
+<article
+  class="category-card relative overflow-hidden bg-white border border-navy/10 rounded-lg p-6 md:p-8 transition-[border-color,box-shadow] duration-200 hover:border-navy/25 hover:shadow-[0_4px_20px_rgba(0,40,92,0.08)]"
+  data-age-min={ageMin}
+  data-age-max={ageMax}
+>
+  <!-- Elemento decorativo: número grande al fondo (DESIGN.md §7) -->
+  <span
+    aria-hidden="true"
+    class="category-card__num absolute -top-2 -right-2 font-display text-[8rem] md:text-[10rem] leading-none text-navy-05 select-none pointer-events-none"
+  >
+    {ageMin}
+  </span>
+
+  <div class="relative z-10 flex flex-col gap-5">
+    <header class="flex items-center gap-3">
+      <span class={badgeClass}>{title}</span>
+    </header>
+
+    <div>
+      <h3 class="h-card mb-2">{title}</h3>
+      <p class="font-body text-[0.875rem] font-semibold uppercase tracking-[0.05em] text-navy-60">
+        {ageRange}
+      </p>
+    </div>
+
+    <p class="font-body text-[0.95rem] leading-[1.55] text-navy-60">
+      {description}
+    </p>
+
+    <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-navy/10">
+      <div>
+        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
+          Foco
+        </dt>
+        <dd class="font-body text-[0.9rem] text-navy leading-snug">{focus}</dd>
+      </div>
+      <div>
+        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
+          Formato
+        </dt>
+        <dd class="font-body text-[0.9rem] text-navy leading-snug">{format}</dd>
+      </div>
+      <div>
+        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
+          Horario
+        </dt>
+        <dd class="font-body text-[0.9rem] text-navy leading-snug">{schedule}</dd>
+      </div>
+    </dl>
+
+    <footer class="pt-2">
+      <a href={ctaHref} class="btn btn--primary" aria-label={`Inscribirse en ${title}`}>
+        Inscribirse
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </footer>
+  </div>
+</article>

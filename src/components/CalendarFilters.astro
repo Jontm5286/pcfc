@@ -1,0 +1,93 @@
+---
+/**
+ * CalendarFilters — PCFC
+ * Tabs horizontales para filtrar partidos por categoría.
+ * Fondo #F5F8FB, tab activa fondo navy, texto blanco.
+ * Inter SemiBold 13px.
+ */
+
+const categories = [
+  { id: "todas", label: "Todas" },
+  { id: "pre", label: "Pre-Formativas" },
+  { id: "form-baja", label: "Formativas Bajas" },
+  { id: "form-alta", label: "Formativas Altas" },
+  { id: "elite", label: "Elite / Reserva" },
+];
+---
+
+<div
+  class="flex items-center gap-1 bg-sky-05 p-1.5 rounded-lg overflow-x-auto"
+  role="tablist"
+  aria-label="Filtrar partidos por categoría"
+  id="calendar-filters"
+>
+  {
+    categories.map((cat) => (
+      <button
+        type="button"
+        role="tab"
+        aria-selected={cat.id === "todas" ? "true" : "false"}
+        aria-controls="match-list"
+        data-filter={cat.id}
+        class="
+          calendar-tab
+          shrink-0
+          px-4 py-2
+          rounded-md
+          font-body font-semibold text-[13px]
+          text-navy-60
+          bg-transparent
+          border-0
+          cursor-pointer
+          transition-colors duration-150
+          whitespace-nowrap
+        "
+      >
+        {cat.label}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .calendar-tab.active {
+    background: var(--color-navy);
+    color: var(--color-white);
+  }
+  .calendar-tab:not(.active):hover {
+    background: rgba(0, 40, 92, 0.07);
+    color: var(--color-navy);
+  }
+</style>
+
+<script>
+  const filters = document.querySelectorAll<HTMLElement>(".calendar-tab");
+  const list = document.getElementById("match-list");
+
+  filters.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filters.forEach((f) => {
+        f.classList.remove("active");
+        f.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+
+      if (!list) return;
+      const filter = btn.dataset.filter ?? "todas";
+      const items = list.querySelectorAll<HTMLElement>("[data-category]");
+      items.forEach((item) => {
+        if (filter === "todas" || item.dataset.category === filter) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+  });
+
+  // Activate "Todas" by default
+  const todasBtn = document.querySelector<HTMLElement>('[data-filter="todas"]');
+  todasBtn?.classList.add("active");
+  todasBtn?.setAttribute("aria-selected", "true");
+</script>

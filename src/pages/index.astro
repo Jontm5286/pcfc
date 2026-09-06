@@ -1,0 +1,75 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import HomeCategories from "../components/HomeCategories.astro";
+import WhyPcfc from "../components/WhyPcfc.astro";
+import ValuePillars from "../components/ValuePillars.astro";
+import CommunityMosaic from "../components/CommunityMosaic.astro";
+import PathwayCards from "../components/PathwayCards.astro";
+import Sponsors from "../components/Sponsors.astro";
+import EnrollmentCta from "../components/EnrollmentCta.astro";
+import {
+  getNextMatchData,
+  getCategoriesData,
+  getPillarsData,
+  getStatsData,
+  getGalleryImagesData,
+  getValuePillarsData,
+  getPathwayCardsData,
+  getSponsorsData,
+} from "../data/homeData";
+
+// Load static datasets for home page sections
+const nextMatch = getNextMatchData();
+const categories = getCategoriesData();
+const pillars = getPillarsData();
+const stats = getStatsData();
+const galleryImages = getGalleryImagesData();
+const valuePillars = getValuePillarsData();
+const pathwayCards = getPathwayCardsData();
+const sponsors = getSponsorsData();
+---
+
+<Base title="Inicio" showFixtures={true}>
+  <!-- HERO — impacto: próximo partido + identidad -->
+  <Hero
+    eyebrow="Academia · Punta Cana"
+    title="Pasión por el Fútbol"
+    description="Academia premium de alto rendimiento en el Caribe dominicano. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
+    bullets={[
+      "Plan formativo por etapa biológica, no por edad cronológica.",
+      "Entrenadores con licencias UEFA y experiencia en academias de élite.",
+      "Instalaciones de primer nivel: 4 canchas, gimnasio y aula académica.",
+    ]}
+    galleryImages={galleryImages}
+    nextMatch={nextMatch}
+  />
+
+  <!-- CATEGORÍAS — progresión: tu hijo tiene camino -->
+  <HomeCategories categories={categories} />
+
+  <!-- VALUE PILLARS — beneficios de unirse al club -->
+  <ValuePillars
+    eyebrow="Beneficios"
+    title="¿POR QUÉ UNIRSE A PCFC?"
+    pillars={valuePillars}
+  />
+  <!-- POR QUÉ PCFC — confianza: números + pilares -->
+  <WhyPcfc stats={stats} pillars={pillars} />
+
+  <!-- ÚLTIMAS FOTOS — comunidad: somos muchos -->
+  <CommunityMosaic images={galleryImages} />
+
+  <!-- PATHWAY CARDS — dos caminos: padres y jugadores -->
+  <PathwayCards cards={pathwayCards} />
+
+  <!-- PATROCINADORES — aliados del club -->
+  <Sponsors
+    eyebrow="Aliados"
+    title="PATROCINADORES Y ALIADOS"
+    sponsors={sponsors}
+  />
+
+  <!-- CTA INSCRIPCIÓN — acción: el siguiente paso -->
+  <EnrollmentCta />
+</Base>

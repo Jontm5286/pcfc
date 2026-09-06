@@ -1,0 +1,498 @@
+---
+// TODO: Conectar a Content Collection o CMS (EmDash) — reemplazar mock data por
+// getCollection('blog') cuando se migré el contenido a Astro Content Collections.
+
+import Base from "../../layouts/Base.astro";
+import SectionHeader from "../../components/SectionHeader.astro";
+import EnrollmentCta from "../../components/EnrollmentCta.astro";
+import GalleryGrid from "../../components/GalleryGrid.astro";
+import type { Photo } from "../../components/GalleryGrid.astro";
+
+// ─── Tipos ────────────────────────────────────────────────────────────────────
+
+interface BlogPost {
+  slug: string;
+  title: string;
+  eyebrow: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  authorTitle: string;
+  date: string;
+  dateIso: string;
+  image: string;
+  imageAlt: string;
+  tags: { slug: string; label: string }[];
+  relatedImages: Photo[];
+  categorySlug: "pre" | "form-baja" | "form-alta" | "elite" | "noticias";
+}
+
+// ─── getStaticPaths — genera una ruta por cada post ─────────────────────────
+// Astro 7 ejecuta getStaticPaths en un contexto aislado, por lo que los datos
+// se declaran dentro de la propia función. Aquí también dejamos el TODO para
+// migrar a getCollection('blog') cuando se conecte el Content Collection.
+
+export function getStaticPaths() {
+  // TODO: Conectar a Content Collection o CMS (EmDash) — reemplazar el array
+  // `allPosts` por `await getCollection('blog')` y mapear `entry.slug` etc.
+  const allPosts: BlogPost[] = [
+  {
+    slug: "torneo-invierno-2025",
+    title: "PCFC Gana el Torneo Invierno 2025 con una Temporada Imparable",
+    eyebrow: "Torneos",
+    excerpt:
+      "Nuestro equipo Sub-15 cerró la temporada con 12 victorias consecutivas y se coronó campeón invicto del Torneo Invierno 2025.",
+    content: `<p>Lo que comenzó como una apuesta por el trabajo silencioso de nuestro cuerpo técnico culminó en una celebración que ningún aficionado de Punta Cana FC olvidará. Nuestro equipo Sub-15 cerró la temporada 2025 con un registro impecable: 12 victorias consecutivas, cero derrotas y un saldo de 34 goles a favor.</p>
+
+<p>El camino al título no fue sencillo. Las primeras jornadas sirvieron para que el cuerpo técnico calibrara el sistema de juego, introduciendo nuestro plan formativo basado en la posesión y la presión alta. A medida que los jugadores absorbieron los conceptos, el equipo encontró su identidad.</p>
+
+<h2>El partido decisivo</h2>
+
+<p>La final se jugó en la Cancha Principal de Bávaro ante más de 800 espectadores. Desde el primer minuto, nuestros jugadores impusieron un ritmo incómodo para el rival. El gol de apertura llegó al minuto 23, producto de una combinación brillante entre mediocampo y ataque. El segundo tanto selló el partido a falta de 15 minutos para el pitido final.</p>
+
+<p>"El resultado es la consecuencia del proceso", declaró nuestro director técnico tras el encuentro. "Estos jugadores entrenan con una intensidad que muchos clubes profesionales no alcanzan. El mérito es enteramente de ellos."</p>
+
+<h2>Lo que viene</h2>
+
+<p>La base del equipo Sub-15 pasará a la categoría Sub-17 con la misión de repetir este nivel en la próxima temporada. Varios de nuestros jugadores ya han atraído el interés de clubes de Santo Domingo, y scouts de tres ligas centroamericanas estarán presentes en los amistosos de pretemporada.</p>`,
+    author: "Comunicación PCFC",
+    authorTitle: "Dirección de Comunicación",
+    date: "15 dic 2025",
+    dateIso: "2025-12-15",
+    image:
+      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
+    imageAlt: "Equipo PCFC celebrando el título del Torneo Invierno 2025",
+    tags: [
+      { slug: "torneos", label: "Torneos" },
+      { slug: "sub-15", label: "Sub-15" },
+      { slug: "campeones", label: "Campeones" },
+    ],
+    relatedImages: [
+      {
+        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        alt: "Celebración del equipo PCFC",
+        caption: "El equipo celebra en la cancha",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+        alt: "Partido en la Cancha Principal",
+        caption: "La final en Bávaro",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+        alt: "Jugadores recibiendo instrucciones",
+        caption: "Reunión técnica previa al partido",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80",
+        alt: "Jugadores con el trofeo",
+        caption: "Trofeo del Torneo Invierno 2025",
+      },
+    ],
+  },
+  {
+    slug: "nuevo-cuerpo-tecnico-uefa",
+    title: "PCFC Refuerza su Cuerpo Técnico con Tres Entrenadores Certificados UEFA",
+    eyebrow: "Noticias",
+    excerpt:
+      "La academia incorpora profesionales con licencias UEFA-B y UEFA-A, consolidando nuestro compromiso con la excelencia metodológica.",
+    content: `<p>En Punta Cana FC entendemos que el talento de nuestros jugadores merece estar en las mejores manos posibles. Por eso, tras un proceso de selección exhaustivo que duró tres meses, estamos orgullosos de anunciar la incorporación de tres entrenadores certificados por la UEFA.</p>
+
+<h2>Nuevos integrantes</h2>
+
+<p>Nuestro nuevo Director Técnico General, con licencia UEFA-A, proviene de una academia filial de un club de La Liga española. Trae consigo más de 15 años de experiencia en formación de jóvenes talentos y un enfoque rigurosamente estructurado en el desarrollo individual.</p>
+
+<p>Los otros dos nuevos entrenadores, ambos con licencia UEFA-B, se especializan en el trabajo con categorías formativas bajas y la preparación física específica por etapa biológica. Sus metodologías complementan perfectamente nuestro plan de desarrollo.</p>
+
+<h2>Qué significa esto para tu hijo</h2>
+
+<p>La certificación UEFA no es solo un título: es una garantía de que el entrenador domina los aspectos técnicos, tácticos, psicológicos y fisiológicos del desarrollo del futbolista joven. En PCFC, cada categoría tiene un entrenador dedicado con la credencial adecuada para esa franja etaria.</p>`,
+    author: "Dirección Deportiva",
+    authorTitle: "Departamento Técnico PCFC",
+    date: "3 nov 2025",
+    dateIso: "2025-11-03",
+    image:
+      "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=1200&q=80",
+    imageAlt: "Cuerpo técnico de PCFC durante una sesión de entrenamiento",
+    tags: [
+      { slug: "noticias", label: "Noticias" },
+      { slug: "cuerpo-tecnico", label: "Cuerpo Técnico" },
+      { slug: "uefa", label: "UEFA" },
+    ],
+    relatedImages: [
+      {
+        src: "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80",
+        alt: "Sesión de entrenamiento técnico",
+        caption: "Práctica de definición",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80",
+        alt: "Reunión del cuerpo técnico",
+        caption: "Planner semanal de entrenos",
+      },
+    ],
+  },
+  {
+    slug: "scratching-scouts-liga-rd",
+    title: "Scouts de Tres Clubes de la Liga RD Asistieron a Nuestro Entrenamiento Abierto",
+    eyebrow: "Scouting",
+    excerpt:
+      "Una sesión de entrenamiento abierta吸引了 представители трёх ведущих клубов dominicanos, todos interesados en nuestros jugadores Sub-17.",
+    content: `<p>La visibilidad de nuestros jugadores en el ecosistema del fútbol caribeño sigue creciendo. La sesión de entrenamiento abierto que organizamos el pasado sábado reunió a observadores de tres clubes que compiten en la Liga Dominamericana, el principal circuito de desarrollo del país.</p>
+
+<p>Los scouts presenciaron una práctica de alta intensidad donde nuestros jugadores Sub-17 demostraron el nivel técnico que han alcanzado bajo nuestra metodología europea. Tres jugadores fueron identificados como candidatos a seguir para procesos de selección futura.</p>
+
+<h2>Un ecosistema de desarrollo</h2>
+
+<p>En PCFC no trabajamos para transferir jugadores, trabajamos para formarlos. La diferencia es sutil pero importante: priorizamos el desarrollo integral sobre laresultado inmediato. Cuando un jugador se forma bien, las oportunidades llegan naturalmente.</p>`,
+    author: "Comunicación PCFC",
+    authorTitle: "Dirección de Comunicación",
+    date: "20 oct 2025",
+    dateIso: "2025-10-20",
+    image:
+      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
+    imageAlt: "Scout observando un entrenamiento de PCFC",
+    tags: [
+      { slug: "scouting", label: "Scouting" },
+      { slug: "sub-17", label: "Sub-17" },
+      { slug: "ligard", label: "Liga RD" },
+    ],
+    relatedImages: [
+      {
+        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+        alt: "Scout tomando notas",
+        caption: "Scout del Club A observando la práctica",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        alt: "Jugadores en ejercicio técnico",
+        caption: "Ejercicio de regate bajo presión",
+      },
+    ],
+  },
+  {
+    slug: "inscripciones-2026-abiertas",
+    title: "Inscripciones Abiertas: Temporada 2026 en Punta Cana FC",
+    eyebrow: "Inscripciones",
+    excerpt:
+      "Las plazas para todas las categorías están abiertas. Incluyen desde Pre-Formativas hasta Elite, de 4 a 19 años.",
+    content: `<p>La temporada 2026 de Punta Cana FC está oficialmente abierta. Con nuevas instalaciones, un cuerpo técnico reforzado y nuestra metodología europea consolidada, este es el mejor momento para que tu hijo o hija se una a la academia.</p>
+
+<h2>Categorías disponibles</h2>
+
+<p>Contamos con plazas en todas las categorías, desde Pre-Formativas (4-8 años) hasta Elite y Reserva (16-19 años). Cada categoría tiene cupos limitados para garantizar la calidad de la formación individual.</p>
+
+<h2>Proceso de inscripción</h2>
+
+<p>El proceso es sencillo. Completa el formulario de inscripción en línea, asiste a una sesión de observación gratuita con tu hijo, y recibe la respuesta de nuestro equipo en menos de 24 horas. No se requiere experiencia previa para las categorías iniciales.</p>`,
+    author: "Administración PCFC",
+    authorTitle: "Dirección Administrativa",
+    date: "1 sep 2025",
+    dateIso: "2025-09-01",
+    image:
+      "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=1200&q=80",
+    imageAlt: "Niños disfrutando una sesión de entrenamiento en PCFC",
+    tags: [
+      { slug: "inscripciones", label: "Inscripciones" },
+      { slug: "2026", label: "Temporada 2026" },
+    ],
+    relatedImages: [
+      {
+        src: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+        alt: "Niños jugando en la academia",
+        caption: "Categoría Pre-Formativa",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        alt: "Partido de práctica",
+        caption: "Formativas Bajas",
+      },
+      {
+        src: "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80",
+        alt: "Equipo Elite en entrenamiento",
+        caption: "Equipo Elite",
+      },
+    ],
+  },
+];
+
+  return allPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+// ─── Props ───────────────────────────────────────────────────────────────────
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+
+// ─── Lectura time: 200 palabras/min ─────────────────────────────────────────
+
+function readingTime(htmlContent: string): number {
+  const words = htmlContent.replace(/<[^>]+>/g, " ").trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+const minutes = readingTime(post.content);
+---
+
+<Base
+  title={post.title}
+  description={post.excerpt}
+>
+  <!-- ── Article hero ──────────────────────────────────────────────────── -->
+  <section class="article-hero">
+    <div class="container-x max-w-[900px] mx-auto">
+      <SectionHeader
+        eyebrow={post.eyebrow}
+        title={post.title}
+        subtitle={post.excerpt}
+        align="left"
+      />
+
+      <!-- Meta: autor + fecha + lectura -->
+      <div class="article-meta">
+        <address class="article-author">
+          <span class="article-author__name">{post.author}</span>
+          <span class="article-author__title">{post.authorTitle}</span>
+        </address>
+        <div class="article-meta__right">
+          <time datetime={post.dateIso} class="article-date">
+            {post.date}
+          </time>
+          <span class="article-meta__sep" aria-hidden="true">·</span>
+          <span class="article-reading">
+            {minutes} min de lectura
+          </span>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="article-tags" role="list" aria-label="Etiquetas del artículo">
+        {post.tags.map((tag) => (
+          <span
+            role="listitem"
+            class={`badge badge--${tag.slug === "noticias" ? "sky" : tag.slug}`}
+          >
+            {tag.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Hero image ─────────────────────────────────────────────────────── -->
+  <div class="article-image-wrapper">
+    <div class="container-x">
+      <figure class="article-figure">
+        <img
+          src={post.image}
+          alt={post.imageAlt}
+          class="article-hero-img"
+          loading="eager"
+        />
+        <figcaption class="article-figure__caption">
+          {post.imageAlt}
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ── Article body ──────────────────────────────────────────────────── -->
+  <article class="article-body">
+    <div class="container-x max-w-[720px]">
+      <div class="article-content prose" set:html={post.content} />
+    </div>
+  </article>
+
+  <!-- ── Galería de fotos ──────────────────────────────────────────────── -->
+  {post.relatedImages.length > 0 && (
+    <section class="article-gallery">
+      <div class="container-x">
+        <h2 class="article-gallery__title">Galería del artículo</h2>
+        <GalleryGrid photos={post.relatedImages} galleryId={`blog-${post.slug}`} />
+      </div>
+    </section>
+  )}
+
+  <!-- ── CTA Inscripción ───────────────────────────────────────────────── -->
+  <EnrollmentCta
+    eyebrow="El siguiente paso es ahora"
+    title="¿LISTO PARA<br />UNIRTE AL CLUB?"
+    copy="Las inscripciones para la temporada 2026 están abiertas. Completa el formulario y nuestro equipo te contactará en menos de 24 horas."
+    enrollHref="/inscribete"
+    whatsappHref="https://wa.me/18096529450"
+  />
+</Base>
+
+<style>
+  /* ── Article hero ──────────────────────────────────────────────────── */
+  .article-hero {
+    padding: clamp(7rem, 15vw, 10rem) 0 clamp(2rem, 4vw, 3rem);
+    background: linear-gradient(180deg, var(--color-navy-05) 0%, var(--color-pure-white) 100%);
+    border-bottom: 1px solid var(--color-navy-10);
+  }
+
+  /* ── Meta bar ─────────────────────────────────────────────────────── */
+  .article-meta {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-navy-10);
+  }
+
+  .article-author {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    font-style: normal;
+  }
+
+  .article-author__name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-navy);
+  }
+
+  .article-author__title {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--color-navy-30);
+    letter-spacing: 0.03em;
+  }
+
+  .article-meta__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-navy-30);
+  }
+
+  .article-meta__sep {
+    color: var(--color-navy-10);
+  }
+
+  .article-reading {
+    font-weight: 500;
+  }
+
+  /* ── Tags ──────────────────────────────────────────────────────────── */
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  /* ── Hero image ────────────────────────────────────────────────────── */
+  .article-image-wrapper {
+    padding: 2rem 0;
+    background: var(--color-pure-white);
+  }
+
+  .article-figure {
+    margin: 0;
+  }
+
+  .article-hero-img {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-navy-10);
+  }
+
+  .article-figure__caption {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-navy-30);
+    margin-top: 0.625rem;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── Article body ──────────────────────────────────────────────────── */
+  .article-body {
+    padding: clamp(2.5rem, 5vw, 4rem) 0;
+    background: var(--color-pure-white);
+  }
+
+  .article-content.prose {
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-navy);
+  }
+
+  .article-content.prose :global(p) {
+    margin-bottom: 1.5rem;
+    color: var(--color-navy);
+  }
+
+  .article-content.prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 1.875rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+    color: var(--color-navy);
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.1;
+    border-top: 2px solid var(--color-navy);
+    padding-top: 1.5rem;
+  }
+
+  .article-content.prose :global(h3) {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── Gallery section ────────────────────────────────────────────────── */
+  .article-gallery {
+    padding: clamp(2.5rem, 5vw, 4rem) 0;
+    background: var(--color-navy-05);
+    border-top: 1px solid var(--color-navy-10);
+    border-bottom: 1px solid var(--color-navy-10);
+  }
+
+  .article-gallery__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+    color: var(--color-navy);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── Responsive ────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .article-meta {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .article-meta__right {
+      gap: 0.375rem;
+    }
+
+    .article-hero-img {
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+    }
+  }
+</style>

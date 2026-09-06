@@ -1,0 +1,48 @@
+---
+/**
+ * EnrollmentCta component.
+ * Displays final call-to-action section for joining the club.
+ */
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  copy?: string;
+  enrollHref?: string;
+  whatsappHref?: string;
+}
+
+const {
+  eyebrow = "El siguiente paso es ahora",
+  title = "¿LISTO PARA<br />UNIRTE AL CLUB?",
+  copy = "Las inscripciones para la temporada 2026 están abiertas. Completa el formulario y nuestro equipo te contactará en menos de 24 horas.",
+  enrollHref = "/inscribete",
+  whatsappHref = "https://wa.me/18096529450",
+} = Astro.props;
+---
+
+<section class="section bg-pure-white" data-component="enrollment-cta">
+  <div class="container-x max-w-180 text-center mx-auto">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2
+      class="h-display text-[clamp(2.5rem,6vw,4.5rem)] my-4"
+      set:html={title}
+    />
+    <p class="lede mx-auto mb-10">
+      {copy}
+    </p>
+    <div class="flex flex-wrap gap-3.5 justify-center">
+      <a href={enrollHref} class="btn btn--primary btn--lg">
+        Inscríbete ahora
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a
+        href={whatsappHref}
+        class="btn btn--outline btn--lg"
+        target="_blank"
+        rel="noopener"
+      >
+        Hablar por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>

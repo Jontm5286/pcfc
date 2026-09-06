@@ -1,0 +1,132 @@
+---
+/**
+ * MatchListItem — PCFC
+ * Fila horizontal de un partido en el calendario.
+ *
+ * Formato: [Badge categoría] [Fecha] — [Categoría] vs [Rival] — [Ubicación] — [📷 Ver fotos]
+ * Fondo blanco, borde sutil bottom, hover fondo #F5F8FB.
+ *
+ * Props:
+ *   - categorySlug: "pre" | "form-baja" | "form-alta" | "elite"
+ *   - categoryLabel: string          Label visible de la categoría (e.g. "Pre-Formativas")
+ *   - date: string                  Fecha formateada (e.g. "Sáb 13 sep")
+ *   - time?: string                 Hora opcional (e.g. "10:00 AM")
+ *   - team1: string                 Nombre equipo PCFC
+ *   - team2: string                 Nombre equipo rival
+ *   - venue: string                Ubicación
+ *   - photosHref?: string          Enlace a fotos (si existe, muestra el botón)
+ *   - past?: boolean               Si true, es un partido jugado (muestra "Ver fotos")
+ */
+
+interface Props {
+  categorySlug: "pre" | "form-baja" | "form-alta" | "elite";
+  categoryLabel: string;
+  date: string;
+  time?: string;
+  team1: string;
+  team2: string;
+  venue: string;
+  photosHref?: string;
+  past?: boolean;
+}
+
+const {
+  categorySlug,
+  categoryLabel,
+  date,
+  time,
+  team1,
+  team2,
+  venue,
+  photosHref,
+  past = false,
+} = Astro.props;
+---
+
+<li
+  class="match-item border-b border-navy/10 last:border-b-0 bg-white hover:bg-sky-05 transition-colors duration-150"
+  data-category={categorySlug}
+>
+  <div
+    class="container-x flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4"
+  >
+    <!-- Fecha + Hora -->
+    <div class="flex items-center gap-3 sm:min-w-[160px]">
+      <span class={`badge badge--${categorySlug}`}>{categoryLabel}</span>
+      <div class="flex flex-col">
+        <span class="text-[0.8rem] font-semibold text-navy tracking-wide">
+          {date}
+        </span>
+        {
+          time && (
+            <span class="text-[0.75rem] text-navy-60 font-normal">{time}</span>
+          )
+        }
+      </div>
+    </div>
+
+    <!-- Enfrentamiento -->
+    <div class="flex-1 flex items-center gap-3 min-w-0">
+      <span class="font-body font-semibold text-[0.95rem] text-navy shrink-0">
+        {team1}
+      </span>
+      <span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>
+      <span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate">
+        {team2}
+      </span>
+    </div>
+
+    <!-- Ubicación -->
+    <div class="flex items-center gap-1.5 sm:min-w-[160px]">
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        class="shrink-0 text-navy-60"
+        aria-hidden="true"
+      >
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      <span class="text-[0.8rem] text-navy-60 whitespace-nowrap">{venue}</span>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex items-center gap-3 sm:shrink-0">
+      {
+        past && photosHref ? (
+          <a
+            href={photosHref}
+            class="inline-flex items-center gap-1.5 text-[0.8rem] font-semibold text-sky hover:text-navy transition-colors duration-150 whitespace-nowrap"
+            aria-label={`Ver fotos del partido ${team1} vs ${team2}`}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            Ver fotos
+          </a>
+        ) : past && !photosHref ? (
+          <span class="text-[0.8rem] text-navy-60 italic">Sin fotos</span>
+        ) : null
+      }
+      {
+        !past && (
+          <span class="badge badge--sky text-[0.7rem]">Próximo</span>
+        )
+      }
+    </div>
+  </div>
+</li>

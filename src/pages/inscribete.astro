@@ -1,0 +1,551 @@
+---
+import Base from '../layouts/Base.astro';
+import FaqSection from '../components/FaqSection.astro';
+---
+
+<Base
+  title="Inscríbete"
+  description="Inscríbete en Punta Cana FC. Completa el formulario y un entrenador se pondrá en contacto en menos de 24 horas."
+>
+
+  <!-- ============================================================
+       HERO — section con SectionHeader eyebrow + título + subtitle
+       ============================================================ -->
+  <section class="bg-navy pt-[clamp(7rem,14vw,10rem)] pb-[clamp(3.5rem,7vw,5rem)]">
+    <div class="container-x">
+      <div class="max-w-[720px]">
+        <p class="eyebrow eyebrow--on-navy">Inscripciones abiertas · Temporada 2026</p>
+        <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5">
+          Únete a la academia<br/>del Caribe
+        </h1>
+        <p class="lede lede--on-navy max-w-[56ch] mb-8">
+          Da el primer paso. Completa el formulario y un entrenador de PCFC se pondrá en contacto en menos de 24 horas.
+        </p>
+        <a href="#formulario" class="btn btn--sky btn--on-navy btn--lg">
+          Inscríbete ahora
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTENT — grid 2 columnas: info (proceso + requisitos) | formulario
+       ============================================================ -->
+  <section class="section">
+    <div class="container-x">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-start">
+
+        <!-- ── Columna izquierda: proceso + requisitos ── -->
+        <div class="space-y-10">
+
+          <!-- Proceso de 4 pasos -->
+          <div>
+            <h2 class="h-section mb-8">Proceso de inscripción</h2>
+            <ol class="steps-list space-y-6">
+              <li class="step-item">
+                <div class="step-item__num" aria-hidden="true">1</div>
+                <div>
+                  <h3 class="step-item__title">Cuéntanos del jugador</h3>
+                  <p class="step-item__sub">Llena los datos del jugador y del representante. Es rápido y sin compromiso.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-item__num" aria-hidden="true">2</div>
+                <div>
+                  <h3 class="step-item__title">Prueba técnica personalizada</h3>
+                  <p class="step-item__sub">El jugador realiza una evaluación con nuestros entrenadores certificados. Medimos su potencial con métricas objetivas.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-item__num" aria-hidden="true">3</div>
+                <div>
+                  <h3 class="step-item__title">Conocemos tus expectativas</h3>
+                  <p class="step-item__sub">Reunión con los padres y el jugador. Definimos juntos el camino ideal.</p>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-item__num" aria-hidden="true">4</div>
+                <div>
+                  <h3 class="step-item__title">Asignación y comienzo</h3>
+                  <p class="step-item__sub">Tu hijo se integra a su categoría. Calentamiento grupal, evaluación continua y progresión garantizada.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Requisitos -->
+          <div class="req-box">
+            <h3 class="req-box__title">Requisitos para unirse</h3>
+            <ul class="req-list space-y-3">
+              <li class="req-list__item">
+                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Cédula de identidad o pasaporte del jugador
+              </li>
+              <li class="req-list__item">
+                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Cédula del representante legal
+              </li>
+              <li class="req-list__item">
+                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Certificado médico reciente (dentro de los últimos 6 meses)
+              </li>
+              <li class="req-list__item">
+                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                2 fotos tipo carnet (fondo blanco)
+              </li>
+              <li class="req-list__item">
+                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Historial futbolístico previo (si aplica)
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- ── Columna derecha: formulario ── -->
+        <div id="formulario" class="bg-white rounded-2xl border border-navy-10 p-8 lg:p-10 shadow-[0_4px_24px_rgba(0,40,92,0.08)]">
+          <h2 class="h-card mb-8 text-center">Formulario de inscripción</h2>
+
+          <form id="inscription-form" novalidate>
+
+            <!-- Datos del jugador -->
+            <fieldset class="form-fieldset">
+              <legend class="form-fieldset__legend">Datos del jugador</legend>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="nombre-jugador" class="form-label">Nombre *</label>
+                  <input type="text" id="nombre-jugador" name="nombre-jugador" required class="form-input" placeholder="Nombre del jugador">
+                </div>
+                <div class="form-group">
+                  <label for="apellido-jugador" class="form-label">Apellido *</label>
+                  <input type="text" id="apellido-jugador" name="apellido-jugador" required class="form-input" placeholder="Apellido del jugador">
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="fecha-nacimiento" class="form-label">Fecha de nacimiento *</label>
+                  <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required class="form-input">
+                </div>
+                <div class="form-group">
+                  <label for="categoria" class="form-label">Categoría *</label>
+                  <select id="categoria" name="categoria" required class="form-input">
+                    <option value="">Seleccionar…</option>
+                    <option value="pre-formativas">Pre-Formativas (4–8 años)</option>
+                    <option value="formativas-bajas">Formativas Bajas (9–12 años)</option>
+                    <option value="formativas-altas">Formativas Altas (13–15 años)</option>
+                    <option value="elite">Elite / Reserva (16–19 años)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="experiencia" class="form-label">Experiencia previa</label>
+                <textarea id="experiencia" name="experiencia" rows="3" class="form-input" placeholder="Describe la experiencia futbolística del jugador, clubes anteriores, logros…"></textarea>
+              </div>
+            </fieldset>
+
+            <!-- Datos del representante -->
+            <fieldset class="form-fieldset">
+              <legend class="form-fieldset__legend">Datos del representante</legend>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="nombre-rep" class="form-label">Nombre completo *</label>
+                  <input type="text" id="nombre-rep" name="nombre-rep" required class="form-input" placeholder="Nombre del padre/madre/tutor">
+                </div>
+                <div class="form-group">
+                  <label for="parentesco" class="form-label">Parentesco *</label>
+                  <select id="parentesco" name="parentesco" required class="form-input">
+                    <option value="">Seleccionar…</option>
+                    <option value="padre">Padre</option>
+                    <option value="madre">Madre</option>
+                    <option value="tutor">Tutor Legal</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="telefono" class="form-label">Teléfono *</label>
+                  <input type="tel" id="telefono" name="telefono" required class="form-input" placeholder="+1 (809) 000-0000">
+                </div>
+                <div class="form-group">
+                  <label for="email" class="form-label">Correo electrónico *</label>
+                  <input type="email" id="email" name="email" required class="form-input" placeholder="correo@ejemplo.com">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="direccion" class="form-label">Dirección</label>
+                <input type="text" id="direccion" name="direccion" class="form-input" placeholder="Barrio, ciudad">
+              </div>
+            </fieldset>
+
+            <!-- Términos -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="terminos" required class="form-checkbox">
+                <span class="form-label">Acepto los <a href="#" class="form-link">términos y condiciones</a> y la <a href="#" class="form-link">política de privacidad</a>.</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--lg btn-full">
+              Enviar inscripción
+            </button>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TRUST SIGNALS — social proof antes del footer
+       ============================================================ -->
+  <section class="section bg-navy-05">
+    <div class="container-x">
+      <blockquote class="trust-card">
+        <p class="trust-card__quote">
+          "Mi hijo mejoró su juego técnico en 6 meses. La evaluación objetiva realmente funciona."
+        </p>
+        <footer class="trust-card__footer">
+          <cite class="trust-card__cite">María G.</cite>
+          <span class="trust-card__meta">Madre de jugador Sub-12 · Temp. 2025</span>
+        </footer>
+      </blockquote>
+      <p class="trust-stat">
+        <strong>Más de 500 futbolista-inscritos</strong> desde 2016
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAQ — dudas frecuentes antes del footer
+       ============================================================ -->
+  <FaqSection
+    eyebrow="DUDAS FRECUENTES"
+    title="¿Listo para unirte? Primero resolvemos tus dudas"
+    faqs={[
+      {
+        question: "¿Cuándo abren las pruebas para la temporada 2026?",
+        answer: "Las pruebas de admisión se realizan durante enero y febrero. Tras recibir tu solicitud de inscripción, un entrenador de PCFC se pondrá en contacto para agendarte una fecha y hora."
+      },
+      {
+        question: "¿Cuál es la mensualidad y qué incluye?",
+        answer: "La cuota mensual incluye 3 entrenamientos semanales con entrenadores certificados por la UEFA, uso de nuestras instalaciones (4 canchas, gimnasio y aula académica), material deportivo y participación en torneos internos. Las becas de mérito están disponibles para jugadores destacados."
+      },
+      {
+        question: "¿Puedo inscribirme si mi hijo nunca ha jugado fútbol?",
+        answer: "Sí. Contamos con una categoría de Pre-Formativas (4-8 años) orientada al primer contacto con el balón, trabajo de coordinación y motricidad, y amor por el juego. No se requiere experiencia previa."
+      },
+      {
+        question: "¿Qué documentos debo presentar?",
+        answer: "Acta de nacimiento, cédula o pasaporte del jugador, cédula del representante legal, certificado médico reciente (no mayor a 6 meses) y 2 fotos tipo carnet."
+      },
+      {
+        question: "¿Tienen sedes fuera de Punta Cana?",
+        answer: "Nuestra academia opera desde nuestras instalaciones principales en Punta Cana. En temporada también atendemos en Bávaro, Cap Cana, Higüey y La Romana, con sesiones grupales programadas para jugadores de esas zonas."
+      }
+    ]}
+    contactEmail="admisiones@puntacanafc.com"
+    contactPhone="+1 809-652-9450"
+  />
+
+</Base>
+
+<style>
+  /* ============================================================
+     Steps list (proceso de inscripción)
+     ============================================================ */
+  .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .step-item__num {
+    width: 2.25rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    border-radius: 50%;
+    background: var(--color-sky);
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-top: 0.1rem;
+  }
+
+  .step-item__title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: var(--color-navy);
+    margin-bottom: 0.3rem;
+  }
+
+  .step-item__sub {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-navy-30);
+  }
+
+  /* ============================================================
+     Requisitos box
+     ============================================================ */
+  .req-box {
+    background: var(--color-sky-10);
+    border: 1px solid var(--color-sky-30);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .req-box__title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-navy);
+    margin-bottom: 1rem;
+  }
+
+  .req-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .req-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: 0.9rem;
+    color: var(--color-navy);
+    line-height: 1.5;
+  }
+
+  .req-list__icon {
+    width: 1rem;
+    height: 1rem;
+    min-width: 1rem;
+    color: var(--color-cat-pre);
+    margin-top: 0.15rem;
+  }
+
+  /* ============================================================
+     Form styles — usan el color scheme del design system
+     ============================================================ */
+  .form-fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+    border-bottom: 1px solid var(--color-navy-10);
+    padding-bottom: 1.75rem;
+  }
+
+  .form-fieldset:last-of-type {
+    border-bottom: none;
+  }
+
+  .form-fieldset__legend {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-navy-30);
+    margin-bottom: 1rem;
+    width: 100%;
+    display: block;
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-navy-30);
+    margin-bottom: 0.375rem;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 0.5rem;
+    color: var(--color-navy);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-sky);
+    box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.18);
+  }
+
+  .form-input::placeholder {
+    color: var(--color-navy-10);
+  }
+
+  .form-input[type="date"] {
+    cursor: pointer;
+  }
+
+  select.form-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236685A6' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  textarea.form-input {
+    resize: vertical;
+    min-height: 5rem;
+  }
+
+  .form-checkbox {
+    width: 1.125rem;
+    height: 1.125rem;
+    min-width: 1.125rem;
+    accent-color: var(--color-sky);
+    cursor: pointer;
+    margin-top: 0.1rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    cursor: pointer;
+  }
+
+  .form-link {
+    color: var(--color-sky);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .btn-full {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  /* ============================================================
+     Trust signals
+     ============================================================ */
+  .trust-card {
+    background: var(--color-pure-white);
+    border-left: 4px solid var(--color-sky);
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 1.75rem 2rem;
+    max-width: 56rem;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 40, 92, 0.07);
+  }
+
+  .trust-card__quote {
+    font-size: 1.0625rem;
+    font-style: italic;
+    color: var(--color-navy);
+    line-height: 1.65;
+    margin: 0 0 1rem;
+  }
+
+  .trust-card__footer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .trust-card__cite {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-navy);
+  }
+
+  .trust-card__meta {
+    font-size: 0.8125rem;
+    color: var(--color-navy-30);
+  }
+
+  .trust-stat {
+    text-align: center;
+    font-size: 0.9375rem;
+    color: var(--color-navy);
+    margin: 0;
+  }
+
+  .trust-stat strong {
+    color: var(--color-sky);
+    font-weight: 700;
+  }
+
+  /* ============================================================
+     Responsive
+     ============================================================ */
+  @media (max-width: 640px) {
+    .form-row-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .req-box {
+      padding: 1.25rem;
+    }
+
+    .trust-card {
+      padding: 1.25rem 1.25rem;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .step-item__num {
+      width: 2rem;
+      height: 2rem;
+      min-width: 2rem;
+      font-size: 0.8125rem;
+    }
+  }
+</style>

@@ -1,0 +1,301 @@
+---
+import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
+---
+
+<Base title="Club" description="Conoce la historia, misión y visión de Punta Cana FC. Más de 10 años formando campeones en el Caribe.">
+  <!-- Hero -->
+  <section class="club-hero">
+    <div class="container-x">
+      <p class="eyebrow eyebrow--on-navy">Nuestro Club</p>
+      <h1 class="club-hero__title">Conoce Punta Cana FC</h1>
+      <p class="club-hero__desc">
+        Más de 10 años dedicados a formar no solo futbolistas, sino personas de bien.
+      </p>
+    </div>
+  </section>
+
+  <!-- Historia -->
+  <section class="section" id="historia">
+    <div class="container-x">
+      <div class="two-col">
+        <div>
+          <p class="eyebrow">Nuestra Historia</p>
+          <h2 class="h-section">De Un Sueño a la Realidad</h2>
+          <p class="text-block">
+            Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe.
+            Desde un pequeño grupo de jugadores ha crecido hasta convertirse en la academia de fútbol
+            más importante de la región.
+          </p>
+          <p class="text-block">
+            A lo largo de nuestros más de 10 años de trayectoria, hemos formado cientos de jugadores
+            que han llegado a competir en ligas profesionales nacionales e internacionales.
+          </p>
+          <a href="/inscribete" class="btn btn--sky">Únete al Club</a>
+        </div>
+        <div class="image-placeholder">
+          <StockImage name="historia" alt="Historia de Punta Cana FC — formando campeones en el Caribe por más de 10 años" className="placeholder-img" loading="lazy" width={1600} height={1200} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mision Vision Valores -->
+  <section class="section mv-section" id="mision">
+    <div class="container-x">
+      <p class="eyebrow eyebrow--on-navy">Misión, Visión y Valores</p>
+      <h2 class="h-section h-section--on-navy">Formando campeones dentro y fuera de la cancha</h2>
+      <div class="mv-grid">
+        <div class="mv-card">
+          <div class="mv-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+          </div>
+          <h3 class="h-card h-card--on-navy">Misión</h3>
+          <p class="mv-desc">
+            Formar futbolistas de excelencia a través de un entrenamiento profesional,
+            integral y basado en valores, contribuyendo al desarrollo deportivo del Caribe.
+          </p>
+        </div>
+        <div class="mv-card">
+          <div class="mv-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <h3 class="h-card h-card--on-navy">Visión</h3>
+          <p class="mv-desc">
+            Ser reconocida como la academia de fútbol líder en América Latina,
+            formando campeones dentro y fuera de la cancha.
+          </p>
+        </div>
+        <div class="mv-card">
+          <div class="mv-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+          </div>
+          <h3 class="h-card h-card--on-navy">Valores</h3>
+          <p class="mv-desc">
+            Disciplina, respeto, trabajo en equipo, perseverancia y pasión.
+            Estos son los pilares que guían a cada jugador de PCFC.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Equipo Directivo -->
+  <section class="section" id="equipo-directivo">
+    <div class="container-x">
+      <p class="eyebrow">Equipo Directivo</p>
+      <h2 class="h-section">Liderazgo con Visión</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
+          </div>
+          <h3 class="h-card">Director General</h3>
+          <p class="team-role">Dirección Estratégica</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
+          </div>
+          <h3 class="h-card">Director Deportivo</h3>
+          <p class="team-role">Área Técnica</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
+          </div>
+          <h3 class="h-card">Coordinador Académico</h3>
+          <p class="team-role">Formación Integral</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .club-hero {
+    padding: 10rem 0 5rem;
+    background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+    border-bottom: 1px solid var(--color-navy-10);
+  }
+
+  .club-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--color-white);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .club-hero__desc {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-white); opacity: 0.78;
+    max-width: 600px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .text-block {
+    color: var(--color-navy-60);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+  }
+  .placeholder-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
+
+  .placeholder-box {
+    width: 100%;
+    height: 100%;
+    background: var(--color-navy-05);
+    border: 2px dashed var(--color-navy-10);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--color-navy-30);
+    font-size: 1rem;
+  }
+
+  .placeholder-box i {
+    font-size: 3rem;
+    color: var(--color-sky);
+    opacity: 0.5;
+  }
+
+  .mv-section {
+    background: var(--color-navy-dark);
+  }
+
+  .mv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .mv-card {
+    background: var(--color-white); opacity: 0.04;
+    border: 1px solid var(--color-navy-10);
+    border-radius: 16px;
+    text-align: center;
+    padding: 3rem 2rem;
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+
+  .mv-card:hover {
+    background: var(--color-white); opacity: 0.07;
+    border-color: var(--color-navy-10);
+  }
+
+  .mv-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: var(--color-sky-10);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-sky);
+  }
+
+  .h-card--on-navy {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .mv-desc {
+    color: var(--color-white); opacity: 0.72;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .team-card {
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 16px;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    transition: box-shadow 200ms ease, border-color 200ms ease;
+  }
+
+  .team-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 40, 92, 0.1);
+    border-color: var(--color-sky-30);
+  }
+
+  .team-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .team-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .team-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-navy);
+  }
+
+  .team-role {
+    color: var(--color-sky);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 992px) {
+    .two-col { grid-template-columns: 1fr; }
+    .mv-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr; }
+  }
+</style>

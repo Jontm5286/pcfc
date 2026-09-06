@@ -1,0 +1,60 @@
+---
+/**
+ * WhyPcfc component.
+ * Displays key stats and differentiators of the club.
+ */
+import type { Pillar, Stat } from "../data/homeData";
+
+export interface Props {
+  stats: Stat[];
+  pillars: Pillar[];
+}
+
+const { stats, pillars } = Astro.props;
+---
+
+<section class="section bg-pure-white" data-component="why-pcfc">
+  <div class="container-x">
+    <header
+      class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-8 mb-[clamp(2.5rem,5vw,4rem)]"
+    >
+      <div>
+        <p class="eyebrow">Por qué PCFC</p>
+        <h2 class="h-section">LO QUE NOS HACE<br />DIFERENTES</h2>
+      </div>
+      <dl
+        class="grid grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-6 m-0 w-full lg:w-auto"
+      >
+        {
+          stats.map((s) => (
+            <div class="lg:text-right">
+              <dt class="font-display text-[2.25rem] text-navy leading-none tracking-[0.02em]">
+                {s.value}
+              </dt>
+              <dd class="text-[0.7rem] text-navy-60 uppercase tracking-[0.12em] mt-2 font-semibold">
+                {s.label}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </header>
+
+    <ol
+      class="list-none grid grid-cols-1 lg:grid-cols-3 border-t border-navy/10"
+      role="list"
+    >
+      {
+        pillars.map((p) => (
+          <li class="pillar-col py-10 pr-0 lg:pr-8 border-b border-navy/10 lg:border-b-0 lg:border-r lg:last:border-r-0 lg:[&:not(:first-child)]:pl-8">
+            <span class="font-display text-[2.5rem] text-sky leading-none block mb-5">
+              {p.n}
+            </span>
+            <h3 class="h-card mb-3">{p.title}</h3>
+            <p class="text-navy-60 text-[0.95rem] leading-[1.6]">{p.copy}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

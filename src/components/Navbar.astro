@@ -1,0 +1,257 @@
+---
+/**
+ * Navbar — PCFC
+ * Sticky header con crest + nav + actions + menú móvil.
+ *
+ * Props:
+ *   - currentPath: string  (opcional, default = Astro.url.pathname)
+ *   - navItems: NavItem[]  (opcional, default = nav del sitio)
+ *
+ * Tipos:
+ *   NavItem = { label, href, children?: NavItem[] }
+ */
+
+export interface NavItem {
+  label: string;
+  href: string;
+  children?: NavItem[];
+}
+
+interface Props {
+  currentPath?: string;
+  navItems?: NavItem[];
+}
+
+const {
+  currentPath = Astro.url.pathname,
+  navItems = [
+    { label: "Inicio", href: "/" },
+    { label: "Inscríbete", href: "/inscribete" },
+    { label: "Club", href: "/club" },
+    { label: "Área Deportiva", href: "/area-deportiva" },
+    { label: "Tienda", href: "/tienda" },
+    { label: "Blog", href: "/blog" },
+  ],
+} = Astro.props;
+
+const isCurrent = (href: string) =>
+  href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+---
+
+<header
+  class="sticky top-0 z-[100] bg-navy border-b border-white/5"
+  data-component="navbar"
+>
+  <div class="container-x flex items-center gap-14 h-20">
+    <!-- Brand -->
+    <a
+      href="/"
+      class="flex items-center shrink-0 no-underline"
+      aria-label="Punta Cana FC — Inicio"
+    >
+      <img
+        src="/Logo-PCFC.svg"
+        alt="Punta Cana FC"
+        class="h-[52px] w-auto object-contain"
+      />
+    </a>
+
+    <!-- Nav -->
+    <nav class="flex items-center gap-8 flex-1 h-full justify-center" aria-label="Principal">
+      {
+        navItems.map((item) => (
+          <div class="relative h-full flex items-center">
+            {item.children ? (
+              <div class="dropdown-trigger relative h-full flex items-center">
+                <a
+                  href={item.href}
+                  class="inline-flex items-center gap-1 font-body text-[14px] font-semibold text-white/70 py-2 no-underline whitespace-nowrap transition-colors duration-200 hover:text-sky aria-[current=page]:text-sky"
+                  aria-current={isCurrent(item.href) ? "page" : undefined}
+                >
+                  {item.label}
+                  <svg
+                    viewBox="0 0 8.75 5"
+                    class="chevron w-[8.75px] h-[5px] shrink-0 transition-transform duration-200"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3.926 4.824C4.056 4.941 4.206 5 4.375 5L4.375 5C4.544 5 4.694 4.941 4.824 4.824L8.574 1.074C8.691 0.944 8.75 0.794 8.75 0.625C8.75 0.456 8.691 0.306 8.574 0.176C8.444 0.059 8.294 0 8.125 0C7.956 0 7.806 0.059 7.676 0.176L4.375 3.496L1.074 0.176C0.944 0.059 0.794 0 0.625 0C0.456 0 0.306 0.059 0.176 0.176C0.059 0.306 0 0.456 0 0.625C0 0.794 0.059 0.944 0.176 1.074L3.926 4.824L3.926 4.824L3.926 4.824"
+                      fill="currentColor"
+                      fill-rule="nonzero"
+                    />
+                  </svg>
+                </a>
+                <div class="dropdown absolute top-[calc(100%+8px)] left-0 bg-navy-dark border border-white/5 rounded-lg min-w-[200px] py-2 opacity-0 invisible -translate-y-1.5 transition-[opacity,transform] duration-200 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[110]">
+                  {item.children.map((child) => (
+                    <a
+                      href={child.href}
+                      class="block font-body text-[14px] font-semibold text-white/70 px-5 py-2.5 no-underline transition-colors duration-150 hover:bg-white/5 hover:text-sky"
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <a
+                href={item.href}
+                class="font-body text-[14px] font-semibold text-white/70 py-2 no-underline whitespace-nowrap transition-colors duration-200 hover:text-sky aria-[current=page]:text-sky"
+                aria-current={isCurrent(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            )}
+          </div>
+        ))
+      }
+    </nav>
+
+    <!-- Actions -->
+    <div class="flex items-center shrink-0">
+      <!-- Cart -->
+      <a
+        href="/tienda"
+        class="relative w-11 h-11 flex items-center justify-center text-white/70 transition-colors duration-200 hover:text-sky"
+        aria-label="Carrito de compras"
+      >
+        <svg viewBox="0 0 20.077 18" class="w-5 h-[18px]" aria-hidden="true">
+          <path
+            d="M0 0.844C0.047 0.328 0.328 0.047 0.844 0L2.461 0C3.258 0.047 3.844 0.422 4.219 1.125L18.668 1.125C19.137 1.148 19.512 1.336 19.793 1.688C20.051 2.039 20.133 2.438 20.039 2.883L18.598 8.262C18.434 8.824 18.129 9.27 17.684 9.598C17.238 9.949 16.723 10.125 16.137 10.125L6.012 10.125L6.188 11.145C6.305 11.566 6.586 11.789 7.031 11.813L17.156 11.813C17.672 11.859 17.953 12.141 18 12.656C17.953 13.172 17.672 13.453 17.156 13.5L7.031 13.5C6.398 13.5 5.859 13.301 5.414 12.902C4.945 12.527 4.652 12.047 4.535 11.461L2.707 1.934C2.684 1.77 2.602 1.688 2.461 1.688L0.844 1.688C0.328 1.641 0.047 1.359 0 0.844L0 0.844L0 0.844M4.5 16.313C4.523 15.68 4.805 15.188 5.344 14.836C5.906 14.555 6.469 14.555 7.031 14.836C7.57 15.188 7.852 15.68 7.875 16.313C7.852 16.945 7.57 17.438 7.031 17.789C6.469 18.07 5.906 18.07 5.344 17.789C4.805 17.438 4.523 16.945 4.5 16.313L4.5 16.313L4.5 16.313M16.313 14.625C16.945 14.648 17.438 14.93 17.789 15.469C18.07 16.031 18.07 16.594 17.789 17.156C17.438 17.695 16.945 17.977 16.313 18C15.68 17.977 15.188 17.695 14.836 17.156C14.555 16.594 14.555 16.031 14.836 15.469C15.188 14.93 15.68 14.648 16.313 14.625L16.313 14.625L16.313 14.625"
+            fill="currentColor"
+            fill-rule="nonzero"></path>
+        </svg>
+        <span
+          class="absolute top-0.5 right-1 w-4 h-4 bg-sky text-navy-dark font-body text-[10px] font-bold rounded-full flex items-center justify-center leading-none"
+          aria-label="0 artículos">0</span
+        >
+      </a>
+
+      <!-- Profile -->
+      <a
+        href="/perfil"
+        class="w-11 h-11 flex items-center justify-center text-white/70 transition-colors duration-200 hover:text-sky"
+        aria-label="Mi perfil"
+      >
+        <svg viewBox="0 0 24 24" class="w-6 h-6" aria-hidden="true">
+          <path
+            d="M19.078 18.75C18.609 17.625 17.875 16.719 16.875 16.031L16.875 16.031C15.906 15.375 14.781 15.031 13.5 15L10.5 15C9.219 15.031 8.094 15.375 7.125 16.031C6.125 16.719 5.406 17.625 4.969 18.75C3.219 16.938 2.313 14.688 2.25 12C2.313 9.25 3.266 6.953 5.109 5.109C6.953 3.266 9.25 2.313 12 2.25C14.75 2.313 17.047 3.266 18.891 5.109C20.734 6.953 21.688 9.25 21.75 12C21.688 14.688 20.797 16.938 19.078 18.75L19.078 18.75L19.078 18.75M17.156 20.25C15.656 21.219 13.938 21.719 12 21.75C10.063 21.719 8.344 21.219 6.844 20.25C7.031 19.375 7.453 18.656 8.109 18.094C8.766 17.563 9.563 17.281 10.5 17.25L13.5 17.25C14.438 17.281 15.234 17.563 15.891 18.094C16.547 18.656 16.984 19.375 17.203 20.25L17.156 20.25L17.156 20.25M12 24C14.188 23.969 16.188 23.438 18 22.406L18 22.406C19.813 21.344 21.281 19.875 22.406 18C23.469 16.094 24 14.094 24 12C24 9.906 23.469 7.906 22.406 6C21.281 4.125 19.813 2.656 18 1.594C16.188 0.563 14.188 0.031 12 0C9.813 0.031 7.813 0.563 6 1.594C4.188 2.656 2.719 4.125 1.594 6C0.531 7.906 0 9.906 0 12C0 14.094 0.531 16.094 1.594 18C2.719 19.875 4.188 21.344 6 22.406C7.813 23.438 9.813 23.969 12 24L12 24L12 24M12 11.25C11.281 11.219 10.734 10.906 10.359 10.313C10.047 9.688 10.047 9.063 10.359 8.438C10.734 7.844 11.281 7.531 12 7.5C12.719 7.531 13.266 7.844 13.641 8.438C13.953 9.063 13.953 9.688 13.641 10.313C13.266 10.906 12.719 11.219 12 11.25L12 11.25L12 11.25M7.875 9.375C7.938 10.938 8.625 12.125 9.938 12.938C11.313 13.688 12.688 13.688 14.063 12.938C15.375 12.125 16.063 10.938 16.125 9.375C16.063 7.813 15.375 6.625 14.063 5.813C12.688 5.063 11.313 5.063 9.938 5.813C8.625 6.625 7.938 7.813 7.875 9.375L7.875 9.375L7.875 9.375"
+            fill="currentColor"
+            fill-rule="nonzero"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button
+      class="menu-toggle bg-transparent border-0 text-white p-2 cursor-pointer shrink-0 ml-auto"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Abrir menú"
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="bg-navy-dark border-t border-white/5"
+    hidden
+  >
+    <nav class="container-x flex flex-col gap-1 py-6" aria-label="Móvil">
+      {
+        navItems.map((item) => (
+          <div class="flex flex-col">
+            {item.children ? (
+              <>
+                <span class="font-body text-xs font-semibold text-sky tracking-[0.12em] uppercase pt-4 pb-1.5 border-b border-white/10 mb-1">
+                  {item.label}
+                </span>
+                {item.children.map((child) => (
+                  <a
+                    href={child.href}
+                    class="text-white/70 font-normal text-[0.9rem] py-3 pl-4 border-b border-white/5 no-underline transition-colors duration-200 hover:text-sky"
+                  >
+                    {child.label}
+                  </a>
+                ))}
+              </>
+            ) : (
+              <a
+                href={item.href}
+                class="text-white/70 font-semibold text-base py-3 border-b border-white/5 no-underline transition-colors duration-200 hover:text-sky"
+              >
+                {item.label}
+              </a>
+            )}
+          </div>
+        ))
+      }
+      <a href="/inscribete" class="btn btn--sky btn--on-navy btn--lg self-start mt-5"
+        >Inscríbete</a
+      >
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* Dropdown visibility — Tailwind v4 + Astro group selectors necesitan
+     esta regla explícita. */
+  .dropdown-trigger:hover .dropdown,
+  .dropdown-trigger:focus-within .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .dropdown-trigger:hover .chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Mobile toggle — oculto en desktop, visible en mobile */
+  .menu-toggle {
+    display: none;
+  }
+  @media (max-width: 1023px) {
+    .menu-toggle {
+      display: inline-flex;
+    }
+    nav[aria-label="Principal"] {
+      display: none;
+    }
+    [data-component="navbar"] > div > div.flex.items-center.shrink-0 {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-component="navbar"]')
+    .forEach((navbar) => {
+      const toggle = navbar.querySelector<HTMLButtonElement>(".menu-toggle");
+      const menu = navbar.querySelector<HTMLElement>("#mobile-menu");
+
+      toggle?.addEventListener("click", () => {
+        const open = toggle.getAttribute("aria-expanded") === "true";
+        toggle.setAttribute("aria-expanded", String(!open));
+        toggle.setAttribute("aria-label", open ? "Abrir menú" : "Cerrar menú");
+        if (menu) {
+          if (open) menu.setAttribute("hidden", "");
+          else menu.removeAttribute("hidden");
+        }
+      });
+    });
+</script>

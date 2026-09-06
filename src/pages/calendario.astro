@@ -1,0 +1,261 @@
+---
+/**
+ * /calendario — PCFC
+ * Página completa de calendario con filtros por categoría, próximos partidos y pasados.
+ * Sigue DESIGN.md §6 (sitemap narrativo) y §7 (patrones de componentes).
+ */
+
+import Base from "../layouts/Base.astro";
+import StockImage from "../components/StockImage.astro";
+import CalendarFilters from "../components/CalendarFilters.astro";
+import MatchListItem from "../components/MatchListItem.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+
+// Próximos partidos (anticipación)
+const upcomingMatches = [
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Sáb 13 sep",
+    time: "10:00 AM",
+    team1: "PCFC",
+    team2: "Atlético Bávaro",
+    venue: "Cancha Principal · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Dom 14 sep",
+    time: "9:00 AM",
+    team1: "PCFC Sub-15",
+    team2: "Moca FC",
+    venue: "Cancha Auxiliar · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "form-baja",
+    categoryLabel: "Formativas Bajas",
+    date: "Sáb 20 sep",
+    time: "11:00 AM",
+    team1: "PCFC Sub-12",
+    team2: "San Cristóbal FC",
+    venue: "Estadio Garrik",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "pre",
+    categoryLabel: "Pre-Formativas",
+    date: "Dom 21 sep",
+    time: "10:30 AM",
+    team1: "PCFC Sub-8",
+    team2: "Escuela Bavaro",
+    venue: "Cancha 3 · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 27 sep",
+    time: "4:00 PM",
+    team1: "PCFC Sub-14",
+    team2: "Selección Federativa",
+    venue: "Florer Puerto",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Dom 28 sep",
+    time: "3:00 PM",
+    team1: "PCFC Reserva",
+    team2: "Higüey United",
+    venue: "Cancha Principal · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+];
+
+// Partidos jugados (recuerdo)
+const pastMatches = [
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Sáb 6 sep",
+    time: "10:00 AM",
+    team1: "PCFC",
+    team2: "Atlántico FC",
+    venue: "Cancha Principal · PCFC",
+    photosHref: "/fotos/pcfc-vs-atlantico-6sep",
+    past: true,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 30 ago",
+    time: "4:00 PM",
+    team1: "PCFC Sub-15",
+    team2: "Santiago FC",
+    venue: "Cancha Auxiliar · PCFC",
+    photosHref: "/fotos/pcfc-sub15-vs-santiago-30ago",
+    past: true,
+  },
+  {
+    categorySlug: "form-baja",
+    categoryLabel: "Formativas Bajas",
+    date: "Dom 24 ago",
+    time: "11:00 AM",
+    team1: "PCFC Sub-10",
+    team2: "Canay FC",
+    venue: "Caseral",
+    photosHref: "/fotos/pcfc-sub10-vs-canay-24ago",
+    past: true,
+  },
+  {
+    categorySlug: "pre",
+    categoryLabel: "Pre-Formativas",
+    date: "Sáb 16 ago",
+    time: "9:30 AM",
+    team1: "PCFC Sub-6",
+    team2: "Casa España",
+    venue: "Casa España",
+    photosHref: "/fotos/pcfc-sub6-vs-casa-espana-16ago",
+    past: true,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 9 ago",
+    time: "4:00 PM",
+    team1: "PCFC Sub-13",
+    team2: "Casa España",
+    venue: "Casa España",
+    photosHref: undefined,
+    past: true,
+  },
+];
+---
+
+<Base
+  title="Calendario"
+  description="Calendario completo de partidos de Punta Cana FC. Próximos encuentros y resultados de las cuatro categorías formativas."
+>
+  <!-- ============================================ -->
+  <!-- HERO — Calendario -->
+  <!-- ============================================ -->
+  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+    <StockImage name="partido-sub13" alt="Partido de fútbol juvenil en cancha de Punta Cana FC" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" width={1600} height={1200} loading="eager" />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
+      <p class="eyebrow eyebrow--on-navy">Temporada 2026</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
+        Calendario
+      </h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Todos los partidos de la temporada, organizados por categoría. Marca
+        tu calendario, filtra por equipo y no te pierdas ningún encuentro de tu
+        hijo.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- FILTROS — control -->
+  <!-- ============================================ -->
+  <section class="bg-pure-white py-10 border-b border-navy/10">
+    <div class="container-x flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h2 class="font-display text-[1.25rem] uppercase text-navy leading-tight">
+          Filtra por categoría
+        </h2>
+        <p class="text-[0.85rem] text-navy-60 mt-1">
+          Encuentra rápidamente los partidos de tu equipo.
+        </p>
+      </div>
+      <CalendarFilters />
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- PRÓXIMOS PARTIDOS — anticipación -->
+  <!-- ============================================ -->
+  <section class="section bg-white">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Esta semana"
+        title="PRÓXIMOS<br />PARTIDOS"
+        subtitle="Consulta los próximos partidos de cada categoría. Filtra por edad y formato, y planifica tu asistencia."
+      />
+
+      <ul
+        id="match-list"
+        class="list-none bg-white border border-navy/10 rounded-lg overflow-hidden"
+        role="list"
+        aria-label="Próximos partidos"
+      >
+        {
+          upcomingMatches.map((match) => (
+            <MatchListItem
+              categorySlug={match.categorySlug}
+              categoryLabel={match.categoryLabel}
+              date={match.date}
+              time={match.time}
+              team1={match.team1}
+              team2={match.team2}
+              venue={match.venue}
+              photosHref={match.photosHref}
+              past={match.past}
+            />
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- PARTIDOS JUGADOS — recuerdo -->
+  <!-- ============================================ -->
+  <section class="section bg-pure-white border-t border-navy/10">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Lo que vivimos"
+        title="PARTIDOS<br />JUGADOS"
+        subtitle="Revive los momentos clave de los partidos recientes. Cada encuentro tiene su galería de fotos."
+      />
+
+      <ul
+        class="list-none bg-white border border-navy/10 rounded-lg overflow-hidden"
+        role="list"
+        aria-label="Partidos jugados"
+      >
+        {
+          pastMatches.map((match) => (
+            <MatchListItem
+              categorySlug={match.categorySlug}
+              categoryLabel={match.categoryLabel}
+              date={match.date}
+              time={match.time}
+              team1={match.team1}
+              team2={match.team2}
+              venue={match.venue}
+              photosHref={match.photosHref}
+              past={match.past}
+            />
+          ))
+        }
+      </ul>
+
+      <div class="mt-12 text-center">
+        <a href="/fotos" class="btn btn--primary btn--lg">
+          Ver galería completa
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,287 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Objetos Perdidos" description="Recupera tus pertenencias perdidas en las instalaciones de Punta Cana FC.">
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="container">
+      <p class="section-title">Objetos Perdidos</p>
+      <h1 class="page-hero-title">Perdiste Algo?</h1>
+      <p class="page-hero-desc">Revisa los objetos encontrados o contactanos para reportar una perdida.</p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="section">
+    <div class="container">
+      <div class="lost-layout">
+        <!-- Info -->
+        <div class="lost-info">
+          <h2>Objetos Encontrados</h2>
+          <p class="text-block">
+            En Punta Cana FC nos preocupamos por tus pertenencias. Si perdiste algo
+            en nuestras instalaciones, revisa la lista de objetos encontrados o
+            contactanos directamente.
+          </p>
+
+          <div class="found-list">
+            <div class="found-item">
+              <div class="found-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-label="icon"><path d="M12 2L2 7v10c0 2.21 1.79 4 4 4h12c2.21 0 4-1.79 4-4V7l-10-5z"/></svg></div>
+              <div class="found-details">
+                <h4>Uniforme Azul - Talla M</h4>
+                <p>Encontrado en cancha 2 - hace 3 dias</p>
+              </div>
+            </div>
+            <div class="found-item">
+              <div class="found-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-label="icon"><path d="M12 2C8.69 2 6 4.69 6 8c0 1.66.69 3.14 1.88 4.22A2.99 2.99 0 0 0 9 18c0 1.66-.69 3.14-1.88 4.22A2.99 2.99 0 0 0 12 18c1.66 0 3.14.69 4.22 1.88A2.99 2.99 0 0 0 15 15c0-1.66.69-3.14 1.88-4.22A2.99 2.99 0 0 0 12 20c-1.66 0-3.14-.69-4.22-1.88A2.99 2.99 0 0 0 9 15V8c0-1.1.9-2 2-2s2 .9 2 2v7"/></svg></div>
+              <div class="found-details">
+                <h4>Botella de Agua Naranja</h4>
+                <p>Encontrado en vestidor - hace 1 semana</p>
+              </div>
+            </div>
+            <div class="found-item">
+              <div class="found-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="icon"><path d="M8 2v3m-5 0v3m5-3h3m-5 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 0h3"/><path d="M17 9h-2l-2-2h-3L8 9H6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2l2-2h3l2 2h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2z"/></svg></div>
+              <div class="found-details">
+                <h4>Tenis Deportivos - Talla 10</h4>
+                <p>Encontrado en area de gimnasio - hace 2 semanas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="notice-box">
+            <h4><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Politica de Objetos</h4>
+            <p>Los objetos se mantienen en nosso por 30 dias. Despues de ese periodo,
+            seran donados a organizaciones benecas. Por favor, recoge tus pertenencias
+            lo antes posible.</p>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="lost-form-container">
+          <form class="lost-form">
+            <h3>Reportar Objeto Perdido</h3>
+
+            <div class="form-group">
+              <label for="nombre">Nombre Completo *</label>
+              <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="form-group">
+              <label for="telefono-contacto">Telefono *</label>
+              <input type="tel" id="telefono-contacto" name="telefono-contacto" required>
+            </div>
+
+            <div class="form-group">
+              <label for="email-contacto">Email</label>
+              <input type="email" id="email-contacto" name="email-contacto">
+            </div>
+
+            <div class="form-group">
+              <label for="descripcion">Descripcion del Objeto *</label>
+              <textarea id="descripcion" name="descripcion" rows="4" required
+                placeholder="Describe el objeto perdido: tipo, color, tamano, marca, etc."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="lugar">Lugar aproximado donde se perdio</label>
+              <select id="lugar" name="lugar">
+                <option value="">Seleccionar...</option>
+                <option value="cancha-1">Cancha 1</option>
+                <option value="cancha-2">Cancha 2</option>
+                <option value="cancha-natural">Cancha Natural</option>
+                <option value="vestidor">Vestidor</option>
+                <option value="gimnasio">Gimnasio</option>
+                <option value="tribuna">Tribuna / Area de Espectadores</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="fecha">Fecha aproximada</label>
+              <input type="date" id="fecha" name="fecha">
+            </div>
+
+            <button type="submit" class="btn-primary btn-full">Enviar Reporte</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-hero {
+    padding: 10rem 0 4rem;
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+    border-bottom: 1px solid var(--border-glow);
+  }
+
+  .page-hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .page-hero-desc {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 600px;
+  }
+
+  .section {
+    padding: var(--section-padding);
+  }
+
+  .lost-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .lost-info h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .text-block {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  /* Found List */
+  .found-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .found-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 10px;
+    transition: border-color 0.3s;
+  }
+
+  .found-item:hover {
+    border-color: var(--border-glow-strong);
+  }
+
+  .found-icon {
+    width: 45px; height: 45px;
+    min-width: 45px;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-cyan);
+    font-size: 1rem;
+  }
+
+  .found-details h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .found-details p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .notice-box {
+    background: rgba(255, 193, 7, 0.05);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .notice-box h4 {
+    color: #ffc107;
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .notice-box p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* Form */
+  .lost-form-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+
+  .lost-form h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--accent-cyan);
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text-secondary);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-glow);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.1);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+  }
+
+  .btn-full {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 992px) {
+    .lost-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

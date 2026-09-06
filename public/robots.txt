@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dev/guia
+
+Sitemap: https://puntacanafc.com/sitemap.xml
+Host: https://puntacanafc.com

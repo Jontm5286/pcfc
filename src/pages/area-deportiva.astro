@@ -1,0 +1,330 @@
+---
+import Base from '../layouts/Base.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+
+const facilityPhotos = [
+  {
+    src: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+    alt: 'Canchas sintéticas FIFA Quality Pro con iluminación LED nocturna',
+    caption: 'Canchas sintéticas',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+    alt: 'Campo de fútbol con césped natural de alta calidad',
+    caption: 'Césped natural',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80',
+    alt: 'Gimnasio con equipamiento completo para entrenamiento funcional',
+    caption: 'Gimnasio',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+    alt: 'Área de recuperación con sauna, jacuzzi y piscina de hidroterapia',
+    caption: 'Área de recuperación',
+  },
+];
+---
+
+<Base
+  title="Área Deportiva"
+  description="Categorías, entrenadores e instalaciones de Punta Cana FC. Entrenamiento profesional para todas las edades."
+>
+  <!-- ============================================ -->
+  <!-- HERO -->
+  <!-- ============================================ -->
+  <section class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]">
+    <div class="container-x">
+      <p class="eyebrow eyebrow--on-navy">Formación 4–19 años</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[18ch]">
+        Área Deportiva
+      </h1>
+      <p class="lede lede--on-navy max-w-[58ch]">
+        Cuatro etapas, un camino. Cada jugador de Punta Cana FC pasa por un
+        proceso diseñado según su edad, su desarrollo y sus objetivos — desde
+        el primer contacto con el balón hasta el alto rendimiento.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- CATEGORÍAS — CategoryCard por categoría -->
+  <!-- ============================================ -->
+  <section class="section bg-white" id="categorias">
+    <div class="container-x">
+      <p class="eyebrow">Programas por edad</p>
+      <h2 class="h-section mb-2">Categorías Formativas</h2>
+      <p class="lede mb-12 max-w-[60ch]">
+        Selecciona la franja de edad de tu hijo. Cada programa tiene un
+        objetivo claro, un formato de competición definido y un horario estable
+        durante toda la temporada.
+      </p>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-8"
+        role="list"
+        aria-label="Lista de categorías formativas"
+      >
+        <div role="listitem">
+          <CategoryCard
+            slug="pre"
+            title="Pre-Formativas"
+            ageMin={4}
+            ageMax={8}
+            ageRange="4–8 años"
+            focus="Movilidad, coordinación, primer contacto con el balón"
+            format="Partidos formativos 90 min"
+            schedule="Martes y jueves · 4:00–5:30 pm"
+            description="El primer paso dentro del club. Jugamos a aprender: exploración del balón, coordinación motriz y reglas básicas en un entorno lúdico, seguro y siempre acompañado por nuestros entrenadores."
+            ctaHref="/inscribete#pre"
+          />
+        </div>
+        <div role="listitem">
+          <CategoryCard
+            slug="form-baja"
+            title="Formativas Bajas"
+            ageMin={9}
+            ageMax={12}
+            ageRange="9–12 años"
+            focus="Técnica individual, reglas del juego, companerismo"
+            format="Partidos 7 vs 7"
+            schedule="Lunes, miércoles y viernes · 4:00–6:00 pm"
+            description="Consolidamos la técnica individual — control, pase, conducción — e introducimos la táctica colectiva en formato 7v7. Los jugadores entienden el juego, sus posiciones y el valor del equipo."
+            ctaHref="/inscribete#form-baja"
+          />
+        </div>
+        <div role="listitem">
+          <CategoryCard
+            slug="form-alta"
+            title="Formativas Altas"
+            ageMin={13}
+            ageMax={15}
+            ageRange="13–15 años"
+            focus="Táctica, preparación física, competición federada"
+            format="Partidos 9 vs 9"
+            schedule="Martes y jueves · 5:00–7:00 pm + bloque de acondicionamiento"
+            description="Etapa de competición real. Profundizamos en sistemas tácticos, añadimos trabajo físico estructurado y participamos en torneos federados para medirnos contra otros clubes de la región."
+            ctaHref="/inscribete#form-alta"
+          />
+        </div>
+        <div role="listitem">
+          <CategoryCard
+            slug="elite"
+            title="Elite / Reserva"
+            ageMin={16}
+            ageMax={19}
+            ageRange="16–19 años"
+            focus="Alto rendimiento, scouting, preparación física avanzada"
+            format="Partidos 11 vs 11"
+            schedule="Lunes, miércoles y viernes · 6:00–8:00 pm + gimnasio"
+            description="El último tramo del proceso formativo. Entrenamientos de alta intensidad, gimnasio, análisis de vídeo y seguimiento individual. Varios de nuestros jugadores de esta categoría han sido captados por clubes profesionales."
+            ctaHref="/inscribete#elite"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- CTA INSCRIPCIÓN -->
+  <!-- ============================================ -->
+  <section class="bg-navy text-white py-[clamp(4rem,8vw,6rem)]">
+    <div class="container-x flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+      <div class="max-w-[52ch]">
+        <p class="eyebrow eyebrow--on-navy">Siguiente paso</p>
+        <h2 class="h-section h-section--on-navy mb-3">
+          INSCRIBE A TU HIJO HOY
+        </h2>
+        <p class="lede lede--on-navy">
+          Completa el formulario de inscripción en menos de tres minutos. Si
+          tienes dudas, escríbenos por WhatsApp y te guiamos en el proceso.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+        <a href="/inscribete" class="btn btn--sky btn--on-navy btn--lg">
+          Iniciar inscripción
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- ENTRENADORES -->
+  <!-- ============================================ -->
+  <section class="section bg-navy-05" id="entrenadores">
+    <div class="container-x">
+      <p class="eyebrow">Staff Técnico</p>
+      <h2 class="h-section mb-10">Entrenadores Certificados</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div class="card text-center">
+          <div class="coach-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 2.33-4 8-4zm0 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+          </div>
+          <h3 class="h-card mb-1">Director Técnico</h3>
+          <p class="coach-license">Licencia UEFA A</p>
+          <p class="coach-bio">
+            Más de 15 años de experiencia en academia juvenil y fútbol profesional.
+          </p>
+        </div>
+
+        <div class="card text-center">
+          <div class="coach-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 2.33-4 8-4zm0 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+          </div>
+          <h3 class="h-card mb-1">Entrenador Principal</h3>
+          <p class="coach-license">Licencia UEFA B</p>
+          <p class="coach-bio">
+            Ex-jugador profesional con pasión por la formación de jóvenes talentos.
+          </p>
+        </div>
+
+        <div class="card text-center">
+          <div class="coach-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 2.33-4 8-4zm0 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+          </div>
+          <h3 class="h-card mb-1">Preparador Físico</h3>
+          <p class="coach-license">MSc. Ciencias del Deporte</p>
+          <p class="coach-bio">
+            Especialista en desarrollo físico juvenil y prevención de lesiones.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- INSTALACIONES -->
+  <!-- ============================================ -->
+  <section class="section bg-white" id="instalaciones">
+    <div class="container-x">
+      <p class="eyebrow">Infraestructura</p>
+      <h2 class="h-section mb-2">Instalaciones de Primera</h2>
+      <p class="lede mb-10 max-w-[55ch]">
+        Nuestras instalaciones cumplen con los estándares más exigentes del
+        fútbol formativo, diseñadas para el desarrollo integral del jugador.
+      </p>
+
+      <div class="facilities-specs mb-10">
+        <div class="specs-grid">
+          <div class="facility-item">
+            <div class="facility-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16V8M8 12l4 4 4-4"/></svg>
+            </div>
+            <h4 class="h-card text-[1rem] mb-1">2 Canchas Sintéticas</h4>
+            <p class="lede text-[0.875rem]">
+              FIFA Quality Pro con iluminación LED nocturna.
+            </p>
+          </div>
+          <div class="facility-item">
+            <div class="facility-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12a9.93 9.93 0 0 1 2-4.11 1 1 0 0 1 1.5 0l1.5 1.5a1 1 0 0 0 1.5 0l4.4-4.4a1 1 0 0 1 1.4 0l1.5 1.5a1 1 0 0 1 0 1.5l-4.4 4.4a1 1 0 0 0 0 1.5l1.5 1.5a1 1 0 0 1 0 1.5L12 19a9.93 9.93 0 0 1-4.11-2 1 1 0 0 0 0 1.5l1.5 1.5a1 1 0 0 1 0 1.5l-4.4 4.4a1 1 0 0 1-1.4 0z"/><line x1="2" y1="12" x2="2" y2="12"/></svg>
+            </div>
+            <h4 class="h-card text-[1rem] mb-1">1 Cancha Natural</h4>
+            <p class="lede text-[0.875rem]">
+              Césped natural de alta calidad con sistema de riego automático.
+            </p>
+          </div>
+          <div class="facility-item">
+            <div class="facility-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM7.05 7.05a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/><path d="M15 13h4a2 2 0 0 1 2 2v3a1 1 0 0 1-1 1h-2.5a2.5 2.5 0 0 1 0-5H15zm-5 0H7.5a2.5 2.5 0 0 1 0-5H10z"/></svg>
+            </div>
+            <h4 class="h-card text-[1rem] mb-1">Gimnasio</h4>
+            <p class="lede text-[0.875rem]">
+              Equipamiento completo para entrenamiento funcional y fuerza.
+            </p>
+          </div>
+          <div class="facility-item">
+            <div class="facility-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17h6a3 3 0 0 0 3-3V5a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v9a3 3 0 0 0 3 3zm0 0V9a3 3 0 1 0-6 0v8a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-3z"/></svg>
+            </div>
+            <h4 class="h-card text-[1rem] mb-1">Área de Recuperación</h4>
+            <p class="lede text-[0.875rem]">
+              Sauna, jacuzzi y piscina de hidroterapia.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <GalleryGrid photos={facilityPhotos} galleryId="instalaciones" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ============================================ */
+  /* Entrenadores */
+  /* ============================================ */
+  .card {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .coach-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: rgba(66, 154, 192, 0.14);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--color-sky);
+  }
+
+  .coach-license {
+    color: var(--color-sky);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .coach-bio {
+    color: var(--color-navy-30);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* ============================================ */
+  /* Instalaciones */
+  /* ============================================ */
+  .facility-item {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .facility-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: rgba(66, 154, 192, 0.14);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--color-sky);
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .specs-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .specs-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

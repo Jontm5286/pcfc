@@ -1,0 +1,396 @@
+---
+/**
+ * Hero — PCFC
+ * Sección hero con imagen de fondo, overlay, dos columnas
+ * (texto a la izquierda + grid 3x2 de imágenes a la derecha) y CTA.
+ *
+ * Props:
+ *   - eyebrow: string               Texto superpuesto (e.g. "Academia · Punta Cana")
+ *   - title: string                 Headline principal (admite HTML, e.g. <br/>)
+ *   - description: string           Párrafo descriptivo
+ *   - backgroundImage: string       URL de la imagen de fondo
+ *   - bullets?: string[]            Lista de beneficios (carrusel horizontal en móvil)
+ *   - ctaPrimary?: { label, href }  Botón CTA principal (default: Inscríbete)
+ *   - ctaSecondary?: { label, href } Botón CTA secundario (default: Conoce el club)
+ *   - galleryImages?: GalleryImage[]  Grid 3x2 a la derecha (si se omite, no se renderiza)
+ *   - nextMatch?: MatchData         Datos del próximo partido (opcional, se muestra debajo)
+ *   - eyebrowOnDark?: boolean       true = texto claro sobre fondo oscuro (default)
+ *
+ * GalleryImage = { src: string, alt: string }
+ * MatchData = { date, time, category, categorySlug?, home, homeLogo, away, awayLogo, venue, calendarHref? }
+ */
+
+export interface GalleryImage {
+  src: string;
+  alt: string;
+}
+
+export interface MatchData {
+  date: string;
+  time: string;
+  category: string;
+  categorySlug?: string;
+  home: string;
+  homeLogo?: string;
+  away: string;
+  awayLogo?: string;
+  venue: string;
+  calendarHref?: string;
+}
+
+export interface CtaButton {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  backgroundImage?: string;
+  bullets?: string[];
+  ctaPrimary?: CtaButton;
+  ctaSecondary?: CtaButton;
+  galleryImages?: GalleryImage[];
+  nextMatch?: MatchData;
+  eyebrowOnDark?: boolean;
+}
+
+const {
+  eyebrow,
+  title = "Pasión por el Fútbol",
+  description,
+  backgroundImage = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+  bullets = [],
+  ctaPrimary = { label: "Inscríbete", href: "/inscribete" },
+  ctaSecondary = { label: "Conoce el club", href: "/club" },
+  galleryImages = [],
+  nextMatch,
+  eyebrowOnDark = true,
+} = Astro.props;
+---
+
+<section
+  class="hero relative lg:min-h-[90vh] flex flex-col justify-center text-white overflow-hidden pt-[clamp(6rem,12vw,9rem)] pb-[clamp(2rem,4vw,3rem)]"
+>
+  <!-- Background image + overlay -->
+  <div class="absolute inset-0 z-0" aria-hidden="true">
+    <img
+      src={backgroundImage}
+      alt=""
+      loading="eager"
+      class="w-full h-full object-cover object-[center_30%]"
+    />
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-navy/[0.55] to-navy/[0.85]"
+    >
+    </div>
+  </div>
+
+  <!-- Two-column content -->
+  <div class="container-x relative z-10 max-w-[1200px]">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <!-- Columna izquierda: texto -->
+      <div>
+        {
+          eyebrow && (
+            <p class={`eyebrow ${eyebrowOnDark ? "eyebrow--on-navy" : ""}`}>
+              {eyebrow}
+            </p>
+          )
+        }
+
+        <h1
+          class={`h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5 lg:mb-6 max-w-[14ch] ${!eyebrow ? "mt-0" : ""}`}
+        >
+          {title}
+        </h1>
+
+        {
+          description && (
+            <p
+              class={`lede lede--on-navy mb-6 lg:mb-8 max-w-[52ch] ${!eyebrow ? "mt-4" : ""}`}
+            >
+              {description}
+            </p>
+          )
+        }
+
+        {
+          bullets.length > 0 && (
+            <ul class="benefits-carousel mb-8 lg:mb-9 flex gap-3 list-none overflow-x-auto snap-x snap-mandatory scroll-px-1 pb-2 -mx-1 px-1 lg:overflow-visible lg:snap-none lg:flex-col lg:flex lg:gap-3 lg:pb-0 lg:mx-0 lg:px-0">
+              {bullets.map((b) => (
+                <li class="bullet-card hidden lg:flex items-start gap-2.5 shrink-0 snap-start">
+                  <span class="shrink-0 w-5 h-5 rounded-full bg-sky flex items-center justify-center text-navy-dark mt-0.5 lg:mt-0.5">
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3.5"
+                      aria-hidden="true"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                  <span class="text-white/85 text-[0.875rem] leading-[1.45] whitespace-nowrap lg:whitespace-normal">
+                    {b}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        <div class="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:gap-3.5">
+          <a
+            href={ctaPrimary.href}
+            class="btn btn--sky btn--on-navy btn--lg w-full lg:w-auto justify-center"
+          >
+            {ctaPrimary.label}
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a
+            href={ctaSecondary.href}
+            class="btn btn--outline-on-navy btn--lg w-full lg:w-auto justify-center"
+          >
+            {ctaSecondary.label}
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: grid 3x2 de partidos destacados con rotación en hover -->
+      {
+        galleryImages.length > 0 && (
+          <div
+            class="hidden lg:block"
+            data-component="featured-rotator"
+            data-rotation-ms="5000"
+          >
+            <div class="grid grid-cols-3 gap-3" data-rotator-grid>
+              {galleryImages.map((img, i) => (
+                <figure
+                  class="rotator-figure group relative aspect-square overflow-hidden bg-navy-30 rounded-2xl border border-white/10 transition-[border-color,box-shadow] duration-200"
+                  data-index={i}
+                >
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    class="w-full h-full object-cover"
+                  />
+                  <figcaption class="rotator-caption absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-[rgba(0,40,92,0.85)] via-[rgba(0,40,92,0.20)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <span class="text-sky-30 text-[0.65rem] font-semibold uppercase tracking-[0.14em] leading-tight">
+                      Partido destacado
+                    </span>
+                    <span class="text-white text-[0.8rem] font-semibold leading-tight mt-0.5">
+                      {img.alt}
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <!-- Next match card -->
+  {
+    nextMatch && (
+      <aside
+        class="relative  z-10 mt-[clamp(2.5rem,6vw,4rem)] bg-navy-dark border-t-4 border-sky"
+        aria-label="Próximo partido"
+      >
+        <div class="container-x py-7 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-8 items-center text-center lg:text-left lg:items-start">
+          <div class="flex flex-col gap-2 items-center lg:items-start">
+            <span class="badge badge--sky-on-navy">Próximo partido</span>
+            <span class="text-[0.8rem] text-sky-30 font-semibold tracking-[0.08em] uppercase">
+              {nextMatch.date} · {nextMatch.time}
+            </span>
+            {nextMatch.category && (
+              <span class="font-display text-[0.95rem] text-white/85 tracking-[0.02em]">
+                {nextMatch.category}
+              </span>
+            )}
+          </div>
+
+          <div class="flex items-center justify-center gap-4 lg:gap-6">
+            <!-- Local -->
+            <div class="flex flex-col items-center min-w-[110px]">
+              {nextMatch.homeLogo ? (
+                <img
+                  src={nextMatch.homeLogo}
+                  alt={`Logo ${nextMatch.home}`}
+                  class="w-12 h-12 object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="font-display text-2xl text-white tracking-[0.02em]">
+                  {nextMatch.home}
+                </span>
+              )}
+              <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+                {nextMatch.home}
+              </span>
+            </div>
+
+            <span class="font-display text-lg text-sky-30">VS</span>
+
+            <!-- Visitante -->
+            <div class="flex flex-col items-center min-w-[110px]">
+              {nextMatch.awayLogo ? (
+                <img
+                  src={nextMatch.awayLogo}
+                  alt={`Logo ${nextMatch.away}`}
+                  class="w-12 h-12 object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="font-display text-2xl text-white tracking-[0.02em]">
+                  {nextMatch.away}
+                </span>
+              )}
+              <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+                {nextMatch.away}
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 lg:items-end lg:text-right">
+            <span class="inline-flex items-center gap-1.5 text-white/70 text-[0.85rem]">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              {nextMatch.venue}
+            </span>
+            <a
+              href={nextMatch.calendarHref ?? "/calendario"}
+              class="text-sky-30 text-[0.85rem] font-semibold inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-white"
+            >
+              Ver calendario
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+    )
+  }
+</section>
+
+<style>
+  /* Scrollbar del carrusel de beneficios (móvil) */
+  .benefits-carousel::-webkit-scrollbar {
+    height: 3px;
+  }
+  .benefits-carousel::-webkit-scrollbar-track {
+    background: var(--color-white);
+    opacity: 0.08;
+    border-radius: 9999px;
+  }
+  .benefits-carousel::-webkit-scrollbar-thumb {
+    background: var(--color-sky);
+    opacity: 0.5;
+    border-radius: 9999px;
+  }
+
+  /* Bullet card en móvil: chip horizontal */
+  .bullet-card {
+    border: 1px solid var(--color-navy-10);
+    border-radius: 9999px;
+    padding: 8px 14px 8px 10px;
+    white-space: nowrap;
+    min-width: max-content;
+    opacity: 1;
+  }
+
+  /* Hide scrollbar en Firefox */
+  .benefits-carousel {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-sky) rgba(255, 255, 255, 0.08);
+  }
+
+  /* ===== Rotador de partidos destacados en hover ===== */
+  .rotator-figure.is-featured {
+    border-color: var(--color-sky);
+    box-shadow:
+      0 0 0 2px rgba(66, 154, 192, 0.35),
+      0 4px 20px rgba(0, 40, 92, 0.12);
+    z-index: 2;
+    position: relative;
+  }
+
+  .rotator-figure.is-featured .rotator-caption {
+    opacity: 1 !important;
+  }
+
+  .rotator-figure:not(.is-featured) img {
+    filter: brightness(0.6) saturate(0.7);
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-component="featured-rotator"]')
+    .forEach((rotator) => {
+      const ms = parseInt(rotator.dataset.rotationMs ?? "5000", 10);
+      const figures = [
+        ...rotator.querySelectorAll<HTMLElement>(".rotator-figure"),
+      ];
+      if (figures.length < 2) return;
+
+      let current = 0;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+
+      function highlight(index: number) {
+        figures.forEach((f) => f.classList.remove("is-featured"));
+        current = index;
+        figures[current]?.classList.add("is-featured");
+      }
+
+      function tick() {
+        highlight((current + 1) % figures.length);
+        timer = setTimeout(tick, ms);
+      }
+
+      function startAuto() {
+        if (timer) return;
+        timer = setTimeout(tick, ms);
+      }
+
+      function stopAuto() {
+        if (!timer) return;
+        clearTimeout(timer);
+        timer = undefined;
+      }
+
+      // Auto-rotación desde el inicio
+      highlight(0);
+      startAuto();
+
+      // Pausa cuando el usuario hace hover en una foto específica
+      figures.forEach((fig, i) => {
+        fig.addEventListener("mouseenter", () => {
+          stopAuto();
+          highlight(i);
+        });
+      });
+
+      // Reanuda cuando el cursor sale del grid completo
+      rotator.addEventListener("mouseleave", () => {
+        highlight(current); // mantiene la última destacada mientras el cursor está fuera
+        startAuto();
+      });
+    });
+</script>

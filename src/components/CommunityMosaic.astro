@@ -1,0 +1,61 @@
+---
+/**
+ * CommunityMosaic component.
+ * Displays photo gallery mosaic for the community section on the homepage.
+ */
+import type { GalleryImage } from "../data/homeData";
+
+export interface Props {
+  images?: GalleryImage[];
+}
+
+const { images = [] } = Astro.props;
+---
+
+<section class="section bg-navy" data-component="community-mosaic">
+  <div class="container-x">
+    <header
+      class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6 mb-[clamp(2.5rem,5vw,4rem)]"
+    >
+      <div>
+        <p class="eyebrow eyebrow--on-navy">Comunidad</p>
+        <h2 class="h-section h-section--on-navy">
+          SOMOS MUCHOS,<br />SOMOS ACTIVOS
+        </h2>
+      </div>
+      <a href="/fotos" class="btn btn--outline-on-navy">
+        Ver galería completa
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <div
+      class="mosaic grid grid-cols-2 md:grid-cols-4 grid-rows-[200px_160px_160px] md:grid-rows-[280px_220px] gap-3"
+    >
+      {images.length >= 5 ? (
+        <>
+          <figure class="mosaic__item relative overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2">
+            <img
+              src={images[0].src}
+              alt={images[0].alt}
+              loading="lazy"
+              class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+            />
+          </figure>
+          {images.slice(1, 5).map((img) => (
+            <figure class="relative overflow-hidden bg-navy-30">
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+              />
+            </figure>
+          ))}
+        </>
+      ) : (
+        <p class="text-white/60">No hay suficientes imágenes para mostrar la galería.</p>
+      )}
+    </div>
+  </div>
+</section>

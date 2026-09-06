@@ -1,0 +1,102 @@
+---
+/**
+ * Sponsors — PCFC
+ * Sección de patrocinadores / aliados del club.
+ * Logos en fila, grayscale → color al hover.
+ *
+ * Props:
+ *   - eyebrow?: string       Texto superpuesto
+ *   - title?: string         Título de la sección
+ *   - sponsors: Sponsor[]    Array de patrocinadores
+ *
+ * Sponsor = {
+ *   name: string,
+ *   logo: string,       // URL de la imagen del logo
+ *   href?: string,     // Link al sitio (opcional)
+ * }
+ */
+
+export interface Sponsor {
+  name: string;
+  logo: string;
+  href?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  sponsors: Sponsor[];
+}
+
+const { eyebrow, title, sponsors } = Astro.props;
+---
+
+<section
+  class="relative w-full py-14 md:py-16 border-t border-b border-white/5 bg-navy-dark"
+  data-component="sponsors"
+>
+  <div class="max-w-[1280px] mx-auto px-8">
+    {(eyebrow || title) && (
+      <header class="mb-10 flex flex-col items-center text-center">
+        {eyebrow && (
+          <p class="eyebrow text-sky mb-3">{eyebrow}</p>
+        )}
+        {title && (
+          <h2 class="h-section h-section--on-navy">
+            {title}
+          </h2>
+        )}
+      </header>
+    )}
+
+    {sponsors.length > 0 && (
+      <div
+        class="sponsors-track flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
+        role="list"
+      >
+        {sponsors.map((sponsor) => (
+          <div role="listitem" class="sponsor-item group">
+            {sponsor.href ? (
+              <a
+                href={sponsor.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visitar ${sponsor.name}`}
+                class="block"
+              >
+                <img
+                  src={sponsor.logo}
+                  alt={`Logo de ${sponsor.name}`}
+                  loading="lazy"
+                  class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
+                />
+              </a>
+            ) : (
+              <img
+                src={sponsor.logo}
+                alt={`Logo de ${sponsor.name}`}
+                loading="lazy"
+                class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {/* Placeholder cuando no hay datos */}
+    {sponsors.length === 0 && (
+      <p class="text-center text-white/30 text-sm">
+        Patrocinadores próximamente
+      </p>
+    )}
+  </div>
+</section>
+
+<style>
+  /* Separator visual entre sponsors */
+  .sponsor-item:not(:last-child)::after {
+    content: '';
+    display: none;
+  }
+</style>

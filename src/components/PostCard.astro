@@ -1,0 +1,97 @@
+---
+/**
+ * PostCard — PCFC
+ * Card de post de partido para la galería de fotos.
+ * Thumbnail + título "[Categoría] vs [Rival]" + fecha + badge categoría.
+ * Click navega al post individual.
+ *
+ * Props:
+ *   - href: string                 Enlace al post individual
+ *   - thumbnail: string             URL de la imagen thumbnail
+ *   - thumbnailAlt: string         Alt text de la imagen
+ *   - categorySlug: "pre" | "form-baja" | "form-alta" | "elite"
+ *   - categoryLabel: string        Label visible de la categoría
+ *   - team1: string                Nombre equipo PCFC
+ *   - team2: string                Nombre equipo rival
+ *   - date: string                 Fecha del partido
+ *   - photoCount?: number          Número de fotos (opcional)
+ */
+
+interface Props {
+  href: string;
+  thumbnail: string;
+  thumbnailAlt: string;
+  categorySlug: "pre" | "form-baja" | "form-alta" | "elite";
+  categoryLabel: string;
+  team1: string;
+  team2: string;
+  date: string;
+  photoCount?: number;
+}
+
+const {
+  href,
+  thumbnail,
+  thumbnailAlt,
+  categorySlug,
+  categoryLabel,
+  team1,
+  team2,
+  date,
+  photoCount,
+} = Astro.props;
+---
+
+<article class="post-card group">
+  <a
+    {href}
+    class="block bg-white border border-navy/10 rounded-lg overflow-hidden hover:border-navy/25 transition-colors duration-200"
+    aria-label={`Partido ${team1} vs ${team2} — ${categoryLabel}, ${date}`}
+  >
+    <!-- Thumbnail -->
+    <div class="relative aspect-[4/3] overflow-hidden bg-navy-05">
+      <img
+        src={thumbnail}
+        alt={thumbnailAlt}
+        loading="lazy"
+        class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+      />
+      {
+        photoCount && (
+          <div class="absolute bottom-2 right-2 bg-navy/80 text-white text-[0.7rem] font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            {photoCount}
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Info -->
+    <div class="p-4">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <span class={`badge badge--${categorySlug}`}>{categoryLabel}</span>
+        <time
+          datetime={date}
+          class="text-[0.75rem] text-navy-60 font-medium whitespace-nowrap"
+        >
+          {date}
+        </time>
+      </div>
+      <h3 class="font-body font-semibold text-[0.95rem] text-navy leading-snug">
+        {team1} <span class="font-normal text-navy-60">vs</span> {team2}
+      </h3>
+    </div>
+  </a>
+</article>

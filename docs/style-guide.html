@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PCFC — Guía de Estilo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================ */
+  /* PCFC Design System — Standalone Style Guide   */
+  /* ============================================ */
+
+  :root {
+    /* Palette */
+    --c-navy: #00285C;
+    --c-navy-dark: #071D3B;
+    --c-navy-60: #33547F;
+    --c-navy-30: #6685A6;
+    --c-navy-10: #B4C5D6;
+    --c-navy-05: #E8F0F5;
+
+    --c-sky: #429AC0;
+    --c-sky-60: #79B8D3;
+    --c-sky-30: #B4D7E5;
+    --c-sky-10: #E1F0F6;
+
+    --c-white: #FAFAF9;
+    --c-pure-white: #FFFFFF;
+    --c-silver: #C8C8C8;
+
+    --c-cat-pre: #1A8A6A;
+    --c-cat-form-baja: #2E7D9B;
+    --c-cat-form-alta: #B8860B;
+    --c-cat-elite: #001F42;
+
+    /* Functional */
+    --font-display: "Bowlby One SC", "Georgia", serif;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --border-soft: 1px solid rgba(0, 40, 92, 0.10);
+    --border-on-navy: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--c-navy);
+    background: var(--c-pure-white);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 { font-weight: 400; margin: 0; }
+  p { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 2px solid var(--c-sky);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* ============================================ */
+  /* Layout primitives                            */
+  /* ============================================ */
+  .container-x {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: clamp(1.25rem, 4vw, 2.5rem);
+    padding-right: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .section {
+    padding-top: clamp(4rem, 8vw, 6rem);
+    padding-bottom: clamp(4rem, 8vw, 6rem);
+  }
+
+  /* ============================================ */
+  /* HERO                                         */
+  /* ============================================ */
+  .hero {
+    background: var(--c-navy);
+    color: var(--c-white);
+    padding: 4rem 0 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    bottom: -120px;
+    width: 400px;
+    height: 400px;
+    background: var(--c-navy-05);
+    color: var(--c-navy);
+    font-family: var(--font-display);
+    font-size: 320px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.06;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-logo {
+    width: 120px;
+    height: auto;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--c-white);
+    margin-bottom: 1rem;
+  }
+  .hero .tagline {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 1.125rem;
+    max-width: 50ch;
+  }
+  .hero .eyebrow {
+    color: var(--c-sky-30);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ============================================ */
+  /* NAV (sticky)                                 */
+  /* ============================================ */
+  .nav-bar {
+    background: var(--c-navy);
+    color: var(--c-white);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .nav-bar nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+  }
+  .nav-bar a {
+    color: var(--c-white);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 200ms ease;
+  }
+  .nav-bar a:hover { color: var(--c-sky); }
+  .nav-bar a.is-active { color: var(--c-sky); }
+  .nav-cta {
+    margin-left: auto;
+    background: var(--c-sky);
+    color: var(--c-navy) !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+  }
+  .nav-cta:hover { background: var(--c-navy-60); color: var(--c-white) !important; }
+
+  /* ============================================ */
+  /* SECTION HEADERS                              */
+  /* ============================================ */
+  .sg-header {
+    margin-bottom: 3rem;
+  }
+  .sg-eyebrow {
+    color: var(--c-navy-60);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .sg-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--c-navy);
+    margin-bottom: 1rem;
+  }
+  .sg-desc {
+    color: var(--c-navy-60);
+    max-width: 60ch;
+    font-size: 1.0625rem;
+  }
+  .sg-num {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--c-navy-30);
+    margin-bottom: -0.5rem;
+  }
+
+  .sg-block { padding: 4rem 0; border-bottom: var(--border-soft); }
+  .sg-block--on-navy { background: var(--c-navy); color: var(--c-white); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .sg-block--dark { background: var(--c-navy-dark); color: var(--c-white); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .sg-block--soft { background: var(--c-white); }
+
+  .sg-block .sg-title { color: inherit; }
+  .sg-block .sg-eyebrow { color: var(--c-navy-60); }
+  .sg-block--on-navy .sg-eyebrow, .sg-block--dark .sg-eyebrow { color: var(--c-sky-30); }
+  .sg-block .sg-desc { color: var(--c-navy-60); }
+  .sg-block--on-navy .sg-desc, .sg-block--dark .sg-desc { color: rgba(255, 255, 255, 0.78); }
+
+  /* ============================================ */
+  /* COLOR PALETTE                                */
+  /* ============================================ */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .swatch {
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .swatch-color {
+    height: 96px;
+  }
+  .swatch-info {
+    padding: 0.875rem 1rem;
+  }
+  .swatch-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--c-navy);
+    margin-bottom: 0.125rem;
+  }
+  .swatch-hex {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--c-navy-60);
+  }
+
+  /* ============================================ */
+  /* TYPOGRAPHY                                   */
+  /* ============================================ */
+  .type-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: var(--border-soft);
+    align-items: baseline;
+  }
+  .type-row:last-child { border-bottom: 0; }
+  .type-label {
+    font-size: 0.75rem;
+    color: var(--c-navy-60);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .type-sample { color: var(--c-navy); }
+  .t-h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); line-height: 0.95; text-transform: uppercase; }
+  .t-h2 { font-family: var(--font-display); font-size: clamp(1.75rem, 3.5vw, 2.5rem); line-height: 1; text-transform: uppercase; }
+  .t-h3 { font-family: var(--font-body); font-weight: 700; font-size: 1.5rem; line-height: 1.3; }
+  .t-h4 { font-family: var(--font-body); font-weight: 600; font-size: 1.25rem; line-height: 1.3; }
+  .t-body { font-family: var(--font-body); font-size: 1rem; line-height: 1.6; }
+  .t-caption { font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; color: var(--c-navy-60); }
+  .t-ui { font-family: var(--font-body); font-size: 0.9375rem; font-weight: 500; }
+  .t-eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--c-navy-60);
+  }
+
+  /* ============================================ */
+  /* BUTTONS                                      */
+  /* ============================================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.875rem 1.75rem;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .btn--lg { padding: 1.125rem 2.25rem; font-size: 1rem; }
+  .btn--primary { background: var(--c-navy); color: var(--c-white); border-color: var(--c-navy); }
+  .btn--primary:hover { background: var(--c-navy-60); border-color: var(--c-navy-60); }
+  .btn--sky { background: var(--c-sky); color: var(--c-navy); border-color: var(--c-sky); }
+  .btn--sky:hover { background: var(--c-navy-60); border-color: var(--c-navy-60); }
+  /* Variante para usar sobre fondo navy (Hero / secciones oscuras) */
+  .btn--sky.btn--on-navy { background: var(--c-navy); color: var(--c-sky-30); border-color: var(--c-navy); }
+  .btn--sky.btn--on-navy:hover { background: var(--c-navy-60); color: var(--c-white); border-color: var(--c-navy-60); }
+  .btn--outline { color: var(--c-navy); border-color: var(--c-sky); }
+  .btn--outline:hover { background: var(--c-sky-10); }
+  .btn--outline-on-navy { color: var(--c-white); border-color: rgba(255, 255, 255, 0.4); background: transparent; }
+  .btn--outline-on-navy:hover { border-color: var(--c-white); background: rgba(255, 255, 255, 0.06); }
+  .btn--ghost { color: var(--c-navy); padding-left: 0; padding-right: 0; border: none; text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .btn--ghost:hover { text-decoration: underline; }
+  .btn--ghost[disabled], .btn--primary[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  .arrow { display: inline-block; transition: transform 200ms ease; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  .btn-stack { display: grid; gap: 1rem; }
+
+  /* ============================================ */
+  /* BADGES                                       */
+  /* ============================================ */
+  .badge {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    line-height: 1;
+  }
+  .badge--pre         { background: rgba(26, 138, 106, 0.12); color: var(--c-cat-pre); }
+  .badge--form-baja   { background: rgba(46, 125, 155, 0.12); color: var(--c-cat-form-baja); }
+  .badge--form-alta   { background: rgba(184, 134, 11, 0.14); color: var(--c-cat-form-alta); }
+  .badge--elite       { background: rgba(0, 31, 66, 0.10);    color: var(--c-cat-elite); }
+  .badge--sky         { background: rgba(66, 154, 192, 0.14); color: var(--c-navy); }
+  .badge--sky-on-navy { background: rgba(66, 154, 192, 0.22); color: var(--c-sky-30); }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  /* ============================================ */
+  /* CARDS                                        */
+  /* ============================================ */
+  .card {
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    border-color: rgba(0, 40, 92, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 40, 92, 0.08);
+  }
+  .card--decor {
+    position: relative;
+  }
+  .card--decor::after {
+    content: attr(data-num);
+    position: absolute;
+    right: -20px;
+    bottom: -50px;
+    font-family: var(--font-display);
+    font-size: 200px;
+    line-height: 1;
+    color: var(--c-navy-10);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .card--decor > * { position: relative; z-index: 1; }
+
+  .card--on-navy {
+    background: var(--c-navy);
+    border: var(--border-on-navy);
+    color: var(--c-white);
+  }
+  .card--on-navy:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .card h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.25rem; line-height: 1.3; margin-bottom: 0.5rem; }
+  .card p { color: var(--c-navy-60); font-size: 0.9375rem; }
+  .card--on-navy p { color: rgba(255, 255, 255, 0.78); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+
+  /* ============================================ */
+  /* FEATURE CARD / PILLAR CARD                   */
+  /* Reutilizable: ValuePillars, PathwayCards, WhyPcfc */
+  /* ============================================ */
+  .pillar-card {
+    background: var(--c-navy-dark);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2.5rem 1rem;
+    box-shadow:
+      0 4px 12px rgba(0, 40, 92, 0.12),
+      0 10px 20px rgba(0, 40, 92, 0.08);
+    position: relative;
+    flex: 1 1 100%;
+  }
+  .pillar-card .pillar-icon {
+    width: 5rem;
+    height: 5rem;
+    margin: 0 auto 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--c-sky);
+    background: rgba(66, 154, 192, 0.05); /* bg-sky/5 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-sky);
+  }
+  .pillar-card .pillar-icon svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .pillar-card h3 {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    color: var(--c-white);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+  .pillar-card p {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    text-align: center;
+  }
+
+  /* ============================================ */
+  /* FORMS                                        */
+  /* ============================================ */
+  .form-row { display: grid; gap: 0.375rem; margin-bottom: 1.25rem; }
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--c-navy);
+  }
+  .form-label .req { color: #D32F2F; }
+  .form-input, .form-textarea {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--c-navy);
+    background: var(--c-pure-white);
+    border: 1px solid var(--c-navy-10);
+    border-radius: 6px;
+    padding: 0.75rem 0.875rem;
+    width: 100%;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--c-sky);
+    background: var(--c-pure-white);
+    outline: none;
+  }
+  .form-input.error, .form-textarea.error { border-color: #D32F2F; }
+  .form-help { font-size: 0.8125rem; color: var(--c-navy-60); }
+  .form-error { font-size: 0.8125rem; color: #D32F2F; margin-top: 0.25rem; }
+  .form-textarea { min-height: 120px; resize: vertical; }
+
+  /* ============================================ */
+  /* POSTCARD                                     */
+  /* ============================================ */
+  .postcard {
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+    cursor: pointer;
+  }
+  .postcard:hover {
+    border-color: rgba(0, 40, 92, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 40, 92, 0.08);
+  }
+  .postcard-thumb {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--c-navy-05) 0%, var(--c-sky-10) 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .postcard-thumb svg { width: 56px; height: 56px; color: var(--c-navy-60); }
+  .postcard-body { padding: 1rem 1.25rem 1.25rem; }
+  .postcard-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .postcard-title { font-family: var(--font-body); font-weight: 600; font-size: 1.0625rem; line-height: 1.3; color: var(--c-navy); margin-bottom: 0.25rem; }
+  .postcard-date { font-size: 0.8125rem; color: var(--c-navy-60); }
+
+  /* ============================================ */
+  /* MATCH LIST ITEM                              */
+  /* ============================================ */
+  .match-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+    transition: background-color 200ms ease;
+  }
+  .match-item:hover { background: #F5F8FB; }
+  .match-date { font-weight: 600; color: var(--c-navy); font-size: 0.9375rem; min-width: 80px; }
+  .match-vs { color: var(--c-navy); font-weight: 600; }
+  .match-meta { color: var(--c-navy-60); font-size: 0.875rem; display: flex; gap: 0.75rem; }
+  .match-link { color: var(--c-navy-60); font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ============================================ */
+  /* CALENDAR FILTERS                             */
+  /* ============================================ */
+  .cal-filters {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #F5F8FB;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  .cal-tab {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    color: var(--c-navy);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 200ms ease, color 200ms ease;
+    white-space: nowrap;
+  }
+  .cal-tab:hover { background: rgba(66, 154, 192, 0.10); }
+  .cal-tab.is-active { background: var(--c-navy); color: var(--c-white); }
+
+  /* ============================================ */
+  /* ICONS                                        */
+  /* ============================================ */
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; }
+  .icon-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+  }
+  .icon-cell svg { width: 28px; height: 28px; color: var(--c-navy); }
+  .icon-cell .icon-name { font-size: 0.75rem; color: var(--c-navy-60); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ============================================ */
+  /* ANIMATIONS                                   */
+  /* ============================================ */
+  .anim-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .anim-card {
+    padding: 1.5rem;
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    border-radius: 8px;
+  }
+  .anim-target {
+    padding: 1rem;
+    background: var(--c-navy-05);
+    border-radius: 6px;
+    text-align: center;
+    color: var(--c-navy);
+    margin-bottom: 1rem;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+  }
+  .anim-target--border {
+    border: 2px solid var(--c-sky);
+  }
+  .anim-card:hover .anim-target { background: var(--c-sky-10); }
+  .anim-card:hover .anim-target--border { border-color: var(--c-navy); background: var(--c-navy-05); color: var(--c-navy); }
+
+  /* ============================================ */
+  /* LAYOUT PATTERNS                               */
+  /* ============================================ */
+  .layer-demo {
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .layer-demo--base { background: var(--c-pure-white); border: var(--border-soft); }
+  .layer-demo--container { background: var(--c-white); border: var(--border-soft); }
+  .layer-demo--dark { background: var(--c-navy); color: var(--c-white); border: var(--border-on-navy); }
+  .layer-demo--darker { background: var(--c-navy-dark); color: var(--c-white); border: var(--border-on-navy); }
+  .layer-demo h4 { font-family: var(--font-body); font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
+  .layer-demo p { font-size: 0.875rem; }
+
+  /* ============================================ */
+  /* PROHIBITIONS (DO-NOT)                        */
+  /* ============================================ */
+  .do-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .do-card {
+    border: 2px solid var(--c-cat-pre);
+    border-radius: 8px;
+    padding: 1.25rem;
+    background: rgba(26, 138, 106, 0.04);
+  }
+  .do-card--bad {
+    border-color: #D32F2F;
+    background: rgba(211, 47, 47, 0.04);
+  }
+  .do-card h5 {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-cat-pre);
+    margin-bottom: 0.75rem;
+  }
+  .do-card--bad h5 { color: #D32F2F; }
+  .do-card .demo {
+    padding: 1rem;
+    background: var(--c-pure-white);
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+  .do-card .reason { font-size: 0.8125rem; color: var(--c-navy-60); }
+
+  /* Bad demo variations */
+  .demo--glass {
+    background: rgba(66, 154, 192, 0.30);
+    backdrop-filter: blur(8px);
+    color: var(--c-navy);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  .demo--neon {
+    background: linear-gradient(135deg, #ff00ff, #00ffff);
+    color: white;
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
+  }
+  .demo--hover-scale {
+    background: var(--c-pure-white);
+    border: var(--border-soft);
+    color: var(--c-navy);
+    transition: transform 200ms ease;
+  }
+  .do-card:hover .demo--hover-scale { transform: scale(1.05); }
+  .demo--diag {
+    background: linear-gradient(45deg, var(--c-cat-pre), var(--c-sky));
+    color: white;
+  }
+  .demo--saturated {
+    background: #ec4899;
+    color: white;
+  }
+  .demo--gray {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+  }
+
+  /* ============================================ */
+  /* FOOTER                                       */
+  /* ============================================ */
+  .site-footer {
+    background: var(--c-navy-dark);
+    color: var(--c-white);
+    padding: 4rem 0 2rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+  .footer-col h5 {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    color: var(--c-white);
+  }
+  .footer-col p { color: rgba(255, 255, 255, 0.7); font-size: 0.875rem; max-width: 32ch; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.625rem; }
+  .footer-col a { color: rgba(255, 255, 255, 0.7); font-size: 0.875rem; transition: color 200ms ease; }
+  .footer-col a:hover { color: var(--c-sky); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* ============================================ */
+  /* UTILITIES                                    */
+  /* ============================================ */
+  .m-bottom-1 { margin-bottom: 0.5rem; }
+  .m-bottom-2 { margin-bottom: 1rem; }
+  .m-bottom-3 { margin-bottom: 1.5rem; }
+  .m-bottom-4 { margin-bottom: 2.5rem; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .meta-text { font-size: 0.75rem; color: var(--c-navy-60); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  /* ============================================ */
+  /* REDUCED MOTION                               */
+  /* ============================================ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+    .do-card:hover .demo--hover-scale { transform: none; }
+    .btn:hover .arrow { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- HERO                                         -->
+<!-- ============================================ -->
+<header class="hero">
+  <div class="container-x">
+    <div class="hero-grid">
+      <img src="../public/Logo-PCFC.svg" alt="Punta Cana FC" class="hero-logo" />
+      <div>
+        <div class="eyebrow">Punta Cana FC · Academia Premium</div>
+        <h1>Guía de Estilo</h1>
+        <p class="tagline">Sistema visual del club: paleta, tipografía, componentes y patrones que usamos en puntacanafc.com. Referencia única para diseño, contenido y desarrollo.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================ -->
+<!-- STICKY NAV                                   -->
+<!-- ============================================ -->
+<div class="nav-bar">
+  <div class="container-x">
+    <nav>
+      <a href="#colores">Colores</a>
+      <a href="#tipografia">Tipografía</a>
+      <a href="#botones">Botones</a>
+      <a href="#badges">Badges</a>
+      <a href="#cards">Cards</a>
+      <a href="#formularios">Formularios</a>
+      <a href="#postcard">PostCard</a>
+      <a href="#partidos">Partidos</a>
+      <a href="#calendario">Calendario</a>
+      <a href="#iconos">Iconos</a>
+      <a href="#animaciones">Animaciones</a>
+      <a href="#layout">Layout</a>
+      <a href="#accesibilidad">Accesibilidad</a>
+      <a href="#prohibiciones">Prohibiciones</a>
+      <a href="#footer" class="nav-cta">Inscribirse</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 1. PALETA DE COLORES                         -->
+<!-- ============================================ -->
+<section id="colores" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">01</div>
+      <div class="sg-eyebrow">Paleta de Colores</div>
+      <h2 class="sg-title">Sistema cromático oficial</h2>
+      <p class="sg-desc">Colores principales, escala de apoyo y badges por categoría. Solo se usan los HEX definidos aquí — nunca grises de Tailwind ni colores fuera de paleta.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Paleta principal</h3>
+    <div class="palette-grid m-bottom-4">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #00285C"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">PCFC Navy</div>
+          <div class="swatch-hex">#00285C</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #429AC0"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">PCFC Sky</div>
+          <div class="swatch-hex">#429AC0</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #FAFAF9; border-bottom: var(--border-soft)"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">PCFC White</div>
+          <div class="swatch-hex">#FAFAF9</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #FFFFFF; border-bottom: var(--border-soft)"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Pure White</div>
+          <div class="swatch-hex">#FFFFFF</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #071D3B"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Navy Dark</div>
+          <div class="swatch-hex">#071D3B</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #C8C8C8"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">PCFC Silver</div>
+          <div class="swatch-hex">#C8C8C8</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Escala de apoyo (Navy + Sky)</h3>
+    <div class="palette-grid m-bottom-4">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #33547F"></div>
+        <div class="swatch-info"><div class="swatch-name">Navy 60</div><div class="swatch-hex">#33547F</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #6685A6"></div>
+        <div class="swatch-info"><div class="swatch-name">Navy 30</div><div class="swatch-hex">#6685A6</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #B4C5D6"></div>
+        <div class="swatch-info"><div class="swatch-name">Navy 10</div><div class="swatch-hex">#B4C5D6</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #E8F0F5; border-bottom: var(--border-soft)"></div>
+        <div class="swatch-info"><div class="swatch-name">Navy 05</div><div class="swatch-hex">#E8F0F5</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #79B8D3"></div>
+        <div class="swatch-info"><div class="swatch-name">Sky 60</div><div class="swatch-hex">#79B8D3</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #B4D7E5"></div>
+        <div class="swatch-info"><div class="swatch-name">Sky 30</div><div class="swatch-hex">#B4D7E5</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #E1F0F6; border-bottom: var(--border-soft)"></div>
+        <div class="swatch-info"><div class="swatch-name">Sky 10</div><div class="swatch-hex">#E1F0F6</div></div>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Colores por categoría</h3>
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background: #1A8A6A"></div>
+        <div class="swatch-info"><div class="swatch-name">Pre-Formativas (4-8)</div><div class="swatch-hex">#1A8A6A</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #2E7D9B"></div>
+        <div class="swatch-info"><div class="swatch-name">Formativas Bajas (9-12)</div><div class="swatch-hex">#2E7D9B</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #B8860B"></div>
+        <div class="swatch-info"><div class="swatch-name">Formativas Altas (13-15)</div><div class="swatch-hex">#B8860B</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: #001F42"></div>
+        <div class="swatch-info"><div class="swatch-name">Elite / Reserva (16-19)</div><div class="swatch-hex">#001F42</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 2. TIPOGRAFÍA                                -->
+<!-- ============================================ -->
+<section id="tipografia" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">02</div>
+      <div class="sg-eyebrow">Tipografía</div>
+      <h2 class="sg-title">Jerarquía con contraste de escala</h2>
+      <p class="sg-desc">Bowlby One SC para titulares (display, mayúscula, heráldica). Inter para todo lo demás. El contraste de escala ES la personalidad — un H1 a 64px junto a un caption a 14px.</p>
+    </div>
+
+    <div class="type-row">
+      <div class="type-label">H1 · 48–64px<br/>Bowlby One SC</div>
+      <div class="type-sample t-h1">VISIÓN · MISIÓN</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H2 · 32–40px<br/>Bowlby One SC</div>
+      <div class="type-sample t-h2">PRÓXIMO PARTIDO</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H3 · 24–28px<br/>Inter Bold</div>
+      <div class="type-sample t-h3">Tu hijo tiene un camino claro</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H4 · 20px<br/>Inter SemiBold</div>
+      <div class="type-sample t-h4">Formativas Bajas Sub-12</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Body · 16px<br/>Inter Regular</div>
+      <div class="type-sample t-body">Academia premium de alto rendimiento del Caribe dominicano. Aquí se juega, aquí se forma. Mañana, con luz natural, con la camiseta bien puesta, en serio.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Caption · 14px<br/>Inter Medium</div>
+      <div class="type-sample t-caption">15 de septiembre · Estadio Municipal</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">UI · 14–16px<br/>Inter Medium</div>
+      <div class="type-sample t-ui">Inscribirse ahora</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Eyebrow · 12px<br/>Inter SemiBold · Uppercase</div>
+      <div class="type-sample t-eyebrow">Categoría · Próximamente</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 3. BOTONES                                   -->
+<!-- ============================================ -->
+<section id="botones" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">03</div>
+      <div class="sg-eyebrow">Botones</div>
+      <h2 class="sg-title">Variantes oficiales</h2>
+      <p class="sg-desc">Cinco estilos: primary (navy), sky, outline, outline-on-navy y ghost. Transición 200ms en background-color y border-color. Nunca <code>transform</code>.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Sobre fondo claro</h3>
+    <div class="btn-row m-bottom-4">
+      <button class="btn btn--primary">Inscribirse</button>
+      <button class="btn btn--sky">Ver calendario</button>
+      <button class="btn btn--outline">Más información</button>
+      <button class="btn btn--ghost">Leer más →</button>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Tamaño grande (LG)</h3>
+    <div class="btn-row m-bottom-4">
+      <button class="btn btn--primary btn--lg">Inscribirse ahora <span class="arrow">→</span></button>
+      <button class="btn btn--sky btn--lg">Próximos partidos <span class="arrow">→</span></button>
+      <button class="btn btn--outline btn--lg">Ver fotos <span class="arrow">→</span></button>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Estados</h3>
+    <div class="btn-row m-bottom-4">
+      <button class="btn btn--primary">Default</button>
+      <button class="btn btn--primary" disabled>Disabled</button>
+    </div>
+
+    <div class="sg-block sg-block--on-navy" style="margin: 3rem -2.5rem -4rem; padding: 3rem 2.5rem; border-radius: 0;">
+      <h3 class="t-h3 m-bottom-3" style="color: var(--c-white)">Sobre fondo navy</h3>
+      <div class="btn-row">
+        <button class="btn btn--sky btn--on-navy">Inscribirse</button>
+        <button class="btn btn--outline-on-navy">Más información</button>
+        <button class="btn btn--ghost" style="color: var(--c-white)">Leer más →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 4. BADGES                                    -->
+<!-- ============================================ -->
+<section id="badges" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">04</div>
+      <div class="sg-eyebrow">Badges</div>
+      <h2 class="sg-title">Identificación de categoría</h2>
+      <p class="sg-desc">Inter SemiBold 11px, uppercase, letter-spacing 0.08em, padding 4×10, border-radius 4px. Fondo a 10-14% opacidad del color, texto en color sólido.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Sobre fondo claro</h3>
+    <div class="badge-row m-bottom-4">
+      <span class="badge badge--pre">Pre-Formativas</span>
+      <span class="badge badge--form-baja">Formativas Bajas</span>
+      <span class="badge badge--form-alta">Formativas Altas</span>
+      <span class="badge badge--elite">Elite / Reserva</span>
+      <span class="badge badge--sky">Nuevo</span>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Con texto contextual</h3>
+    <div class="badge-row m-bottom-4">
+      <span class="badge badge--form-baja">Sub-12 · Próximo</span>
+      <span class="badge badge--pre">Sub-8 · Este sábado</span>
+      <span class="badge badge--elite">Reserva · Final</span>
+    </div>
+
+    <div class="sg-block sg-block--on-navy" style="margin: 3rem -2.5rem -4rem; padding: 3rem 2.5rem; border-radius: 0;">
+      <h3 class="t-h3 m-bottom-3" style="color: var(--c-white)">Sobre fondo navy</h3>
+      <div class="badge-row">
+        <span class="badge badge--sky-on-navy">Sub-12</span>
+        <span class="badge badge--sky-on-navy">Próximo</span>
+        <span class="badge badge--sky-on-navy">Fotos disponibles</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 5. CARDS                                     -->
+<!-- ============================================ -->
+<section id="cards" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">05</div>
+      <div class="sg-eyebrow">Cards</div>
+      <h2 class="sg-title">Contenedores de contenido</h2>
+      <p class="sg-desc">Fondo blanco con borde navy 10%, border-radius 8px, padding 1.5rem. Hover: borde navy 25% + sombra sutil. Nunca <code>hover:scale</code>.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Card estándar</h3>
+    <div class="card-grid m-bottom-4">
+      <div class="card">
+        <h3>Card estándar</h3>
+        <p>Borde navy 10%, sin sombra estática. Hover: borde más marcado y sombra sutil. Padding 1.5rem.</p>
+      </div>
+      <div class="card">
+        <h3>Otra card</h3>
+        <p>El whitespace generoso entre cards (gap ≥ 2rem) hace el trabajo. No hacen falta sombras ni separadores.</p>
+      </div>
+      <div class="card">
+        <h3>Tercera card</h3>
+        <p>El número grande decorativo va detrás en navy 05% — marca visual del club sin gritar.</p>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Card con número decorativo</h3>
+    <div class="card-grid m-bottom-4">
+      <div class="card card--decor" data-num="4">
+        <div class="eyebrow" style="color: var(--c-navy-60)">Pre-Formativas</div>
+        <h3>Sub-4 · 4 a 5 años</h3>
+        <p>Primer contacto con el balón. Trabajo de coordinación, motricidad y diversión. Sesiones de 60 minutos.</p>
+      </div>
+      <div class="card card--decor" data-num="12">
+        <div class="eyebrow" style="color: var(--c-navy-60)">Formativas Bajas</div>
+        <h3>Sub-12 · 11 a 12 años</h3>
+        <p>Técnica individual, primeros conceptos tácticos. Inicio de la competencia federada.</p>
+      </div>
+    </div>
+
+    <div class="sg-block sg-block--on-navy" style="margin: 3rem -2.5rem -4rem; padding: 3rem 2.5rem; border-radius: 0;">
+      <h3 class="t-h3 m-bottom-3" style="color: var(--c-white)">Card sobre fondo navy</h3>
+      <div class="card-grid">
+        <div class="card card--on-navy">
+          <h3 style="color: var(--c-white)">Card sobre navy</h3>
+          <p>Fondo navy, borde blanco 8% opacidad. Hover: borde blanco 20%. Texto blanco 78% para lede.</p>
+        </div>
+        <div class="card card--on-navy">
+          <h3 style="color: var(--c-white)">Otra card</h3>
+          <p>El número decorativo en este caso va en sky 10% en lugar de navy 05%.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="color: var(--c-white)">Feature card / Pillar card</h3>
+    <p class="sg-desc" style="color: var(--c-navy-60); margin-bottom: 2rem;">Tarjeta de valor con fondo navy-dark, sombra navy, icono sky.</p>
+    <div class="card-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon">
+          <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2 3.74 9.24l-.38 6.2 7.1 3.07v1.5h2v-1.5L16.08 22l7.1-3.07 1.18-6.88L12 2z"/>
+          </svg>
+        </div>
+        <h3>Metodología europea</h3>
+        <p>Plan formativo estructurado por etapa biológica, no por edad cronológica.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">
+          <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="9" r="3"/>
+            <path d="M9 15.5c1.93 1.06 4.17.56 5.24-.41.28-.24.5-.56.5-.93 0-.66-.54-1.18-1.2-1.18-.41 0-.81.18-1.12.49-.18.18-.28.42-.28.69V13c0 .55-.45 1-1 1s-1-.45-1-1V9c0-.55.45-1 1-1 1.1 0 2.18-.41 3-1.12.81-.7 1.2-1.77 1-2.8V3c0-.55-.45-1-1-1C14.5 2 14 2.45 14 3v1.1c0 1.1-.9 2-2 2s-2-1-2-2.1V3c0-.55-.45-1-1-1S6 2.45 6 3v3.9c0 1.1-.9 2-2 2S2 10.9 2 12v2.8c0 1.1-.9 2-2 2s-1-1-1-2v-.8c-.66 0-1.2-...."/>
+          </svg>
+        </div>
+        <h3>Formación integral</h3>
+        <p>Valores, disciplina y liderazgo. Coordinación con el área académica y familiar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 6. FORMULARIOS                               -->
+<!-- ============================================ -->
+<section id="formularios" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">06</div>
+      <div class="sg-eyebrow">Formularios</div>
+      <h2 class="sg-title">Inputs claros, errores honestos</h2>
+      <p class="sg-desc">Labels siempre visibles, focus ring celeste, errores en rojo #D32F2F con mensaje descriptivo. Menos campos, más claridad.</p>
+    </div>
+
+    <div style="max-width: 480px;">
+      <div class="form-row">
+        <label class="form-label" for="nombre">Nombre del jugador <span class="req">*</span></label>
+        <input class="form-input" type="text" id="nombre" placeholder="Como aparece en el documento" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="categoria">Categoría <span class="req">*</span></label>
+        <select class="form-input" id="categoria">
+          <option>Sub-8 (Pre-Formativas)</option>
+          <option>Sub-12 (Formativas Bajas)</option>
+          <option>Sub-15 (Formativas Altas)</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="email">Email de contacto <span class="req">*</span></label>
+        <input class="form-input error" type="email" id="email" value="correo-invalido" />
+        <span class="form-error">Ingresa un email válido (ej. nombre@correo.com)</span>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="comentarios">Comentarios</label>
+        <textarea class="form-textarea" id="comentarios" placeholder="Cuéntanos sobre el jugador: experiencia previa, posición preferida, etc."></textarea>
+        <span class="form-help">Opcional · máximo 500 caracteres</span>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="acepta">
+          <input type="checkbox" id="acepta" /> Acepto los términos y condiciones
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn--primary">Enviar inscripción</button>
+        <button class="btn btn--ghost">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 7. POSTCARD                                  -->
+<!-- ============================================ -->
+<section id="postcard" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">07</div>
+      <div class="sg-eyebrow">PostCard · Fotos</div>
+      <h2 class="sg-title">Tarjeta de post fotográfico</h2>
+      <p class="sg-desc">Card con thumbnail (aspect-ratio 4:3) + badge de categoría + título "[Categoría] vs [Rival]" + fecha. Click navega al post individual.</p>
+    </div>
+
+    <div class="card-grid">
+      <article class="postcard">
+        <div class="postcard-thumb">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+        </div>
+        <div class="postcard-body">
+          <div class="postcard-meta">
+            <span class="badge badge--form-baja">Formativas Bajas</span>
+            <span class="postcard-date">28 ago</span>
+          </div>
+          <h3 class="postcard-title">Sub-12 vs Atlético San Pedro</h3>
+          <p class="postcard-date">32 fotos · Estadio Municipal</p>
+        </div>
+      </article>
+
+      <article class="postcard">
+        <div class="postcard-thumb">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+        </div>
+        <div class="postcard-body">
+          <div class="postcard-meta">
+            <span class="badge badge--pre">Pre-Formativas</span>
+            <span class="postcard-date">21 ago</span>
+          </div>
+          <h3 class="postcard-title">Sub-8 vs Escuela Bavaro</h3>
+          <p class="postcard-date">18 fotos · Cancha 3</p>
+        </div>
+      </article>
+
+      <article class="postcard">
+        <div class="postcard-thumb">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+        </div>
+        <div class="postcard-body">
+          <div class="postcard-meta">
+            <span class="badge badge--elite">Elite</span>
+            <span class="postcard-date">14 ago</span>
+          </div>
+          <h3 class="postcard-title">Reserva vs Moca FC</h3>
+          <p class="postcard-date">45 fotos · Estadio de Moca</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 8. MATCH LIST ITEM                           -->
+<!-- ============================================ -->
+<section id="partidos" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">08</div>
+      <div class="sg-eyebrow">MatchListItem</div>
+      <h2 class="sg-title">Fila de partido (calendario)</h2>
+      <p class="sg-desc">Fila horizontal: badge + fecha + categoría vs rival + ubicación + enlace a fotos. Hover: fondo #F5F8FB.</p>
+    </div>
+
+    <div class="btn-stack" style="max-width: 920px;">
+      <div class="match-item">
+        <span class="badge badge--elite">Elite</span>
+        <span class="match-date">15 SEP</span>
+        <div>
+          <div class="match-vs">Reserva vs Atlético Punta Cana</div>
+          <div class="match-meta">
+            <span>📍 Estadio Municipal · 16:00</span>
+          </div>
+        </div>
+        <span class="badge badge--sky">Próximo</span>
+        <a href="#" class="match-link">Ver fotos →</a>
+      </div>
+
+      <div class="match-item">
+        <span class="badge badge--form-alta">Formativas Altas</span>
+        <span class="match-date">13 SEP</span>
+        <div>
+          <div class="match-vs">Sub-15 vs Moca FC</div>
+          <div class="match-meta">
+            <span>📍 Cancha 2 · 09:00</span>
+          </div>
+        </div>
+        <span class="badge badge--sky">Próximo</span>
+        <a href="#" class="match-link">Ver fotos →</a>
+      </div>
+
+      <div class="match-item">
+        <span class="badge badge--form-baja">Formativas Bajas</span>
+        <span class="match-date">06 SEP</span>
+        <div>
+          <div class="match-vs">Sub-12 vs Bavaro Academy</div>
+          <div class="match-meta">
+            <span>📍 Cancha 1 · 10:30</span>
+          </div>
+        </div>
+        <span class="badge badge--sky">Próximo</span>
+        <a href="#" class="match-link">Ver fotos →</a>
+      </div>
+
+      <div class="match-item">
+        <span class="badge badge--pre">Pre-Formativas</span>
+        <span class="match-date">30 AGO</span>
+        <div>
+          <div class="match-vs">Sub-8 vs Escuela Bavaro</div>
+          <div class="match-meta">
+            <span>📍 Cancha 3 · 09:00</span>
+            <span>· 3-1 ✓</span>
+          </div>
+        </div>
+        <span class="badge badge--sky">Pasado</span>
+        <a href="#" class="match-link">Ver fotos →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 9. CALENDAR FILTERS                          -->
+<!-- ============================================ -->
+<section id="calendario" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">09</div>
+      <div class="sg-eyebrow">CalendarFilters</div>
+      <h2 class="sg-title">Tabs de filtro</h2>
+      <p class="sg-desc">Tabs horizontales con las 4 categorías + "Todas". Fondo #F5F8FB, tab activa fondo navy con texto blanco. Inter SemiBold 13px.</p>
+    </div>
+
+    <div class="cal-filters" style="max-width: 720px;">
+      <button class="cal-tab is-active">Todas</button>
+      <button class="cal-tab">Pre-Formativas</button>
+      <button class="cal-tab">Formativas Bajas</button>
+      <button class="cal-tab">Formativas Altas</button>
+      <button class="cal-tab">Elite / Reserva</button>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="margin-top: 3rem">Variante: tabs sin fondo contenedor</h3>
+    <div class="cal-filters" style="max-width: 720px; background: transparent; padding: 0; gap: 0; border-bottom: var(--border-soft); border-radius: 0;">
+      <button class="cal-tab is-active" style="border-radius: 0;">Todas</button>
+      <button class="cal-tab" style="border-radius: 0;">Pre-Formativas</button>
+      <button class="cal-tab" style="border-radius: 0;">Formativas Bajas</button>
+      <button class="cal-tab" style="border-radius: 0;">Elite</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 10. ICONOGRAFÍA                              -->
+<!-- ============================================ -->
+<section id="iconos" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">10</div>
+      <div class="sg-eyebrow">Iconografía</div>
+      <h2 class="sg-title">Set de iconos SVG</h2>
+      <p class="sg-desc">Iconos en línea (stroke 1.5–2), color navy 30% o sky según contexto. Tamaño 24px estándar, 28px en showcase.</p>
+    </div>
+
+    <div class="icon-grid">
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          <path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+        </svg>
+        <span class="icon-name">location</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+          <circle cx="12" cy="13" r="3" />
+        </svg>
+        <span class="icon-name">camera</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+        <span class="icon-name">arrow</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M6 18 18 6M6 6l12 12" />
+        </svg>
+        <span class="icon-name">close</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span class="icon-name">download</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+        <span class="icon-name">chevron-r</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+        <span class="icon-name">chevron-l</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+        <span class="icon-name">chevron-d</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+        <span class="icon-name">menu</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <span class="icon-name">time</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+        </svg>
+        <span class="icon-name">phone</span>
+      </div>
+      <div class="icon-cell">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+        </svg>
+        <span class="icon-name">heart</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 11. ANIMACIONES                              -->
+<!-- ============================================ -->
+<section id="animaciones" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">11</div>
+      <div class="sg-eyebrow">Animaciones</div>
+      <h2 class="sg-title">Transiciones medidas</h2>
+      <p class="sg-desc">200ms para UI micro, 800–1200ms para text reveals. Nunca <code>transition: all</code>. Respeta <code>prefers-reduced-motion</code>.</p>
+    </div>
+
+    <div class="anim-demo">
+      <div class="anim-card">
+        <div class="anim-target">Pasa el cursor aquí</div>
+        <div class="meta-text">background-color 200ms</div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-target anim-target--border">Borde animado</div>
+        <div class="meta-text">border-color 200ms</div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-target" style="color: var(--c-navy-60)">Cambio de color</div>
+        <div class="meta-text">color 200ms</div>
+      </div>
+      <div class="anim-card">
+        <div class="anim-target" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <span>Hover</span>
+          <span class="arrow" style="display: inline-block; color: var(--c-navy);">→</span>
+        </div>
+        <div class="meta-text">transform: translateX 200ms</div>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="margin-top: 3rem">Reglas</h3>
+    <ul style="color: var(--c-navy-60); padding-left: 1.25rem; line-height: 1.8;">
+      <li><strong>UI micro</strong> (hover, tab change): 150–200ms, ease</li>
+      <li><strong>Entry</strong> (sección al scroll): 600–900ms, ease-out</li>
+      <li><strong>Text reveal</strong>: 800–1200ms, con stagger 0.03s</li>
+      <li><strong>NUNCA</strong> <code>transition: all</code> — especificar propiedades exactas</li>
+      <li><strong>NUNCA</strong> rebote/elastic en UI</li>
+      <li><strong>NUNCA</strong> <code>transform: scale()</code> en hover de cards</li>
+      <li><strong>SIEMPRE</strong> <code>prefers-reduced-motion: reduce</code> → desactivar todo</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 12. LAYOUT PATTERNS                          -->
+<!-- ============================================ -->
+<section id="layout" class="sg-block sg-block--soft">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">12</div>
+      <div class="sg-eyebrow">Layout · Capas</div>
+      <h2 class="sg-title">Sistema de superficies</h2>
+      <p class="sg-desc">Tres capas: fondo base (blanco o navy), contenedores (white/navy con borde 10%) y superficies oscuras (navy + dark). Whitespace generoso entre cards, nunca líneas gruesas.</p>
+    </div>
+
+    <div class="layer-demo layer-demo--base">
+      <h4>Capa 0 · Fondo base blanco</h4>
+      <p>Usado en secciones de contenido: categorías, club, inscripción. Texto navy sobre blanco: contraste 14.6:1.</p>
+    </div>
+
+    <div class="layer-demo layer-demo--container">
+      <h4>Capa 1 · Contenedor (white #FAFAF9)</h4>
+      <p>Borde navy 10%, border-radius 8px (cards) o 12px (contenedores grandes). Sin sombras estáticas. Whitespace ≥ 2rem entre cards.</p>
+    </div>
+
+    <div class="layer-demo layer-demo--dark">
+      <h4>Capa 2 · Superficie navy</h4>
+      <p>Fondos hero, CTA, headers. Bordes blancos 8% opacidad. Texto blanco #FAFAF9.</p>
+    </div>
+
+    <div class="layer-demo layer-demo--darker">
+      <h4>Capa 2 · Superficie navy oscuro</h4>
+      <p>Solo para el footer. Background #071D3B. Bordes blancos 8%.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="margin-top: 3rem">Reglas de separación</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--c-navy-10);">
+          <th style="text-align: left; padding: 0.75rem 0; font-weight: 600;">Situación</th>
+          <th style="text-align: left; padding: 0.75rem 0; font-weight: 600;">Método</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: var(--border-soft);">
+          <td style="padding: 0.75rem 0;">Misma capa (dos cards)</td>
+          <td style="padding: 0.75rem 0; color: var(--c-navy-60);">Whitespace generoso (gap ≥ 2rem)</td>
+        </tr>
+        <tr style="border-bottom: var(--border-soft);">
+          <td style="padding: 0.75rem 0;">Capas diferentes (navy → blanco)</td>
+          <td style="padding: 0.75rem 0; color: var(--c-navy-60);">Borde fino <code>rgba(0,40,92,0.10)</code> O cambio de fondo</td>
+        </tr>
+        <tr style="border-bottom: var(--border-soft);">
+          <td style="padding: 0.75rem 0;">Elevación hover</td>
+          <td style="padding: 0.75rem 0; color: var(--c-navy-60);">Sombra: <code>0 4px 20px rgba(0,40,92,0.08)</code></td>
+        </tr>
+        <tr>
+          <td style="padding: 0.75rem 0; color: #D32F2F; font-weight: 600;">NUNCA</td>
+          <td style="padding: 0.75rem 0; color: var(--c-navy-60);">Líneas gruesas (&gt;2px), sombras como separadores, divisores de color fuerte</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="t-h3 m-bottom-3" style="margin-top: 3rem">Container-x · Section padding</h3>
+    <p style="color: var(--c-navy-60); max-width: 60ch;">
+      <code>container-x</code>: max-width 1280px, padding horizontal <code>clamp(1.25rem, 4vw, 2.5rem)</code>.<br/>
+      <code>section</code>: padding vertical <code>clamp(4rem, 8vw, 6rem)</code>.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 13. ACCESIBILIDAD                            -->
+<!-- ============================================ -->
+<section id="accesibilidad" class="sg-block">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num">13</div>
+      <div class="sg-eyebrow">Accesibilidad</div>
+      <h2 class="sg-title">WCAG AA + focus visible</h2>
+      <p class="sg-desc">Contraste mínimo 4.5:1 en texto normal, 3:1 en grande. Focus ring celeste visible en todo lo interactivo. Labels siempre presentes, nunca solo placeholder.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3">Focus ring (probá con Tab)</h3>
+    <div class="btn-row m-bottom-4">
+      <button class="btn btn--primary">Tab aquí</button>
+      <button class="btn btn--sky">O aquí</button>
+      <a href="#" style="color: var(--c-navy-60); font-weight: 600; padding: 0.875rem 0;">O un link</a>
+    </div>
+    <p style="color: var(--c-navy-60); font-size: 0.875rem; margin-bottom: 2rem;">
+      <code>outline: 2px solid #429AC0; outline-offset: 2px;</code> — siempre visible.
+    </p>
+
+    <h3 class="t-h3 m-bottom-3">Contraste de color</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4 style="font-family: var(--font-body); font-weight: 600; margin-bottom: 0.5rem;">Navy sobre blanco</h4>
+        <div style="font-family: ui-monospace, monospace; font-size: 0.875rem; color: var(--c-navy-60);">14.6:1 · WCAG AAA ✅</div>
+      </div>
+      <div class="card">
+        <h4 style="font-family: var(--font-body); font-weight: 600; margin-bottom: 0.5rem;">Blanco sobre navy</h4>
+        <div style="font-family: ui-monospace, monospace; font-size: 0.875rem; color: var(--c-navy-60);">14.6:1 · WCAG AAA ✅</div>
+      </div>
+      <div class="card">
+        <h4 style="font-family: var(--font-body); font-weight: 600; margin-bottom: 0.5rem;">Celeste sobre navy</h4>
+        <div style="font-family: ui-monospace, monospace; font-size: 0.875rem; color: var(--c-navy-60);">4.4:1 · WCAG AA ✅</div>
+      </div>
+      <div class="card">
+        <h4 style="font-family: var(--font-body); font-weight: 600; margin-bottom: 0.5rem;">Celeste sobre blanco</h4>
+        <div style="font-family: ui-monospace, monospace; font-size: 0.875rem; color: #D32F2F;">3.1:1 ⚠️ Solo texto grande o bold</div>
+      </div>
+      <div class="card">
+        <h4 style="font-family: var(--font-body); font-weight: 600; margin-bottom: 0.5rem;">Plata sobre blanco</h4>
+        <div style="font-family: ui-monospace, monospace; font-size: 0.875rem; color: #D32F2F;">1.6:1 ❌ Nunca para texto</div>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="margin-top: 3rem;">prefers-reduced-motion</h3>
+    <p style="color: var(--c-navy-60); max-width: 60ch; margin-bottom: 1rem;">
+      Todas las animaciones y transiciones se desactivan automáticamente si el usuario tiene esta preferencia activada en su sistema. <code>transition-duration: 0.01ms !important</code>.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 14. PROHIBICIONES                            -->
+<!-- ============================================ -->
+<section id="prohibiciones" class="sg-block sg-block--dark">
+  <div class="container-x">
+    <div class="sg-header">
+      <div class="sg-num" style="color: rgba(255, 255, 255, 0.15)">14</div>
+      <div class="sg-eyebrow" style="color: var(--c-navy-60)">Prohibiciones</div>
+      <h2 class="sg-title" style="color: var(--c-white)">Lo que NO se hace</h2>
+      <p class="sg-desc" style="color: rgba(255, 255, 255, 0.78)">PFCF no es una app gaming, ni un startup SaaS, ni una tienda. Estos patrones rompen la identidad del club.</p>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="color: var(--c-white)">Estilo — NUNCA</h3>
+    <div class="do-grid m-bottom-4">
+      <div class="do-card do-card--bad">
+        <h5>Glassmorphism</h5>
+        <div class="demo demo--glass">Card con blur</div>
+        <p class="reason">No usar <code>backdrop-filter: blur()</code> como elemento decorativo. Rompe la sobriedad del club.</p>
+      </div>
+      <div class="do-card do-card--bad">
+        <h5>Hover scale</h5>
+        <div class="demo demo--hover-scale">Card que crece</div>
+        <p class="reason">Nunca <code>transform: scale(1.05)</code> en hover. Usar cambio de borde + sombra sutil.</p>
+      </div>
+      <div class="do-card do-card--bad">
+        <h5>Neon / Glow</h5>
+        <div class="demo demo--neon">Brillo magenta</div>
+        <p class="reason">Sin gradientes tipo neón, sin <code>box-shadow: 0 0 30px</code>, sin border-glow. No somos gaming.</p>
+      </div>
+      <div class="do-card do-card--bad">
+        <h5>Gradiente diagonal</h5>
+        <div class="demo demo--diag">Fondo multicolor</div>
+        <p class="reason">Sin gradientes diagonales como fondo de sección. Solo navy → sky vertical o sólido.</p>
+      </div>
+      <div class="do-card do-card--bad">
+        <h5>Fondo saturado</h5>
+        <div class="demo demo--saturated">Pink saturado</div>
+        <p class="reason">No usar pink, emerald, violet, orange, yellow como fondo. Solo paleta navy + sky.</p>
+      </div>
+      <div class="do-card do-card--bad">
+        <h5>Grays de Tailwind</h5>
+        <div class="demo demo--gray">gray-100 / gray-600</div>
+        <p class="reason">No usar <code>gray-50</code>, <code>gray-100</code>, <code>gray-200</code>. Usar la escala navy de la marca.</p>
+      </div>
+    </div>
+
+    <h3 class="t-h3 m-bottom-3" style="color: var(--c-white); margin-top: 3rem;">Layout — NUNCA</h3>
+    <ul style="color: rgba(255, 255, 255, 0.78); padding-left: 1.25rem; line-height: 1.9;">
+      <li>Filas de 3 cards idénticas alineadas al mismo tamaño</li>
+      <li>Alternancia texto/imagen/texto/imagen genérica</li>
+      <li>Hero centrado con título + 2 botones + mockup flotante</li>
+      <li>Grid de 4-6 iconos circulares con título y párrafo debajo</li>
+      <li>Carrusel de testimonios con estrellas de valoración</li>
+      <li>Secciones de "Nuestros servicios" con iconos genéricos</li>
+    </ul>
+
+    <h3 class="t-h3 m-bottom-3" style="color: var(--c-white); margin-top: 3rem;">Copy — NUNCA</h3>
+    <ul style="color: rgba(255, 255, 255, 0.78); padding-left: 1.25rem; line-height: 1.9;">
+      <li>Headlines genéricos: "Nuestros servicios", "Lo que ofrecemos", "Contáctanos"</li>
+      <li>Subtítulos de relleno que no dicen nada</li>
+      <li>CTAs sin contexto: "Haz clic aquí", "Leer más", "Ver todo"</li>
+      <li>Mezclar inglés y español innecesariamente</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER                                       -->
+<!-- ============================================ -->
+<footer id="footer" class="site-footer">
+  <div class="container-x">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <img src="../public/Logo-PCFC.svg" alt="Punta Cana FC" style="height: 56px; width: auto; margin-bottom: 1rem; filter: brightness(0) invert(1);" />
+        <p>Academia premium de alto rendimiento del Caribe dominicano. Aquí se juega, aquí se forma.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Club</h5>
+        <ul>
+          <li><a href="#">Misión y Visión</a></li>
+          <li><a href="#">Staff y Directivos</a></li>
+          <li><a href="#">Historia</a></li>
+          <li><a href="#">Instalaciones</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Categorías</h5>
+        <ul>
+          <li><a href="#">Pre-Formativas</a></li>
+          <li><a href="#">Formativas Bajas</a></li>
+          <li><a href="#">Formativas Altas</a></li>
+          <li><a href="#">Elite / Reserva</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="#">WhatsApp</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Email</a></li>
+          <li><a href="#">Estadio Municipal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Punta Cana FC · Todos los derechos reservados</span>
+      <span>Hecho en Punta Cana con ❤</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

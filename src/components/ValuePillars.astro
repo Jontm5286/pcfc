@@ -1,0 +1,88 @@
+---
+/**
+ * ValuePillars — PCFC
+ * Sección "Por qué unirte" — 3 tarjetas de pilares de valor con:
+ *   - Ícono sky en cuadrado con borde cyan
+ *   - Título blanco en mayúsculas + tracking
+ *   - Descripción clara centrada
+ *   - Fondo navy con borde sutil y sombra
+ *
+ * Props:
+ *   - eyebrow?: string   Texto superpuesto
+ *   - title: string      Encabezado de la sección
+ *   - pillars: Pillar[]  Array de pilares { icon, title, copy, iconViewBox? }
+ *
+ * Pillar = {
+ *   icon: string         Path SVG d=""
+ *   title: string
+ *   copy: string
+ *   iconViewBox?: string default "0 0 24 24"
+ * }
+ */
+
+export interface Pillar {
+  icon: string;
+  title: string;
+  copy: string;
+  iconViewBox?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  pillars: Pillar[];
+}
+
+const { eyebrow, title, pillars } = Astro.props;
+---
+
+<section
+  class="relative w-full py-16 md:py-20 bg-navy-dark"
+  data-component="value-pillars"
+>
+  <div class="max-w-lx7 mx-auto px-8">
+    {(eyebrow || title) && (
+      <header class="mb-12 flex flex-col items-center text-center">
+        {eyebrow && (
+          <p class="eyebrow text-sky mb-3">{eyebrow}</p>
+        )}
+        <h2 class="text-[2.25rem] md:text-[2.75rem] leading-[1.1] text-white font-bold tracking-[0.9px]">
+          {title}
+        </h2>
+      </header>
+    )}
+
+    <ol class="list-none grid grid-cols-1 md:grid-cols-3 gap-8" role="list">
+      {pillars.map((p) => (
+        <li
+          class="pillar-card relative flex flex-col items-center text-center bg-navy-dark border border-navy-60/30 rounded-xl px-8 pt-10 pb-9 shadow-[0_4px_12px_rgba(0,40,92,0.12),0_10px_20px_rgba(0,40,92,0.08)]"
+        >
+          <!-- Icon -->
+          <span
+            class="w-16 h-16 shrink-0 flex items-center justify-center bg-sky/5 border border-sky rounded-xl mb-6 text-sky"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox={p.iconViewBox ?? "0 0 24 24"}
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8"
+              fill="none"
+            >
+              <path d={p.icon} fill="currentColor" fill-rule="nonzero"></path>
+            </svg>
+          </span>
+
+          <!-- Title -->
+          <h3 class="text-[1.125rem] leading-[1.55] text-white font-bold tracking-[0.9px] uppercase mb-3">
+            {p.title}
+          </h3>
+
+          <!-- Copy -->
+          <p class="text-[0.875rem] leading-[1.65] text-white/70">
+            {p.copy}
+          </p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

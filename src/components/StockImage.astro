@@ -1,0 +1,108 @@
+---
+/**
+ * StockImage — PCFC / FutbolPro
+ * Component reutilizable para imágenes de stock optimizadas a WebP.
+ *
+ * Props:
+ *   - name: string   — clave del stock (historia, directivo, entrenamiento, partido-sub13, jugadores-cancha)
+ *                    o URL directa (http(s)://...) cuando stock="external"
+ *   - alt: string    — texto accesible (REQUERIDO)
+ *   - width?: number — ancho intrínseco (para layout shift)
+ *   - height?: number
+ *   - className?: string — clases Tailwind extra
+ *   - loading?: "lazy"|"eager" — default "lazy"
+ *
+ * Genera <picture> con:
+ *   - <source type="image/webp" srcset="...300.webp 300w, ...800.webp 800w, ...1600.webp 1600w">
+ *   - <img> con sizes + loading lazy + decoding async
+ *
+ * Fallback: si el archivo .png original existe (foto real del usuario), usa el png.
+ *
+ * WCAG: siempre incluye alt accesible. Si alt vacío → aria-hidden.
+ */
+interface Props {
+  name: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  name,
+  alt,
+  width = 800,
+  height = 600,
+  className = '',
+  loading = 'lazy',
+} = Astro.props;
+
+// Si es URL externa, usar directamente (foto real post-semana)
+const isExternal = name.startsWith('http://') || name.startsWith('https://');
+
+// Clave base para archivos locales /public/images/stock/<name>.webp
+const base = isExternal
+  ? name
+  : `/images/stock/${name}`;
+
+const webp300 = base + '.webp';
+const webp800 = isExternal ? base : `/images/stock/${name}-800.webp`;
+const webp1600 = isExternal ? base : `/images/stock/${name}-1600.webp`;
+
+// El .png original (foto real) como último fallback — si existe, priorizar
+// Estrategia: <picture> con webp primero, luego img (webp o png)
+---
+
+<picture>
+  {isExternal ? (
+    <img
+      src={base}
+      alt={alt}
+      width={width}
+      height={height}
+      class:list={[className]}
+      loading={loading}
+      decoding="async"
+      style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+    />
+  ) : (
+    <>
+      <source
+        type="image/webp"
+        srcset={
+          `${webp300} 300w, ${webp800} 800w, ${webp1600} 1600w`
+        }
+        sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
+      />
+      <img
+        src={base + '.webp'}
+        alt={alt}
+        width={width}
+        height={height}
+        class:list={[className]}
+        loading={loading}
+        decoding="async"
+        style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+      />
+    </>
+  )}
+</picture>
+
+<style>
+  /* Hero overlay pattern reutilizable */
+  .hero-stock-overlay {
+    position: relative;
+  }
+  .hero-stock-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(7,29,59,0.75) 0%, rgba(7,29,59,0.85) 100%);
+    pointer-events: none;
+  }
+  .hero-stock-img {
+    position: relative;
+    z-index: 1;
+  }
+</style>
