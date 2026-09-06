@@ -331,6 +331,199 @@
           "type": "image"
         }
       ]
+    },
+    {
+      "slug": "next_match",
+      "label": "Next Match Hero",
+      "labelSingular": "Next Match",
+      "supports": [
+        "drafts",
+        "preview"
+      ],
+      "titleField": "home",
+      "fields": [
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "time",
+          "label": "Time",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "category",
+          "label": "Category",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "category_slug",
+          "label": "Category Slug",
+          "type": "select",
+          "options": [
+            "pre",
+            "form-baja",
+            "form-alta",
+            "elite"
+          ],
+          "required": true
+        },
+        {
+          "slug": "home",
+          "label": "Home Team",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "home_logo",
+          "label": "Home Logo",
+          "type": "image"
+        },
+        {
+          "slug": "away",
+          "label": "Away Team",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "away_logo",
+          "label": "Away Logo",
+          "type": "image"
+        },
+        {
+          "slug": "venue",
+          "label": "Venue",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "slug": "sponsors",
+      "label": "Sponsors",
+      "labelSingular": "Sponsor",
+      "supports": [
+        "drafts",
+        "preview",
+        "search"
+      ],
+      "titleField": "name",
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "logo",
+          "label": "Logo",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "href",
+          "label": "Href",
+          "type": "url"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "defaultValue": 99
+        }
+      ]
+    },
+    {
+      "slug": "gallery",
+      "label": "Gallery",
+      "labelSingular": "Gallery Image",
+      "supports": [
+        "drafts",
+        "preview",
+        "search"
+      ],
+      "titleField": "alt",
+      "fields": [
+        {
+          "slug": "src",
+          "label": "Src",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "alt",
+          "label": "Alt",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "defaultValue": 99
+        }
+      ]
+    },
+    {
+      "slug": "stats_pillars",
+      "label": "Stats & Pillars",
+      "labelSingular": "Stat/Pillar",
+      "supports": [
+        "drafts",
+        "preview",
+        "search"
+      ],
+      "fields": [
+        {
+          "slug": "kind",
+          "label": "Kind",
+          "type": "select",
+          "options": [
+            "stat",
+            "pillar"
+          ],
+          "required": true
+        },
+        {
+          "slug": "value",
+          "label": "Value",
+          "type": "string"
+        },
+        {
+          "slug": "label",
+          "label": "Label",
+          "type": "string"
+        },
+        {
+          "slug": "n",
+          "label": "Number",
+          "type": "string"
+        },
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "searchable": true
+        },
+        {
+          "slug": "copy",
+          "label": "Copy",
+          "type": "text"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "defaultValue": 99
+        }
+      ]
     }
   ]
 }

@@ -7,51 +7,29 @@ import { default as emdash } from 'emdash/astro';
 import { sqlite } from 'emdash/db';
 import node from '@astrojs/node';
 
-/**
- * PCFC — Astro 7 + EmDash CMS + Tailwind v4
- * =========================================
- * - output: 'static' → SSG puro. HTML estático desde src/content/*.
- * - getCollection() lee src/content/ (content.config.ts schemas) en BUILD TIME.
- * - EmDash integration: dev admin UI (/_emdash/admin). El content editable
- *   del cliente se guarda → sync a src/content/*.md por emdash dev server.
- *   Prod: pnpm exec astro build (SSG) → Cloudflare static (NUNCA Vercel).
- * - Dev: node adapter (para /_emdash/admin SSR endpoints).
- *   Prod build: adapter node generando standalone Node (o cloudflare en prod).
- *
- * El cliente edita textos/imágenes vía /_emdash/admin/ sin tocar diseño.
- * Ref: astro-cloudflare-deployment skill.
- */
+// PCFC astro.config.mjs — Astro 7 + EmDash CMS integration
+// Deploy target: Cloudflare (Workers + D1). Build local usa node adapter (SSR runtime).
 export default defineConfig({
   site: 'https://puntacanafc.com',
   trailingSlash: 'ignore',
   output: 'server', // SSR: evita prerender React conflict. /_emdash/* = SSR endpoints.
   adapter: node({
-    mode: 'single',
+    mode: 'single', // Astro 7.3.1 node adapter v11 API
+    types: { runtime: 'nodejs_18' },
   }),
   vite: {
     plugins: [tailwindcss()],
-    ssr: {
-      noExternal: ['emdash', 'kysely'],
-    },
   },
   integrations: [
-    react(),
+    react(), // EmDash admin UI hydration (React + TS)
     sitemap(),
     emdash({
-      // Dev DB → SQLite local. emdash init crea data/emdash.db.
-      database: sqlite({ url: 'file:./data/emdash.db' }),
-      contentCollections: {
-        enabled: true,
-        dir: 'src/content',
-      },
-      media: {
-        enabled: true,
-        provider: 'local',
-      },
-      auth: {
-        mode: process.env.NODE_ENV === 'production' ? 'email' : 'dev',
-      },
+      // Dev DB → SQLite local. EmDash v0.36: database = sqlite({ url }) dialect factory.
+      // EmDash integration auto-registra content collections desde src/content.config.ts
+      // via virtual loader. Auth admin: env EMDASH_DEV_AUTH=1 (dev mode auto-login).
+      database: sqlite({ url: 'file:./data.db' }),
     }),
   ],
-  prefetch: { prefetchDefault: true, prefetchAllRoutes: true },
+  // Security headers via Cloudflare (set in wrangler.toml / _headers)
+  // Local dev: Astro dev server sin headers extra.
 });
