@@ -206,11 +206,11 @@ const nextMatchCollection = defineCollection({
 // ─────────────────────────────────────────────────────────
 export const collections = {
   hero: heroCollection,
-  'club-history': clubCollection,
+  'club_history': clubCollection,
   categories: categoriesCollection,
   calendar: calendarCollection,
   sponsors: sponsorsCollection,
   gallery: galleryCollection,
-  'stats-pillars': statsCollection,
-  'next-match': nextMatchCollection,
+  'stats_pillars': statsCollection,
+  'next_match': nextMatchCollection,
 };

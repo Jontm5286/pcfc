@@ -124,7 +124,79 @@ declare module 'astro:content' {
 		: any;
 
 	type DataEntryMap = {
-		
+		"calendar": Record<string, {
+  id: string;
+  body?: string;
+  collection: "calendar";
+  data: InferEntrySchema<"calendar">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"categories": Record<string, {
+  id: string;
+  body?: string;
+  collection: "categories";
+  data: InferEntrySchema<"categories">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"club_history": Record<string, {
+  id: string;
+  body?: string;
+  collection: "club_history";
+  data: InferEntrySchema<"club_history">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"gallery": Record<string, {
+  id: string;
+  body?: string;
+  collection: "gallery";
+  data: InferEntrySchema<"gallery">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"hero": Record<string, {
+  id: string;
+  body?: string;
+  collection: "hero";
+  data: InferEntrySchema<"hero">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"next_match": Record<string, {
+  id: string;
+  body?: string;
+  collection: "next_match";
+  data: InferEntrySchema<"next_match">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"sponsors": Record<string, {
+  id: string;
+  body?: string;
+  collection: "sponsors";
+  data: InferEntrySchema<"sponsors">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+"stats_pillars": Record<string, {
+  id: string;
+  body?: string;
+  collection: "stats_pillars";
+  data: InferEntrySchema<"stats_pillars">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
+
 	};
 
 	type ExtractLoaderTypes<T> = T extends import('astro/loaders').LiveLoader<
@@ -154,6 +226,6 @@ declare module 'astro:content' {
 		LiveContentConfig['collections'][C]['loader']
 	>;
 
-	export type ContentConfig = never;
+	export type ContentConfig = typeof import("../src/content.config.js");
 	export type LiveContentConfig = never;
 }

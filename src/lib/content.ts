@@ -16,7 +16,7 @@ import type { NextMatch, Category, Stat, GalleryImage, SponsorItem, Pillar } fro
 
 // ── next-match (singleton) ──
 export async function getNextMatch() {
-  const items = await getCollection('next-match');
+  const items = await getCollection('next_match');
   if (items.length === 0) return null;
   return items[0].data as unknown as NextMatch;
 }
@@ -31,7 +31,7 @@ export async function getCategories() {
 
 // ── stats (700+, 20+, etc.) ──
 export async function getStats() {
-  const items = await getCollection('stats-pillars');
+  const items = await getCollection('stats_pillars');
   return items
     .filter((i) => i.data.kind === 'stat')
     .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
@@ -40,7 +40,7 @@ export async function getStats() {
 
 // ── pillars (Metodología europea, etc.) ──
 export async function getPillars() {
-  const items = await getCollection('stats-pillars');
+  const items = await getCollection('stats_pillars');
   return items
     .filter((i) => i.data.kind === 'pillar')
     .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))

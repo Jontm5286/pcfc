@@ -6,7 +6,7 @@ import { getCollection } from 'astro:content';
 // ── Datos EDITABLES via EmDash CMS ──
 // Historia + equipo directivo → src/content/club-history/ (editable cliente).
 // Schema valida image.alt (WCAG), type enum (history/teamMember).
-const clubEntries = await getCollection('club-history');
+const clubEntries = await getCollection('club_history');
 const historyEntry = clubEntries.find((e) => e.data.type === 'history') ?? clubEntries[0];
 const history = historyEntry?.data ?? { content: ['Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe.'] };
 const teamMembers = clubEntries

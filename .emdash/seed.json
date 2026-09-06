@@ -525,5 +525,527 @@
         }
       ]
     }
-  ]
+  ],
+  "content": {
+    "calendar": [
+      {
+        "slug": "fixture-01",
+        "data": {
+          "kind": "nextMatch",
+          "date": "S\u00c1B 13 SEP",
+          "time": "10:00 AM",
+          "category": "Sub-13",
+          "category_slug": "form-baja",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "Atl\u00e9tico B\u00e1varo",
+          "away_logo": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&q=80"
+        },
+        "id": "6cc817dd-8dcf-41b5-bc46-708c047811f4"
+      },
+      {
+        "slug": "fixture-02",
+        "data": {
+          "kind": "upcoming",
+          "date": "S\u00c1B 20 SEP",
+          "time": "8:00 AM",
+          "category": "Sub-15",
+          "category_slug": "form-alta",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "Moca FC",
+          "away_logo": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=200&q=80"
+        },
+        "id": "434e91e2-1e6b-408d-bd92-31f6df618695"
+      },
+      {
+        "slug": "fixture-03",
+        "data": {
+          "kind": "upcoming",
+          "date": "DOM 21 SEP",
+          "time": "4:00 PM",
+          "category": "Formativas Bajas",
+          "category_slug": "form-baja",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "San Crist\u00f3bal",
+          "away_logo": "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=200&q=80"
+        },
+        "id": "f1cf9299-1927-4114-8c24-fc87f1c5047d"
+      },
+      {
+        "slug": "fixture-04",
+        "data": {
+          "kind": "upcoming",
+          "date": "S\u00c1B 27 SEP",
+          "time": "9:30 AM",
+          "category": "Pre-Formativas",
+          "category_slug": "pre",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "Hig\u00fcey United",
+          "away_logo": "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=200&q=80"
+        },
+        "id": "1d97dd2f-5caa-4be5-bcf7-b20002951843"
+      },
+      {
+        "slug": "fixture-05",
+        "data": {
+          "kind": "upcoming",
+          "date": "S\u00c1B 04 OCT",
+          "time": "10:00 AM",
+          "category": "Sub-17",
+          "category_slug": "form-alta",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "La Romana FC",
+          "away_logo": "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=200&q=80"
+        },
+        "id": "db080617-4bfe-4f64-baeb-fd35e0524956"
+      },
+      {
+        "slug": "fixture-past-01",
+        "data": {
+          "kind": "past",
+          "date": "S\u00c1B 06 SEP",
+          "time": "9:00 AM",
+          "category": "Sub-13",
+          "category_slug": "form-baja",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "River Plate Dominicano",
+          "away_logo": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&q=80"
+        },
+        "id": "b7d88d5e-3c33-48ba-bcfa-5fcb92764f02"
+      },
+      {
+        "slug": "fixture-past-02",
+        "data": {
+          "kind": "past",
+          "date": "S\u00c1B 30 AGO",
+          "time": "8:30 AM",
+          "category": "Sub-15",
+          "category_slug": "form-alta",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "San Pedro FC",
+          "away_logo": "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=200&q=80"
+        },
+        "id": "c46bf95c-dd38-4460-86c4-bd7de346d0dd"
+      }
+    ],
+    "categories": [
+      {
+        "slug": "pre",
+        "data": {
+          "item_slug": "pre",
+          "badge": "badge--pre",
+          "ages": "4 a 8 a\u00f1os",
+          "name": "Pre-Formativas",
+          "copy": "Primer contacto con el bal\u00f3n. Coordinaci\u00f3n, motricidad y amor por el juego.",
+          "order": 1
+        },
+        "id": "e589c166-ea52-4a9a-a7dd-84ff28d3fbdc"
+      },
+      {
+        "slug": "form-baja",
+        "data": {
+          "item_slug": "form-baja",
+          "badge": "badge--form-baja",
+          "ages": "9 a 12 a\u00f1os",
+          "name": "Formativas Bajas",
+          "copy": "T\u00e9cnica individual, fundamentos t\u00e1cticos y primeras competencias oficiales.",
+          "order": 2
+        },
+        "id": "2da90eea-a2ca-4116-ad35-d4529f071eeb"
+      },
+      {
+        "slug": "form-alta",
+        "data": {
+          "item_slug": "form-alta",
+          "badge": "badge--form-alta",
+          "ages": "13 a 15 a\u00f1os",
+          "name": "Formativas Altas",
+          "copy": "T\u00e1ctica avanzada, f\u00edsico espec\u00edfico y preparaci\u00f3n para competencia regional.",
+          "order": 3
+        },
+        "id": "3fc36a73-3f10-48f3-8dea-2ed75bb80c07"
+      },
+      {
+        "slug": "elite",
+        "data": {
+          "item_slug": "elite",
+          "badge": "badge--elite",
+          "ages": "16 a 19 a\u00f1os",
+          "name": "Elite y Reserva",
+          "copy": "Alto rendimiento, scouting profesional y proyecci\u00f3n hacia ligas nacionales.",
+          "order": 4
+        },
+        "id": "a2e63c5a-0193-4758-b4ca-108a51e19710"
+      }
+    ],
+    "club_history": [
+      {
+        "slug": "historia-fundacion",
+        "data": {
+          "type": "history",
+          "name": "",
+          "role": "",
+          "role_description": "",
+          "content": [
+            {
+              "paragraph": "Punta Cana FC naci\u00f3 del sue\u00f1o de profesionales del f\u00fatbol caribe\u00f1o de crear una academia que uniera metodolog\u00eda europea con la pasi\u00f3n y diversidad del Caribe."
+            },
+            {
+              "paragraph": "Con una visi\u00f3n de formar no s\u00f3lo futbolistas, sino ciudadanos enteros, el club ha crecido desde sus humildes or\u00edgenes hasta convertirse en la academia de f\u00fatbol m\u00e1s significativa de la Rep\u00fablica Dominicana."
+            }
+          ],
+          "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80",
+          "image_alt": "Fundadores del club en cancha",
+          "order": 1
+        },
+        "id": "2aa4152f-e40c-40bc-8d1e-d05e2ef8774d"
+      },
+      {
+        "slug": "metodologia",
+        "data": {
+          "type": "history",
+          "name": "",
+          "role": "",
+          "role_description": "",
+          "content": [
+            {
+              "paragraph": "Implementamos un plan formativo estructurado por etapas biol\u00f3gicas, alineado con las mejores pr\u00e1cticas europeas de scouting y desarrollo juvenil."
+            }
+          ],
+          "image": "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80",
+          "image_alt": "Planificaci\u00f3n t\u00e1ctica en pizarra",
+          "order": 2
+        },
+        "id": "3fc983c2-3409-4549-91c9-3dfd32eed18e"
+      },
+      {
+        "slug": "certificaciones",
+        "data": {
+          "type": "history",
+          "name": "",
+          "role": "",
+          "role_description": "",
+          "content": [
+            {
+              "paragraph": "Nuestro cuerpo t\u00e9cnico est\u00e1 Certificado UEFA, con experiencia en academias internacionales. Garantizamos formaci\u00f3n de alta calidad en todos los niveles."
+            }
+          ],
+          "image": "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600&q=80",
+          "image_alt": "Entrenador UEFA en sesi\u00f3n",
+          "order": 3
+        },
+        "id": "cb11ee21-c38d-48e0-9042-21e3884d1938"
+      },
+      {
+        "slug": "equipos",
+        "data": {
+          "type": "history",
+          "name": "",
+          "role": "",
+          "role_description": "",
+          "content": [
+            {
+              "paragraph": "Contamos con 15 categor\u00edas formativas desde los 4 a\u00f1os hasta el 19, con participaci\u00f3n en torneos federados y ligas regionales."
+            }
+          ],
+          "image": "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=600&q=80",
+          "image_alt": "Todos los equipos del club en formaci\u00f3n",
+          "order": 4
+        },
+        "id": "bb45dc0d-3d94-4a02-94b9-031cead60022"
+      },
+      {
+        "slug": "director-general",
+        "data": {
+          "type": "teamMember",
+          "name": "Misael P\u00e9rez",
+          "role": "Director General",
+          "role_description": "Visionario fundador",
+          "image": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80",
+          "image_alt": "Misael P\u00e9rez, Director General",
+          "order": 5
+        },
+        "id": "116ae3f9-73e6-47c8-902b-971bd3fd0c75"
+      },
+      {
+        "slug": "directora-deportiva",
+        "data": {
+          "type": "teamMember",
+          "name": "Mar\u00eda Fern\u00e1ndez",
+          "role": "Directora Deportiva",
+          "role_description": "15 a\u00f1os en academias UEFA",
+          "image": "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400&q=80",
+          "image_alt": "Mar\u00eda Fern\u00e1ndez, Directora Deportiva",
+          "order": 6
+        },
+        "id": "9b7cf86e-7ea3-4059-8fdf-ffca0a2ad2f0"
+      }
+    ],
+    "gallery": [
+      {
+        "slug": "gal-01",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80",
+          "alt": "Entrenamiento Sub-15",
+          "order": 1
+        },
+        "id": "86dd306f-31df-4940-963e-53cfd7f1bc6e"
+      },
+      {
+        "slug": "gal-02",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80",
+          "alt": "Partido Pre-Formativas",
+          "order": 2
+        },
+        "id": "aa5a48e8-23ca-469e-a875-bab0d042704c"
+      },
+      {
+        "slug": "gal-03",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=80",
+          "alt": "Cancha principal PCFC",
+          "order": 3
+        },
+        "id": "9167483e-a1d8-4083-9c24-893c6d0b77c0"
+      },
+      {
+        "slug": "gal-04",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=600&q=80",
+          "alt": "Celebraci\u00f3n de gol Sub-17",
+          "order": 4
+        },
+        "id": "0a3d843f-710b-4ad5-8cbe-8d85b189fb62"
+      },
+      {
+        "slug": "gal-05",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600&q=80",
+          "alt": "Equipo Formativas Altas",
+          "order": 5
+        },
+        "id": "cd6e5cfb-93c8-47dd-818e-bcb3ec27edd6"
+      },
+      {
+        "slug": "gal-06",
+        "data": {
+          "src": "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=600&q=80",
+          "alt": "Jugadores en cancha",
+          "order": 6
+        },
+        "id": "daba22c5-81cb-43d7-8fcc-e2bc4b8d06fe"
+      }
+    ],
+    "hero": [
+      {
+        "slug": "home-hero",
+        "data": {
+          "page": "home",
+          "eyebrow": "PCFC",
+          "title": "Punta Cana FC",
+          "description": "Formando campeones en el Caribe.",
+          "background_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+          "background_alt": "Entrenamiento Sub-15 de Punta Cana FC en cancha principal"
+        },
+        "id": "735a4ab9-129d-4d80-a7db-92ea3a183bf5"
+      },
+      {
+        "slug": "categorias-hero",
+        "data": {
+          "page": "categorias",
+          "eyebrow": "Formaci\u00f3n 4\u201319 a\u00f1os",
+          "title": "Categor\u00edas formativas",
+          "description": "Cuatro etapas, un camino. Desde el primer contacto con el bal\u00f3n hasta el alto rendimiento.",
+          "background_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+          "background_alt": "Entrenamiento con bal\u00f3n de jugadores de Punta Cana FC"
+        },
+        "id": "d0c11afd-3081-4806-9932-e6344ca56124"
+      },
+      {
+        "slug": "calendario-hero",
+        "data": {
+          "page": "calendario",
+          "eyebrow": "Calendario oficial",
+          "title": "Calendario de partidos",
+          "description": "Todos los partidos de Punta Cana FC en tu agenda.",
+          "background_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+          "background_alt": "Cancha principal PCFC al atardecer"
+        },
+        "id": "902f4d53-3c6a-4a2d-b4ff-78f3db589993"
+      },
+      {
+        "slug": "blog-hero",
+        "data": {
+          "page": "blog",
+          "eyebrow": "Blog del club",
+          "title": "Blog de Punta Cana FC",
+          "description": "Noticias, entrevistas y detr\u00e1s de c\u00e1maras del f\u00fatbol formativo caribe\u00f1o.",
+          "background_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+          "background_alt": "Jugadores celebrando un gol en la cancha"
+        },
+        "id": "7fea1007-2e41-4fbe-ba36-72fdf56f1cf1"
+      }
+    ],
+    "next_match": [
+      {
+        "slug": "default",
+        "data": {
+          "date": "S\u00c1B 13 SEP",
+          "time": "10:00 AM",
+          "category": "Sub-13",
+          "category_slug": "form-baja",
+          "home": "PCFC",
+          "home_logo": "/Logo-PCFC.svg",
+          "away": "Atl\u00e9tico B\u00e1varo",
+          "away_logo": "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&q=80",
+          "venue": "Cancha Principal \u00b7 PCFC"
+        },
+        "id": "92bc6986-ea8e-4e1f-a450-65b8e7e1aeff"
+      }
+    ],
+    "sponsors": [
+      {
+        "slug": "punta-cana-resort",
+        "data": {
+          "name": "Punta Cana Resort",
+          "logo": "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&q=80",
+          "href": "https://example.com",
+          "order": 1
+        },
+        "id": "7b0ac6e5-aa81-4bd6-8372-0e0ef641b764"
+      },
+      {
+        "slug": "banco-popular",
+        "data": {
+          "name": "Banco Popular",
+          "logo": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=200&q=80",
+          "href": "https://example.com",
+          "order": 2
+        },
+        "id": "512c6334-c5bf-4eb8-8f2b-c7753a3d0a26"
+      },
+      {
+        "slug": "scotiabank",
+        "data": {
+          "name": "Scotiabank",
+          "logo": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=200&q=80",
+          "href": "https://example.com",
+          "order": 3
+        },
+        "id": "b874ff94-acbb-4d6e-b3d9-7669ca3736bc"
+      },
+      {
+        "slug": "claro-rd",
+        "data": {
+          "name": "Claro RD",
+          "logo": "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=200&q=80",
+          "href": "https://example.com",
+          "order": 4
+        },
+        "id": "852e55ec-ae17-42b2-a40a-0d193f971afc"
+      },
+      {
+        "slug": "coca-cola",
+        "data": {
+          "name": "Coca-Cola",
+          "logo": "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=200&q=80",
+          "href": "https://example.com",
+          "order": 5
+        },
+        "id": "c79aa1be-3b8a-41d4-b23a-e1de14821506"
+      },
+      {
+        "slug": "nike",
+        "data": {
+          "name": "Nike",
+          "logo": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80",
+          "href": "https://example.com",
+          "order": 6
+        },
+        "id": "636fc3c3-7784-45e3-b8a4-bdd90e6e7bd3"
+      }
+    ],
+    "stats_pillars": [
+      {
+        "slug": "stat-700",
+        "data": {
+          "kind": "stat",
+          "value": "700+",
+          "label": "Futbolistas",
+          "order": 1
+        },
+        "id": "6fa057f7-f614-4e51-868f-9c7b918da33e"
+      },
+      {
+        "slug": "stat-20",
+        "data": {
+          "kind": "stat",
+          "value": "20+",
+          "label": "Entrenadores",
+          "order": 2
+        },
+        "id": "9d8f7b9f-162a-4b24-a526-b27e7bbe9a49"
+      },
+      {
+        "slug": "stat-15",
+        "data": {
+          "kind": "stat",
+          "value": "15",
+          "label": "Categor\u00edas",
+          "order": 3
+        },
+        "id": "aab865b4-240e-4b01-acc0-52cf3f38adfd"
+      },
+      {
+        "slug": "stat-10",
+        "data": {
+          "kind": "stat",
+          "value": "10+",
+          "label": "A\u00f1os",
+          "order": 4
+        },
+        "id": "c68be4cd-77d7-46f2-b4b5-41530e2127ea"
+      },
+      {
+        "slug": "pillar-01",
+        "data": {
+          "kind": "pillar",
+          "n": "01",
+          "title": "Metodolog\u00eda europea",
+          "copy": "Plan formativo estructurado por etapa biol\u00f3gica, no por edad cronol\u00f3gica. Evaluaciones trimestrales con m\u00e9tricas objetivas.",
+          "order": 5
+        },
+        "id": "22633dd0-aa79-4e62-b10c-7d3444a4157b"
+      },
+      {
+        "slug": "pillar-02",
+        "data": {
+          "kind": "pillar",
+          "n": "02",
+          "title": "Cuerpo t\u00e9cnico certificado",
+          "copy": "Entrenadores con licencias UEFA y experiencia en academias de primer nivel. Ratio m\u00e1ximo 1:12. 7 exalumnos firmaron con ligas profesionales.",
+          "order": 6
+        },
+        "id": "62475d3c-6e26-4d17-b448-f818c0624d0c"
+      },
+      {
+        "slug": "pillar-03",
+        "data": {
+          "kind": "pillar",
+          "n": "03",
+          "title": "Formaci\u00f3n integral",
+          "copy": "Trabajo coordinado con el \u00e1rea acad\u00e9mica y familiar. Valores, disciplina y liderazgo son tan importantes como el toque de bal\u00f3n.",
+          "order": 7
+        },
+        "id": "87314f05-82bf-45e7-bcef-6144084ed38a"
+      }
+    ]
+  }
 }

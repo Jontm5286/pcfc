@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "past",
+        "nextMatch"
+      ]
+    },
+    "date": {
+      "type": "string"
+    },
+    "time": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "categorySlug": {
+      "type": "string",
+      "enum": [
+        "pre",
+        "form-baja",
+        "form-alta",
+        "elite"
+      ]
+    },
+    "home": {
+      "type": "string"
+    },
+    "homeLogo": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\/.*"
+        }
+      ]
+    },
+    "away": {
+      "type": "string"
+    },
+    "awayLogo": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\/.*"
+        }
+      ]
+    },
+    "venue": {
+      "type": "string"
+    },
+    "photosHref": {
+      "type": "string"
+    },
+    "order": {
+      "default": 0,
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "date",
+    "time",
+    "category",
+    "home",
+    "away",
+    "venue"
+  ]
+}
