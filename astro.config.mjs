@@ -3,53 +3,51 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
-import { default as emdash } from "emdash/astro";
-import { sqlite } from "emdash/db";
-import node from "@astrojs/node";
+import { default as emdash } from 'emdash/astro';
+import { sqlite } from 'emdash/db';
+import node from '@astrojs/node';
 
-// ============================================================
-// PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
-// ============================================================
-// El cliente edita content collections desde /_emdash/admin/
-// SIN tocar diseño/código. Schemas en src/content.config.ts.
-// Dev: SQLite local (data/emdash.db).  Prod: Cloudflare D1 (DB).
-// Ref: astro-cloudflare-deployment skill (Eter Studio pattern)
-// ============================================================
-
+/**
+ * PCFC — Astro 7 + EmDash CMS + Tailwind v4
+ * =========================================
+ * - output: 'static' → SSG puro. HTML estático desde src/content/*.
+ * - getCollection() lee src/content/ (content.config.ts schemas) en BUILD TIME.
+ * - EmDash integration: dev admin UI (/_emdash/admin). El content editable
+ *   del cliente se guarda → sync a src/content/*.md por emdash dev server.
+ *   Prod: pnpm exec astro build (SSG) → Cloudflare static (NUNCA Vercel).
+ * - Dev: node adapter (para /_emdash/admin SSR endpoints).
+ *   Prod build: adapter node generando standalone Node (o cloudflare en prod).
+ *
+ * El cliente edita textos/imágenes vía /_emdash/admin/ sin tocar diseño.
+ * Ref: astro-cloudflare-deployment skill.
+ */
 export default defineConfig({
   site: 'https://puntacanafc.com',
   trailingSlash: 'ignore',
-  output: 'server', // EmDash requiere SSR para endpoints /_emdash/*
+  output: 'server', // SSR: evita prerender React conflict. /_emdash/* = SSR endpoints.
   adapter: node({
-    // Dev/local: Node standalone. Prod: @astrojs/cloudflare.
     mode: 'single',
   }),
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      noExternal: ['@emdash-cms/cloudflare', 'emdash', 'kysely'],
+      noExternal: ['emdash', 'kysely'],
     },
   },
   integrations: [
-    react(),            // EmDash admin UI hydration (React + TS)
+    react(),
     sitemap(),
     emdash({
-      // Dev DB → SQLite local con Kysely SQLite dialect (v0.36: sqlite({ url })).
-      // Prod: Cloudflare D1 (EMDASH_DATABASE_URL= env). `emdash init` crea data/emdash.db.
+      // Dev DB → SQLite local. emdash init crea data/emdash.db.
       database: sqlite({ url: 'file:./data/emdash.db' }),
-      // Content collections editable por el cliente (schemas Zod en content.config.ts).
-      // Schema valida que los values editados no rompan el layout.
       contentCollections: {
         enabled: true,
         dir: 'src/content',
       },
-      // Media uploads → R2 (prod) / ./data/media (dev).
       media: {
         enabled: true,
         provider: 'local',
-        // Local dev: uploads en data/media/. Prod: R2 bucket (R2 binding).
       },
-      // Auth: dev bypass (localhost). Prod: Cloudflare Access o email.
       auth: {
         mode: process.env.NODE_ENV === 'production' ? 'email' : 'dev',
       },
