@@ -27,7 +27,7 @@ export default defineConfig({
       // Dev DB → SQLite local. EmDash v0.36: database = sqlite({ url }) dialect factory.
       // EmDash integration auto-registra content collections desde src/content.config.ts
       // via virtual loader. Auth admin: env EMDASH_DEV_AUTH=1 (dev mode auto-login).
-      database: sqlite({ url: 'file:./data.db' }), // data.db was corrupt; fresh seed applied
+      database: sqlite({ url: 'file:./data-seeded.db' }), // data.db was corrupt; fresh seed applied
     }),
   ],
   // Security headers via Cloudflare (set in wrangler.toml / _headers)
