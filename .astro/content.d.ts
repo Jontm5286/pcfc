@@ -169,6 +169,15 @@ declare module 'astro:content' {
   filePath?: string;
   digest?: string | number;
 }>;
+"next-match": Record<string, {
+  id: string;
+  body?: string;
+  collection: "next-match";
+  data: InferEntrySchema<"next-match">;
+  rendered?: RenderedContent;
+  filePath?: string;
+  digest?: string | number;
+}>;
 "sponsors": Record<string, {
   id: string;
   body?: string;

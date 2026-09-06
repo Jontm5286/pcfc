@@ -2,8 +2,10 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import { default as emdash } from 'emdash/astro';
-import node from '@astrojs/node';
+import react from '@astrojs/react';
+import { default as emdash } from "emdash/astro";
+import { sqlite } from "emdash/db";
+import node from "@astrojs/node";
 
 // ============================================================
 // PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
@@ -29,14 +31,12 @@ export default defineConfig({
     },
   },
   integrations: [
+    react(),            // EmDash admin UI hydration (React + TS)
     sitemap(),
     emdash({
-      // Dev DB → SQLite local. EmDash auto-detecta EMDASH_DATABASE_URL=.
-      database: {
-        provider: 'sqlite',
-        // Local dev DB — creado por `emdash init` (data/emdash.db)
-        url: 'file:./data/emdash.db',
-      },
+      // Dev DB → SQLite local con Kysely SQLite dialect (v0.36: sqlite({ url })).
+      // Prod: Cloudflare D1 (EMDASH_DATABASE_URL= env). `emdash init` crea data/emdash.db.
+      database: sqlite({ url: 'file:./data/emdash.db' }),
       // Content collections editable por el cliente (schemas Zod en content.config.ts).
       // Schema valida que los values editados no rompan el layout.
       contentCollections: {

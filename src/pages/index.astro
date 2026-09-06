@@ -8,28 +8,31 @@ import CommunityMosaic from "../components/CommunityMosaic.astro";
 import PathwayCards from "../components/PathwayCards.astro";
 import Sponsors from "../components/Sponsors.astro";
 import EnrollmentCta from "../components/EnrollmentCta.astro";
+
+// ── Datos EDITABLES via EmDash CMS (src/content/ + content.config.ts) ──
+// El cliente edita estos en /_emdash/admin/ (hero stats, nextMatch, sponsors, gallery, categorías).
+// Los SVG iconos de value-pillars + pathway-cards quedan en homeData.ts (Design-fixed, NO editable).
 import {
-  getNextMatchData,
-  getCategoriesData,
-  getPillarsData,
-  getStatsData,
-  getGalleryImagesData,
-  getValuePillarsData,
-  getPathwayCardsData,
-  getSponsorsData,
-} from "../data/homeData";
+  getNextMatch,
+  getCategories,
+  getStats,
+  getPillars,
+  getGalleryImages,
+  getSponsors,
+} from "../lib/content";
+// Value-pillars + pathway-cards: iconos SVG fixed (no cliente edita) → datos estáticos.
+import { getValuePillarsData, getPathwayCardsData } from "../data/homeData";
 
-// Load static datasets for home page sections
-const nextMatch = getNextMatchData();
-const categories = getCategoriesData();
-const pillars = getPillarsData();
-const stats = getStatsData();
-const galleryImages = getGalleryImagesData();
-const valuePillars = getValuePillarsData();
-const pathwayCards = getPathwayCardsData();
-const sponsors = getSponsorsData();
+// Cargar datos editable del CMS (async → await en frontmatter Astro).
+const nextMatch = await getNextMatch();
+const categories = await getCategories();
+const stats = await getStats();
+const pillars = await getPillars();
+const galleryImages = await getGalleryImages();
+const valuePillars = getValuePillarsData();   // SVG iconos — no editable
+const pathwayCards = getPathwayCardsData();    // iconos — no editable
+const sponsors = await getSponsors();
 ---
-
 <Base title="Inicio" showFixtures={true}>
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero

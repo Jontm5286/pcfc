@@ -183,6 +183,25 @@ const statsCollection = defineCollection({
 });
 
 // ─────────────────────────────────────────────────────────
+// COLLECTION 8: next-match (singleton — featured hero fixture)
+// Edita fecha/hora/equipos del próximo partido (hero index).
+// ─────────────────────────────────────────────────────────
+const nextMatchCollection = defineCollection({
+  type: 'data',
+  schema: z.object({
+    date: z.string(), // "SÁB 13 SEP"
+    time: z.string(), // "10:00 AM"
+    category: z.string(),
+    categorySlug: z.enum(['pre', 'form-baja', 'form-alta', 'elite']),
+    home: z.string(),
+    homeLogo: ImageSchema.optional(),
+    away: z.string(),
+    awayLogo: ImageSchema.optional(),
+    venue: z.string(),
+  }),
+});
+
+// ─────────────────────────────────────────────────────────
 // EXPORT
 // ─────────────────────────────────────────────────────────
 export const collections = {
@@ -193,4 +212,5 @@ export const collections = {
   sponsors: sponsorsCollection,
   gallery: galleryCollection,
   'stats-pillars': statsCollection,
+  'next-match': nextMatchCollection,
 };
