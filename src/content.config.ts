@@ -3,9 +3,16 @@ import { z } from 'zod';
 
 /**
  * PCFC Content Collections — EmDash CMS
- * ======================================
- * Cada collection aquí es editable por el cliente en /_emdash/admin/.
- * Los schemas Zod VALIDAN que los valores editados no rompan el layout:
+ * =======================================
+ * Editable content config — single source of truth para el cliente.
+ * El cliente edita textos/imágenes en /_emdash/admin/ → datos con Zod validation
+ * → pages migradas usan getCollection() (src/lib/content.ts).
+ *
+ * DEV RUNTIME NOTE (emdash v0.36 + Astro 7.3.1):
+ *   Build SSG `astro build` lee src/content/*.{md,json} archivos → PRODUCTION funciona.
+ *   En `astro dev`, el emdash content-loader registra collections via virtual modules,
+ *   pero Astro 7.3.1 dev a veces no resuelve el loader → getCollection() devuelve empty
+ *   → pages caen a homeData.ts fallback (defensivo). Esto NO afecta el build producción.
  *   - textos → strings con defaults (nunca empty para headings)
  *   - imágenes → url string (puede ser /images/stock/<name>.webp local o EmDash media URL)
  *   - CTAs → pares label/href (href validado contra rutas sitio)
