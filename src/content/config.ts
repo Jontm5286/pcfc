@@ -143,8 +143,8 @@ const sponsorsCollection = defineCollection({
   type: 'data',
   schema: z.object({
     name: z.string(),
-    logo: ImageSchema, // puede ser local /Logo-PCFC.svg o external
-    href: z.string().url(),
+    logo: z.string().min(1, 'Ruta del logo requerida'),
+    href: z.string().optional().or(z.literal('')),
     order: z.number().int().default(99),
   }),
 });
@@ -202,6 +202,29 @@ const nextMatchCollection = defineCollection({
 });
 
 // ─────────────────────────────────────────────────────────
+// COLLECTION 9: blog-posts
+// Artículos de blog: noticias, torneos, entrevistas, resultados, eventos.
+// El cliente edita texto, imágenes y CTAs SIN tocar el diseño del blog.
+// ─────────────────────────────────────────────────────────
+const blogCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().min(3, 'Título requerido (mín. 3 caracteres)'),
+    slug: z.string(),
+    category: z.enum(['Noticias', 'Torneos', 'Entrevistas', 'Resultados', 'Eventos']),
+    publishedAt: z.string(), // e.g. "2026-09-06"
+    coverImage: ImageSchema.default('/images/blog/inicio-temporada-2026.webp'),
+    coverAlt: z.string().min(3, 'Alt accesible requerido').default('Imagen titular del artículo'),
+    excerpt: z.string().min(10, 'Extracto breve requerido (mín. 10 caracteres)'),
+    body: z
+      .array(z.string().min(1, 'Párrafo requerido'))
+      .min(1, 'El artículo debe tener al menos un párrafo'),
+    ctaPrimary: CtaSchema.optional(),
+    ctaSecondary: CtaSchema.optional(),
+  }),
+});
+
+// ─────────────────────────────────────────────────────────
 // EXPORT
 // ─────────────────────────────────────────────────────────
 export const collections = {
@@ -213,4 +236,5 @@ export const collections = {
   gallery: galleryCollection,
   'stats_pillars': statsCollection,
   'next_match': nextMatchCollection,
+  blog: blogCollection,
 };

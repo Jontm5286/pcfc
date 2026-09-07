@@ -1,6 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+const blogPosts = await getCollection('blog');
 ---
 
 <Base title="Blog" description="Noticias, eventos y novedades de Punta Cana FC. Mantente al día con la academia.">
@@ -30,17 +35,66 @@ import StockImage from '../components/StockImage.astro';
       <div class="blog-layout">
         <!-- Main Content -->
         <div class="blog-main">
-          <div class="blog-empty">
-            <div class="empty-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2 2 0 0 1 2 17.5V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12"/><path d="M16 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M4 8V6a2 2 0 0 1 2-2h8"/></svg>
-            </div>
-            <h3>Las historias de PCFC, pronto aquí.</h3>
-            <p>
-              Estamos preparando contenido exclusivo para ti. Noticias, entrevistas,
-              highlights y mucho más sobre la academia que está formando los campeones del mañana.
-            </p>
-            <a href="/" class="btn btn--primary">Volver al Inicio</a>
-          </div>
+          {
+            blogPosts.length === 0 ? (
+              <div class="blog-empty">
+                <div class="empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2 2 0 0 1 2 17.5V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12"/><path d="M16 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M4 8V6a2 2 0 0 1 2-2h8"/></svg>
+                </div>
+                <h3>Las historias de PCFC, pronto aquí.</h3>
+                <p>
+                  Estamos preparando contenido exclusivo para ti.
+                  Noticias, entrevistas, highlights y mucho más sobre la
+                  academia que está formando los campeones del mañana.
+                </p>
+                <a href="/" class="btn btn--primary">Volver al Inicio</a>
+              </div>
+            ) : (
+              blogPosts
+                .sort((a,b)=>b.data.publishedAt.localeCompare(a.data.publishedAt))
+                .map(({data,id})=>{
+                  const {title,excerpt,body,category}=data;
+                  // mapa de clases CSS para badge por categoría (mantiene diseño fijo)
+                  const categoryClass={
+                    'Noticias':'badge--sky',
+                    'Torneos':'badge--form-baja',
+                    'Entrevistas':'badge--form-alta',
+                    'Resultados':'badge--pre',
+                    'Eventos':'badge--elite',
+                  };
+                  return (
+                    <article class="blog-article" key={id}>
+                      <h2 class="blog-article__title">{title}</h2>
+                      <p class="blog-article__meta">
+                        <span class={categoryClass[data.category] ?? 'badge--sky'}>{category}</span>
+                        <span class="blog-article__date">{data.publishedAt}</span>
+                      </p>
+                      <p class="blog-article__excerpt">{excerpt}</p>
+                      <div class="blog-article__body">
+                        {body.map((p, i) => (
+                          <p class="blog-article__paragraph" key={i}>
+                            {p}
+                          </p>
+                        ))}
+                      </div>
+                      {(data.ctaPrimary || data.ctaSecondary) && (
+                        <div class="blog-article__cta">
+                          {data.ctaPrimary && (
+                            <a href={data.ctaPrimary.href} class="btn btn--sky">
+                              {data.ctaPrimary.label}
+                            </a>
+                          )}
+                          {data.ctaSecondary && (
+                            <a href={data.ctaSecondary.href} class="btn btn--outline btn--lg ml-2">
+                              {data.ctaSecondary.label}
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })
+        )}
         </div>
 
         <!-- Sidebar -->

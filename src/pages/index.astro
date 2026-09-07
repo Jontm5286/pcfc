@@ -18,8 +18,8 @@ import {
   getStats,
   getPillars,
   getGalleryImages,
-  getSponsors,
 } from "../lib/content";
+import { getSponsorsFromEmDash } from "../lib/content";
 // Value-pillars + pathway-cards: iconos SVG fixed (no cliente edita) → datos estáticos.
 import { getValuePillarsData, getPathwayCardsData } from "../data/homeData";
 
@@ -29,10 +29,11 @@ const categories = await getCategories();
 const stats = await getStats();
 const pillars = await getPillars();
 const galleryImages = await getGalleryImages();
-const valuePillars = getValuePillarsData();   // SVG iconos — no editable
-const pathwayCards = getPathwayCardsData();    // iconos — no editable
-const sponsors = await getSponsors();
+const valuePillars = getValuePillarsData(); // SVG iconos — no editable
+const pathwayCards = getPathwayCardsData(); // iconos — no editable
+const sponsors = await getSponsorsFromEmDash();
 ---
+
 <Base title="Inicio" showFixtures={true}>
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero

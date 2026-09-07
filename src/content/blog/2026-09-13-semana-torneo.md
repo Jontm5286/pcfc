@@ -1,0 +1,30 @@
+---
+title: "Primera semana del torneo PCFC 2026 — la temporada arranca con fuerza"
+slug: "primera-semana-torneo-pcfc-2026"
+category: "Torneos"
+publishedAt: "2026-09-13"
+coverImage: ""
+coverAlt: "Jugadores de Punta Cana FC en el primer partido del torneo de temporada"
+excerpt: "La primera semana del torneo de temporada 2026 dejó partidos intensos, goles que celebran el esfuerzo colectivo y una comunidad cada vez más unida alrededor de la academia."
+body:
+  - "El torneo de temporada 2026 arrancó el sábado 13 de septiembre con una energía que se siente en la cancha desde que llegas: cháchara de padres, silbatos de los árbitros y, sobre todo, goles. Punta Cana FC tuvo una primera semana intensa, con tres encuentros que dejaron claro lo que viene: una temporada de compromiso, lectura de juego y ganas de sumar."
+  - "## Partidos clave de la semana"
+  - "El primer partido del torneo fue entre las Formativas Altas de PCFC y Atlético Bávaro —un clásico del torneo que siempre deja huella. El resultado: victoria por 3 a 1. Tres goles, tres historias diferentes de lectura de juego: un cabezazo deAlejandro, un remate de primera vez de Marcos y un gol de equipo que partió de un pase filtrado en el medio campo."
+  - "El segundo partido, contra el equipo anfitrión del torneo, fue más ajustado. Empate a 1 a 1 al mediodía, pero PCFC logró la ventaja en el segundo tiempo. No fue un partido fácil —el rival se defendió bien y los penaltis marcaron la diferencia— pero el equipo mostró la madurez que se espera de las Formativas Altas: sereno en la defensa, decidido en los balones parados."
+  - "El tercer partido de la semana fue para las Pre-Formativas (Sub-10), que disputaron su primer encuentro del torneo con el equipo local. El resultado final: 2 a 1. Mención especial para los primeros toques de balón de algunos de los jugadores más jóvenes —momentos que el club graba y comparte porque son, literalmente, el inicio de todo."
+  - "## Jugadores destacados"
+  - "Alejandro Méndez (Formativas Altas, 14 años) fue el máximo goleador de la semana con dos goles. Su lectura de juego y posición en el penal es lo que más destaca: «No corro más que los demás —dice—, corro al lugar donde el balón va a llegar. Eso me enseñaron en Punta Cana FC»."
+  - "Ana Beltré (Sub-10, Pre-Formativa) anotó el segundo gol del partido contra el equipo local. A sus 9 años, su primer gol en un torneo oficial dejó a todos los padres y entrenadores con una sonrisa difícil de borrar."
+  - "## Próximos partidos"
+  - "La segunda semana del torneo arranca el sábado 20 de septiembre. PCFC jugará ante dos rivales nuevos: un equipo de San Cristóbal que viene con resultados impresionantes en su región y el equipo campeón del torneo anterior, que busca la repetición del título. Los horarios y canchas están disponibles en el calendario oficial del club."
+  - "Para los padres que llegan por primera vez al torneo: los partidos son en canchas de la sede principal de Punta Cana FC. Hay público limitado por las normas del torneo, pero siempre hay espacio para quien llega temprano. Llevar silla plegable es un hack que todos los padres del club comparten."
+  - "## La temporada sigue en construcción"
+  - "Esta primera semana mostró lo que Punta Cana FC viene construyendo: jugadores que leen la cancha antes de moverse, que corren al lugar correcto y que, sobre todo, juegan en equipo. Los resultados importan, claro, pero lo que queda en la cancha después del silbato final es lo que el club quiere que quede en los jugadores."
+  - "Si no pudiste estar, los próximos partidos son el 20, 24 y 27 de septiembre. Los horarios exactos se publican cada viernes en el grupo de WhatsApp de los padres. Si todavía no tienes acceso, el formulario de inscripción está en la página de inicio del club."
+ctaPrimary:
+  label: "Ver calendario completo"
+  href: "/calendario"
+ctaSecondary:
+  label: "Inscríbete ahora"
+  href: "/inscribete"
+---

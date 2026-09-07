@@ -6,20 +6,19 @@
       "type": "string"
     },
     "logo": {
+      "type": "string",
+      "minLength": 1
+    },
+    "href": {
       "anyOf": [
         {
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         },
         {
           "type": "string",
-          "pattern": "^\\/.*"
+          "const": ""
         }
       ]
-    },
-    "href": {
-      "type": "string",
-      "format": "uri"
     },
     "order": {
       "default": 99,
@@ -33,7 +32,6 @@
   },
   "required": [
     "name",
-    "logo",
-    "href"
+    "logo"
   ]
 }

@@ -83,7 +83,7 @@
 		"type": "sqlite",
 		"executorEntrypoint": "emdash/db/sqlite-migrations",
 		"executorConfig": {
-			"url": "file:./data.db"
+			"url": "file:./data-seeded.db"
 		}
 	}
 }
