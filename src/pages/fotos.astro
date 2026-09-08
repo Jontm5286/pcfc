@@ -1,23 +1,15 @@
 ---
 /**
  * /fotos — PCFC
- * Página de galería de fotos por partido.
- * Sigue DESIGN.md §6 (sitemap narrativo, sección FOTOS):
- *   - HeroSection navy con título "Galería de fotos"
- *   - Grid de posts por partido usando PostCard
- *   - Post individual (galería) — placeholder con datos hardcodeados
- *   - Lightbox al hacer click en foto
- *   - Botón "Ver todas las fotos" → navega al post individual
+ * Galería de fotos por partido.
+ * Lee desde EmDash DB (ec_partidos + ec_gallery).
  */
 import Base from "../layouts/Base.astro";
 import PostCard from "../components/PostCard.astro";
 import GalleryGrid from "../components/GalleryGrid.astro";
 import Lightbox from "../components/Lightbox.astro";
 import type { Photo } from "../components/GalleryGrid.astro";
-
-// ──────────────────────────────────────────────────────────────
-// Datos hardcodeados — 8 posts mínimos tal como exige la tarea
-// ──────────────────────────────────────────────────────────────
+import Database from "better-sqlite3";
 
 interface MatchPost {
   id: string;
@@ -32,155 +24,92 @@ interface MatchPost {
   photos: Photo[];
 }
 
-const posts: MatchPost[] = [
-  {
-    id: "pcfc-vs-atlantico-6sep",
-    categorySlug: "elite",
-    categoryLabel: "Elite / Reserva",
-    team1: "PCFC",
-    team2: "Atlántico FC",
-    date: "6 sep 2026",
-    photoCount: 24,
-    thumbnail: "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80",
-    thumbnailAlt: "PCFC vs Atlántico FC — Partido Elite en Cancha Principal",
-    photos: Array.from({ length: 24 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-elite-6sep-${i + 1}/1200/800`,
-      alt: `PCFC vs Atlántico FC — Foto ${i + 1}`,
-      caption: i === 0 ? "El once inicial" : i === 11 ? "Gol de cabeza" : undefined,
-      downloadName: `pcfc-atlantico-6sep-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub15-vs-santiago-30ago",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-15",
-    team2: "Santiago FC",
-    date: "30 ago 2026",
-    photoCount: 18,
-    thumbnail: "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-15 vs Santiago FC — Partido Formativas Altas",
-    photos: Array.from({ length: 18 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub15-santiago-${i + 1}/1200/800`,
-      alt: `PCFC Sub-15 vs Santiago FC — Foto ${i + 1}`,
-      caption: i === 0 ? "Alineación del equipo" : undefined,
-      downloadName: `pcfc-sub15-santiago-30ago-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub10-vs-canay-24ago",
-    categorySlug: "form-baja",
-    categoryLabel: "Formativas Bajas",
-    team1: "PCFC Sub-10",
-    team2: "Canay FC",
-    date: "24 ago 2026",
-    photoCount: 15,
-    thumbnail: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-10 vs Canay FC — Partido Formativas Bajas",
-    photos: Array.from({ length: 15 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub10-canay-${i + 1}/1200/800`,
-      alt: `PCFC Sub-10 vs Canay FC — Foto ${i + 1}`,
-      downloadName: `pcfc-sub10-canay-24ago-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub8-vs-escuela-bavaro-21ago",
-    categorySlug: "pre",
-    categoryLabel: "Pre-Formativas",
-    team1: "PCFC Sub-8",
-    team2: "Escuela Bávaro",
-    date: "21 ago 2026",
-    photoCount: 12,
-    thumbnail: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-8 vs Escuela Bávaro — Partido Pre-Formativas",
-    photos: Array.from({ length: 12 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub8-bavaro-${i + 1}/1200/800`,
-      alt: `PCFC Sub-8 vs Escuela Bávaro — Foto ${i + 1}`,
-      caption: i === 0 ? "¡El equipo al completo!" : undefined,
-      downloadName: `pcfc-sub8-bavaro-21ago-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-reserva-vs-higuey-28sep",
-    categorySlug: "elite",
-    categoryLabel: "Elite / Reserva",
-    team1: "PCFC Reserva",
-    team2: "Higüey United",
-    date: "28 sep 2026",
-    photoCount: 22,
-    thumbnail: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80",
-    thumbnailAlt: "PCFC Reserva vs Higüey United — Partido Elite",
-    photos: Array.from({ length: 22 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-reserva-higuey-${i + 1}/1200/800`,
-      alt: `PCFC Reserva vs Higüey United — Foto ${i + 1}`,
-      downloadName: `pcfc-reserva-higuey-28sep-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub14-vs-seleccion-16ago",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-14",
-    team2: "Selección Federativa",
-    date: "16 ago 2026",
-    photoCount: 16,
-    thumbnail: "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-14 vs Selección Federativa — Partido Formativas Altas",
-    photos: Array.from({ length: 16 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub14-fed-16ago-${i + 1}/1200/800`,
-      alt: `PCFC Sub-14 vs Selección Federativa — Foto ${i + 1}`,
-      downloadName: `pcfc-sub14-fed-16ago-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub6-vs-casa-espana-9ago",
-    categorySlug: "pre",
-    categoryLabel: "Pre-Formativas",
-    team1: "PCFC Sub-6",
-    team2: "Casa España",
-    date: "9 ago 2026",
-    photoCount: 10,
-    thumbnail: "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-6 vs Casa España — Partido Pre-Formativas",
-    photos: Array.from({ length: 10 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub6-casa-espana-${i + 1}/1200/800`,
-      alt: `PCFC Sub-6 vs Casa España — Foto ${i + 1}`,
-      caption: i === 0 ? "Nuestros pequeños cracks" : undefined,
-      downloadName: `pcfc-sub6-casa-espana-9ago-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-  {
-    id: "pcfc-sub13-vs-casa-espana-2sep",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-13",
-    team2: "Casa España",
-    date: "2 sep 2026",
-    photoCount: 14,
-    thumbnail: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-13 vs Casa España — Partido Formativas Altas",
-    photos: Array.from({ length: 14 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub13-casa-espana-${i + 1}/1200/800`,
-      alt: `PCFC Sub-13 vs Casa España — Foto ${i + 1}`,
-      downloadName: `pcfc-sub13-casa-espana-2sep-${String(i + 1).padStart(2, "0")}.jpg`,
-    })),
-  },
-];
+const categoryMap: Record<string, { slug: "pre" | "form-baja" | "form-alta" | "elite"; label: string }> = {
+  "Pre-Formativas": { slug: "pre", label: "Pre-Formativas" },
+  "Formativas Bajas": { slug: "form-baja", label: "Formativas Bajas" },
+  "Formativas Altas": { slug: "form-alta", label: "Formativas Altas" },
+  "Elite": { slug: "elite", label: "Elite / Reserva" },
+};
+
+let posts: MatchPost[] = [];
+
+try {
+  const db = new Database("data.db", { readonly: true });
+
+  // Read partidos
+  const partidos = db.prepare(
+    "SELECT id, publicar, imagen, fecha, categoria, equipo FROM ec_partidos WHERE deleted_at IS NULL"
+  ).all() as any[];
+
+  // Read gallery
+  const gallery = db.prepare(
+    "SELECT id, src, alt, \"order\", partido_id FROM ec_gallery WHERE deleted_at IS NULL"
+  ).all() as any[];
+
+  db.close();
+
+  // Build posts from partidos
+  posts = partidos
+    .filter((p) => p.publicar !== 0)
+    .map((p) => {
+      const cat = categoryMap[p.categoria] || { slug: "elite" as const, label: p.categoria || "Elite" };
+      const matchPhotos = gallery
+        .filter((g) => g.partido_id === p.id)
+        .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+        .map((g) => ({
+          src: g.src || "",
+          alt: g.alt || "",
+        }));
+
+      return {
+        id: p.id,
+        categorySlug: cat.slug,
+        categoryLabel: cat.label,
+        team1: p.equipo || "PCFC",
+        team2: "",
+        date: p.fecha || "",
+        photoCount: matchPhotos.length,
+        thumbnail: p.imagen || "",
+        thumbnailAlt: p.equipo || "Partido",
+        photos: matchPhotos,
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // If no partidos, show all gallery photos as one big post
+  if (posts.length === 0 && gallery.length > 0) {
+    const allPhotos = gallery
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+      .map((g) => ({
+        src: g.src || "",
+        alt: g.alt || "",
+      }));
+
+    posts = [{
+      id: "all-photos",
+      categorySlug: "elite",
+      categoryLabel: "Todas las fotos",
+      team1: "PCFC",
+      team2: "",
+      date: "",
+      photoCount: allPhotos.length,
+      thumbnail: allPhotos[0]?.src || "",
+      thumbnailAlt: "Galería completa PCFC",
+      photos: allPhotos,
+    }];
+  }
+} catch (err) {
+  console.error("[fotos] Error reading DB:", err);
+}
 ---
 
 <Base
   title="Galería de Fotos"
-  description="Galería completa de fotos de todos los partidos de Punta Cana FC. Imágenes de los partidos de las cuatro categorías formativas."
+  description="Galería completa de fotos de todos los partidos de Punta Cana FC."
 >
-  <!-- Lightbox — un solo componente para toda la página -->
   <Lightbox />
 
-  <!-- ============================================ -->
-  <!-- HERO — Galería de fotos                   -->
-  <!-- ============================================ -->
-  <section
-    class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]"
-  >
+  <section class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]">
     <div class="container-x">
       <p class="eyebrow eyebrow--on-navy">PARTIDOS RECIENTES</p>
       <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[18ch]">
@@ -194,9 +123,6 @@ const posts: MatchPost[] = [
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- GRID DE POSTS POR PARTIDO — descubrimiento  -->
-  <!-- ============================================ -->
   <section class="section bg-white">
     <div class="container-x">
       <div class="mb-10">
@@ -209,92 +135,54 @@ const posts: MatchPost[] = [
         </p>
       </div>
 
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        id="posts-grid"
-      >
-        {
-          posts.map((post) => (
-            <PostCard
-              href={`#${post.id}`}
-              thumbnail={post.thumbnail}
-              thumbnailAlt={post.thumbnailAlt}
-              categorySlug={post.categorySlug}
-              categoryLabel={post.categoryLabel}
-              team1={post.team1}
-              team2={post.team2}
-              date={post.date}
-              photoCount={post.photoCount}
-            />
-          ))
-        }
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="posts-grid">
+        {posts.map((post) => (
+          <PostCard
+            href={`#${post.id}`}
+            thumbnail={post.thumbnail}
+            thumbnailAlt={post.thumbnailAlt}
+            categorySlug={post.categorySlug}
+            categoryLabel={post.categoryLabel}
+            team1={post.team1}
+            team2={post.team2}
+            date={post.date}
+            photoCount={post.photoCount}
+          />
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- POSTS INDIVIDUALES — emoción + propiedad    -->
-  <!-- ============================================ -->
-  {
-    posts.map((post) => (
-      <section
-        id={post.id}
-        class="section bg-pure-white border-t border-navy/10"
-        aria-labelledby={`post-heading-${post.id}`}
-      >
-        <div class="container-x">
-          {/* Encabezado del post individual */}
-          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10">
-            <div>
-              <span class={`badge badge--${post.categorySlug} mb-3`}>
-                {post.categoryLabel}
-              </span>
-              <h2
-                id={`post-heading-${post.id}`}
-                class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]"
-              >
-                {post.team1} vs {post.team2}
-              </h2>
-              <time
-                datetime={post.date}
-                class="mt-2 text-[0.9rem] text-navy-60 font-medium"
-              >
-                {post.date} · {post.photoCount} fotos
-              </time>
-            </div>
-
-            <a
-              href="#posts-grid"
-              class="btn btn--outline btn--lg flex-shrink-0 self-start sm:self-auto"
-              aria-label={`Volver al grid de partidos — ${post.team1} vs ${post.team2}`}
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.4"
-                stroke-linecap="round"
-                aria-hidden="true"
-              >
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              Ver todos los partidos
-            </a>
+  {posts.map((post) => (
+    <section
+      id={post.id}
+      class="section bg-pure-white border-t border-navy/10"
+      aria-labelledby={`post-heading-${post.id}`}
+    >
+      <div class="container-x">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10">
+          <div>
+            <span class={`badge badge--${post.categorySlug} mb-3`}>
+              {post.categoryLabel}
+            </span>
+            <h2 id={`post-heading-${post.id}`} class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]">
+              {post.team1} {post.team2 ? `vs ${post.team2}` : ""}
+            </h2>
+            <time datetime={post.date} class="mt-2 text-[0.9rem] text-navy-60 font-medium">
+              {post.date} · {post.photoCount} fotos
+            </time>
           </div>
-
-          {/* Grid de fotos */}
-          <GalleryGrid photos={post.photos} galleryId={post.id} />
+          <a href="#posts-grid" class="btn btn--outline btn--lg flex-shrink-0 self-start sm:self-auto">
+            ← Volver
+          </a>
         </div>
-      </section>
-    ))
-  }
+        <GalleryGrid photos={post.photos} galleryId={post.id} />
+      </div>
+    </section>
+  ))}
 </Base>
 
 <script>
-  // Si la URL tiene un hash (#post-id), hacer scroll suave a esa sección
   if (window.location.hash) {
     const target = document.querySelector(window.location.hash);
     if (target) {

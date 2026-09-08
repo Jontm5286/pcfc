@@ -2,5 +2,6 @@
   "name": "Nike",
   "logo": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80",
   "href": "https://example.com",
-  "order": 6
+  "order": 6,
+  "published": false
 }

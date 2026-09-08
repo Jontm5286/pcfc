@@ -40,6 +40,16 @@
       "default": "/inscribete",
       "type": "string"
     },
+    "order": {
+      "default": 99,
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "published": {
+      "default": true,
+      "type": "boolean"
+    },
     "$schema": {
       "type": "string"
     }
@@ -50,9 +60,6 @@
     "ages",
     "name",
     "copy",
-    "focus",
-    "format",
-    "schedule",
     "description"
   ]
 }

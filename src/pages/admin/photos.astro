@@ -1,0 +1,121 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="Admin — Subir Fotos" description="Subir fotos a la galería de partidos">
+  <section class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]">
+    <div class="container-x">
+      <p class="eyebrow eyebrow--on-navy">ADMIN</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2rem,4vw,3rem)] mb-3">Subir Fotos</h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Sube varias fotos a la vez. Arrastra las imágenes o selecciona desde tu computadora.
+      </p>
+    </div>
+  </section>
+
+  <section class="section bg-white">
+    <div class="container-x max-w-[800px]">
+      <div id="drop-zone" class="border-2 border-dashed border-navy/20 rounded-2xl p-12 text-center cursor-pointer transition-colors hover:border-sky hover:bg-sky/5">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-4 text-navy/40">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p class="text-navy/60 text-lg mb-2">Arrastra fotos aquí</p>
+        <p class="text-navy/40 text-sm">o haz clic para seleccionar</p>
+        <input type="file" id="file-input" multiple accept="image/*" class="hidden"/>
+      </div>
+
+      <div id="preview" class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 hidden"></div>
+
+      <div id="submit-section" class="mt-6 hidden">
+        <div class="flex items-center justify-between">
+          <p id="file-count" class="text-navy/60"></p>
+          <button id="upload-btn" class="btn btn--sky btn--lg">Subir fotos →</button>
+        </div>
+        <div id="progress" class="mt-4 hidden">
+          <div class="w-full bg-navy/10 rounded-full h-2">
+            <div id="progress-bar" class="bg-sky h-2 rounded-full transition-all" style="width: 0%"></div>
+          </div>
+          <p id="progress-text" class="text-sm text-navy/60 mt-2"></p>
+        </div>
+      </div>
+
+      <div id="result" class="mt-6 hidden">
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+          <p id="result-text" class="text-green-800"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const dropZone = document.getElementById('drop-zone')!;
+  const fileInput = document.getElementById('file-input') as HTMLInputElement;
+  const preview = document.getElementById('preview')!;
+  const submitSection = document.getElementById('submit-section')!;
+  const fileCount = document.getElementById('file-count')!;
+  const uploadBtn = document.getElementById('upload-btn')!;
+  const progress = document.getElementById('progress')!;
+  const progressBar = document.getElementById('progress-bar')!;
+  const progressText = document.getElementById('progress-text')!;
+  const result = document.getElementById('result')!;
+  const resultText = document.getElementById('result-text')!;
+  let files: File[] = [];
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-sky', 'bg-sky/5'); });
+  dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-sky', 'bg-sky/5'); });
+  dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('border-sky', 'bg-sky/5'); addFiles(Array.from(e.dataTransfer!.files)); });
+  fileInput.addEventListener('change', () => { addFiles(Array.from(fileInput.files)); fileInput.value = ''; });
+
+  function addFiles(newFiles: File[]) {
+    files = [...files, ...newFiles.filter(f => f.type.startsWith('image/'))];
+    renderPreview();
+  }
+
+  function renderPreview() {
+    preview.innerHTML = '';
+    if (!files.length) { preview.classList.add('hidden'); submitSection.classList.add('hidden'); return; }
+    preview.classList.remove('hidden');
+    submitSection.classList.remove('hidden');
+    fileCount.textContent = `${files.length} foto${files.length > 1 ? 's' : ''}`;
+    files.forEach((file, i) => {
+      const div = document.createElement('div');
+      div.className = 'relative aspect-square rounded-xl overflow-hidden bg-navy/5';
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.className = 'w-full h-full object-cover';
+      div.appendChild(img);
+      const name = document.createElement('p');
+      name.className = 'absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1.5 truncate';
+      name.textContent = file.name;
+      div.appendChild(name);
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center';
+      removeBtn.textContent = '×';
+      removeBtn.onclick = () => { files.splice(i, 1); renderPreview(); };
+      div.appendChild(removeBtn);
+      preview.appendChild(div);
+    });
+  }
+
+  uploadBtn.addEventListener('click', async () => {
+    if (!files.length) return;
+    uploadBtn.disabled = true; uploadBtn.textContent = 'Subiendo...';
+    progress.classList.remove('hidden'); result.classList.add('hidden');
+    let uploaded = 0;
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('alt', file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '));
+      const res = await fetch('/api/upload-photo', { method: 'POST', body: fd });
+      if (res.ok) { uploaded++; progressBar.style.width = `${(uploaded/files.length)*100}%`; progressText.textContent = `${uploaded}/${files.length}`; }
+    }
+    result.classList.remove('hidden');
+    resultText.textContent = `${uploaded}/${files.length} fotos subidas correctamente`;
+    uploadBtn.disabled = false; uploadBtn.textContent = 'Subir fotos →';
+    files = []; renderPreview();
+  });
+</script>

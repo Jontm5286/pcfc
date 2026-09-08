@@ -2,5 +2,6 @@
   "name": "Claro RD",
   "logo": "https://images.unsplash.com/photo-1556656793-085e5c8ed74d?w=200&q=80",
   "href": "https://example.com",
-  "order": 4
+  "order": 4,
+  "published": false
 }

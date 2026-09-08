@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "categorySlug": {
+      "default": "elite",
+      "type": "string"
+    },
+    "categoryLabel": {
+      "default": "Elite / Reserva",
+      "type": "string"
+    },
+    "team1": {
+      "type": "string"
+    },
+    "team2": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "thumbnail": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\/.*"
+        }
+      ]
+    },
+    "thumbnailAlt": {
+      "type": "string",
+      "minLength": 3
+    },
+    "published": {
+      "default": true,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "team1",
+    "team2",
+    "date",
+    "thumbnail",
+    "thumbnailAlt"
+  ]
+}

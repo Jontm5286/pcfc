@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "description": {
+      "type": "string"
+    },
+    "pubDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "author": {
+      "default": "PCFC",
+      "type": "string"
+    },
+    "image": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\/.*"
+        }
+      ]
+    },
+    "imageAlt": {
+      "type": "string",
+      "minLength": 3
+    },
+    "tags": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "draft": {
+      "default": false,
+      "type": "boolean"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

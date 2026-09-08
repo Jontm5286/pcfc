@@ -24,9 +24,9 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const calendarEntries = await getCollection("calendar");
-const upcomingMatches = calendarEntries
+const upcomingMatches = (calendarEntries || [])
   .filter((e) => e.data.kind === "upcoming")
-  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .sort((a, b) => ((a.data.order as number) ?? 99) - ((b.data.order as number) ?? 99))
   .map((e) => ({
     categorySlug: e.data.categorySlug ?? "form-baja",
     categoryLabel: CATEGORY_LABELS[e.data.categorySlug ?? ""] ?? e.data.category,

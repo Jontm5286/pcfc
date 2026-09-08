@@ -29,13 +29,14 @@ interface Props {
 }
 
 const { eyebrow, title, sponsors } = Astro.props;
+// console.log(sponsors);
 ---
 
 <section
-  class="relative w-full py-14 md:py-16 border-t border-b border-white/5 bg-navy-dark"
+  class="relative w-full py-14 md:py-16 border-t border-b border-white/5k"
   data-component="sponsors"
 >
-  <div class="max-w-[1280px] mx-auto px-8">
+  <div class="max-w-7xl mx-auto px-8">
     {
       (eyebrow || title) && (
         <header class="mb-10 flex flex-col items-center text-center">

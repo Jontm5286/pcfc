@@ -37,9 +37,9 @@ const sponsors = await getSponsorsFromEmDash();
 <Base title="Inicio" showFixtures={true}>
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero
-    eyebrow="Academia · Punta Cana"
+    eyebrow="Academia Punta Cana FC"
     title="Pasión por el Fútbol"
-    description="Academia premium de alto rendimiento en el Caribe dominicano. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
+    description="Academia premium de alto rendimiento en la Rep. Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
     bullets={[
       "Plan formativo por etapa biológica, no por edad cronológica.",
       "Entrenadores con licencias UEFA y experiencia en academias de élite.",
@@ -58,6 +58,14 @@ const sponsors = await getSponsorsFromEmDash();
     title="¿POR QUÉ UNIRSE A PCFC?"
     pillars={valuePillars}
   />
+
+  <!-- PATROCINADORES — aliados del club -->
+  <Sponsors
+    eyebrow="Aliados"
+    title="PATROCINADORES Y ALIADOS"
+    sponsors={sponsors}
+  />
+
   <!-- POR QUÉ PCFC — confianza: números + pilares -->
   <WhyPcfc stats={stats} pillars={pillars} />
 
@@ -66,13 +74,6 @@ const sponsors = await getSponsorsFromEmDash();
 
   <!-- PATHWAY CARDS — dos caminos: padres y jugadores -->
   <PathwayCards cards={pathwayCards} />
-
-  <!-- PATROCINADORES — aliados del club -->
-  <Sponsors
-    eyebrow="Aliados"
-    title="PATROCINADORES Y ALIADOS"
-    sponsors={sponsors}
-  />
 
   <!-- CTA INSCRIPCIÓN — acción: el siguiente paso -->
   <EnrollmentCta />

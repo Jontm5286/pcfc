@@ -7,10 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "cms:sync": "pnpm exec emdash types && pnpm astro sync",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "images:webp": "bash scripts/optimize-images.sh",
     "images:webp": "bash scripts/optimize-images.sh"
   },
   "dependencies": {

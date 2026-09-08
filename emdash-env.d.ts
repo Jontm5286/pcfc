@@ -3,7 +3,7 @@
 
 /// <reference types="emdash/locals" />
 
-import type { ContentBylineCredit, TaxonomyTerm } from "emdash";
+import type { ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
 
 export interface Calendar {
   id: string;
@@ -59,6 +59,19 @@ export interface ClubHistory {
   image?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
   image_alt: string;
   order?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface Equipo {
+  id: string;
+  slug: string | null;
+  status: string;
+  nombre: string;
+  escudo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -122,6 +135,39 @@ export interface NextMatch {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Page {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  content?: PortableTextBlock[];
+  blocks?: unknown;
+  seo?: unknown;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface Partido {
+  id: string;
+  slug: string | null;
+  status: string;
+  categoria?: "Elite" | "Formativas Bajas" | "Formativas Altas" | "Pre-Formativas";
+  imagen: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  publicar?: boolean;
+  fecha: string;
+  equipo?: string;
+  equipo_local?: string;
+  test?: { "asdf"?: string | null }[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface Sponsor {
   id: string;
   slug: string | null;
@@ -160,9 +206,12 @@ declare module "emdash" {
     calendar: Calendar;
     categories: Category;
     club_history: ClubHistory;
+    equipos: Equipo;
     gallery: Gallery;
     hero: Hero;
     next_match: NextMatch;
+    pages: Page;
+    partidos: Partido;
     sponsors: Sponsor;
     stats_pillars: StatsPillar;
   }

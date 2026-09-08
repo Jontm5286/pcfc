@@ -524,6 +524,125 @@
           "defaultValue": 99
         }
       ]
+    },
+    {
+      "slug": "match-photos",
+      "fields": [
+        {
+          "name": "categorySlug",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "categoryLabel",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "team1",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "team2",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "date",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "thumbnail",
+          "type": "image",
+          "required": true
+        },
+        {
+          "name": "thumbnailAlt",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "published",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "name": "photos",
+          "type": "array",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "match_photos",
+      "label": "Match Photos",
+      "labelSingular": "Match Photo",
+      "supports": [
+        "drafts",
+        "preview",
+        "search"
+      ],
+      "titleField": "team1",
+      "fields": [
+        {
+          "slug": "categorySlug",
+          "label": "Category Slug",
+          "type": "string",
+          "required": true,
+          "options": [
+            "pre",
+            "form-baja",
+            "form-alta",
+            "elite"
+          ]
+        },
+        {
+          "slug": "categoryLabel",
+          "label": "Category Label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "team1",
+          "label": "Team 1",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "team2",
+          "label": "Team 2",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "thumbnail",
+          "label": "Thumbnail",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "thumbnailAlt",
+          "label": "Thumbnail Alt",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "published",
+          "label": "Published",
+          "type": "boolean",
+          "default": true
+        }
+      ]
     }
   ],
   "content": {
