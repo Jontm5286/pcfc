@@ -6,38 +6,68 @@
  *   - Lista de programas por edad → convicción ("Esto es lo que ofrece")
  *   - CTA inscripción por categoría → acción ("Inscríbelo ahora")
  *
- * Datos cargados desde EmDash CMS vía getCategories() (src/lib/content.ts).
- * El cliente edita los textos/imágenes en /_emdash/admin/ SIN tocar este archivo.
+ * Datos hardcodeados de las 4 categorías. En el futuro se cargarán desde EmDash.
  */
+
 import Base from "../layouts/Base.astro";
 import StockImage from "../components/StockImage.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import CategoryCard from "../components/CategoryCard.astro";
-import { getCategories } from "../lib/content";
 
-export const prerender = true;
-
-function parseAges(ages: string): { min: number; max: number } {
-  const m = ages.match(/(\d+)\s*a\s*(\d+)/i);
-  if (!m) return { min: 0, max: 0 };
-  return { min: +m[1], max: +m[2] };
-}
-
-const categories = (await getCategories()).map((cat) => {
-  const { min, max } = parseAges(cat.ages);
-  return {
-    slug: cat.slug as "pre" | "form-baja" | "form-alta" | "elite",
-    title: cat.name,
-    ageMin: min,
-    ageMax: max,
-    ageRange: cat.ages,
-    focus: cat.focus,
-    format: cat.format,
-    schedule: cat.schedule,
-    description: cat.description,
-    ctaHref: cat.ctaHref ?? "/inscribete",
-  };
-});
+const categories = [
+  {
+    slug: "pre" as const,
+    title: "Pre-Formativas",
+    ageMin: 4,
+    ageMax: 8,
+    ageRange: "4–8 años",
+    focus: "Movilidad, coordinación, primer contacto con el balón",
+    format: "Partidos formativos 90 min",
+    schedule: "Martes y jueves · 4:00–5:30 pm",
+    description:
+      "El primer paso dentro del club. Jugamos a aprender: exploración del balón, coordinación motriz y reglas básicas en un entorno lúdico, seguro y siempre acompañado por nuestros entrenadores.",
+    ctaHref: "/inscribete",
+  },
+  {
+    slug: "form-baja" as const,
+    title: "Formativas Bajas",
+    ageMin: 9,
+    ageMax: 12,
+    ageRange: "9–12 años",
+    focus: "Técnica individual, reglas del juego, compañerismo",
+    format: "Partidos 7 vs 7",
+    schedule: "Lunes, miércoles y viernes · 4:00–6:00 pm",
+    description:
+      "Consolidamos la técnica individual — control, pase, conducción — e introducimos la táctica colectiva en formato 7v7. Los jugadores entienden el juego, sus posiciones y el valor del equipo.",
+    ctaHref: "/inscribete",
+  },
+  {
+    slug: "form-alta" as const,
+    title: "Formativas Altas",
+    ageMin: 13,
+    ageMax: 15,
+    ageRange: "13–15 años",
+    focus: "Táctica, preparación física, competición federada",
+    format: "Partidos 9 vs 9",
+    schedule: "Martes y jueves · 5:00–7:00 pm + bloque de acondicionamiento",
+    description:
+      "Etapa de competición real. Profundizamos en sistemas tácticos, añadimos trabajo físico estructurado y participamos en torneos federados para medirnos contra otros clubes de la región.",
+    ctaHref: "/inscribete",
+  },
+  {
+    slug: "elite" as const,
+    title: "Elite / Reserva",
+    ageMin: 16,
+    ageMax: 19,
+    ageRange: "16–19 años",
+    focus: "Alto rendimiento, scouting, preparación física avanzada",
+    format: "Partidos 11 vs 11",
+    schedule: "Lunes, miércoles y viernes · 6:00–8:00 pm + gimnasio",
+    description:
+      "El último tramo del proceso formativo. Entrenamientos de alta intensidad, gimnasio, análisis de vídeo y seguimiento individual. Varios de nuestros jugadores de esta categoría han sido captados por clubes profesionales.",
+    ctaHref: "/inscribete",
+  },
+];
 ---
 
 <Base

@@ -53,28 +53,6 @@
     "venue": {
       "type": "string"
     },
-    "homeId": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string",
-          "const": ""
-        }
-      ]
-    },
-    "awayId": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string",
-          "const": ""
-        }
-      ]
-    },
     "$schema": {
       "type": "string"
     }

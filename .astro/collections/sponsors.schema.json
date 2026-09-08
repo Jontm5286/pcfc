@@ -18,15 +18,8 @@
       ]
     },
     "href": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string",
-          "const": ""
-        }
-      ]
+      "type": "string",
+      "format": "uri"
     },
     "order": {
       "default": 99,
@@ -34,16 +27,13 @@
       "minimum": -9007199254740991,
       "maximum": 9007199254740991
     },
-    "published": {
-      "default": true,
-      "type": "boolean"
-    },
     "$schema": {
       "type": "string"
     }
   },
   "required": [
     "name",
-    "logo"
+    "logo",
+    "href"
   ]
 }

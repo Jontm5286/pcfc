@@ -29,75 +29,74 @@ interface Props {
 }
 
 const { eyebrow, title, sponsors } = Astro.props;
-// console.log(sponsors);
 ---
 
 <section
-  class="relative w-full py-14 md:py-16 border-t border-b border-white/5k"
+  class="relative w-full py-14 md:py-16 border-t border-b border-white/5 bg-navy-dark"
   data-component="sponsors"
 >
-  <div class="max-w-7xl mx-auto px-8">
-    {
-      (eyebrow || title) && (
-        <header class="mb-10 flex flex-col items-center text-center">
-          {eyebrow && <p class="eyebrow text-sky mb-3">{eyebrow}</p>}
-          {title && <h2 class="h-section h-section--on-navy">{title}</h2>}
-        </header>
-      )
-    }
+  <div class="max-w-[1280px] mx-auto px-8">
+    {(eyebrow || title) && (
+      <header class="mb-10 flex flex-col items-center text-center">
+        {eyebrow && (
+          <p class="eyebrow text-sky mb-3">{eyebrow}</p>
+        )}
+        {title && (
+          <h2 class="h-section h-section--on-navy">
+            {title}
+          </h2>
+        )}
+      </header>
+    )}
 
-    {
-      sponsors.length > 0 && (
-        <div
-          class="sponsors-track flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
-          role="list"
-        >
-          {sponsors.map((sponsor) => (
-            <div role="listitem" class="sponsor-item group">
-              {sponsor.href ? (
-                <a
-                  href={sponsor.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Visitar ${sponsor.name}`}
-                  class="block"
-                >
-                  <img
-                    src={sponsor.logo}
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="sponsor-logo h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
-                  />
-                </a>
-              ) : (
+    {sponsors.length > 0 && (
+      <div
+        class="sponsors-track flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
+        role="list"
+      >
+        {sponsors.map((sponsor) => (
+          <div role="listitem" class="sponsor-item group">
+            {sponsor.href ? (
+              <a
+                href={sponsor.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visitar ${sponsor.name}`}
+                class="block"
+              >
                 <img
                   src={sponsor.logo}
                   alt={`Logo de ${sponsor.name}`}
                   loading="lazy"
-                  class="sponsor-logo h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                  class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
                 />
-              )}
-            </div>
-          ))}
-        </div>
-      )
-    }
+              </a>
+            ) : (
+              <img
+                src={sponsor.logo}
+                alt={`Logo de ${sponsor.name}`}
+                loading="lazy"
+                class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    )}
 
     {/* Placeholder cuando no hay datos */}
-    {
-      sponsors.length === 0 && (
-        <p class="text-center text-white/30 text-sm">
-          Patrocinadores próximamente
-        </p>
-      )
-    }
+    {sponsors.length === 0 && (
+      <p class="text-center text-white/30 text-sm">
+        Patrocinadores próximamente
+      </p>
+    )}
   </div>
 </section>
 
 <style>
   /* Separator visual entre sponsors */
   .sponsor-item:not(:last-child)::after {
-    content: "";
+    content: '';
     display: none;
   }
 </style>

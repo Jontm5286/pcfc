@@ -2,6 +2,5 @@
   "name": "Banco Popular",
   "logo": "https://images.unsplash.com/photo-1554224155-6722b3ff0602?w=200&q=80",
   "href": "https://example.com",
-  "order": 2,
-  "published": false
+  "order": 2
 }

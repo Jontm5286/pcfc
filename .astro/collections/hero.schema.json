@@ -49,6 +49,7 @@
         },
         "href": {
           "type": "string",
+          "format": "uri",
           "pattern": "^\\/.*"
         }
       },
@@ -66,6 +67,7 @@
         },
         "href": {
           "type": "string",
+          "format": "uri",
           "pattern": "^\\/.*"
         }
       },

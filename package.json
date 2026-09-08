@@ -7,16 +7,16 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "cms:sync": "pnpm exec emdash types && pnpm astro sync",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "images:webp": "bash scripts/optimize-images.sh"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.0",
     "@astrojs/react": "^6.0.5",
     "@emdash-cms/cloudflare": "^0.36.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
     "astro": "^7.2.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

@@ -1,19 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
-import { getCollection } from 'astro:content';
-
-// ── Datos EDITABLES via EmDash CMS ──
-// Historia + equipo directivo → src/content/club-history/ (editable cliente).
-// Schema valida image.alt (WCAG), type enum (history/teamMember).
-const clubEntries = await getCollection('club_history');
-const historyEntry = clubEntries.find((e) => e.data.type === 'history') ?? clubEntries[0];
-const history = historyEntry?.data ?? { content: ['Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe.'] };
-const teamMembers = clubEntries
-  .filter((e) => e.data.type === 'teamMember')
-  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
-  .map((e) => e.data);
 ---
+
 <Base title="Club" description="Conoce la historia, misión y visión de Punta Cana FC. Más de 10 años formando campeones en el Caribe.">
   <!-- Hero -->
   <section class="club-hero">
@@ -33,9 +22,15 @@ const teamMembers = clubEntries
         <div>
           <p class="eyebrow">Nuestra Historia</p>
           <h2 class="h-section">De Un Sueño a la Realidad</h2>
-          {history.content.map((paragraph) => (
-            <p class="text-block">{paragraph}</p>
-          ))}
+          <p class="text-block">
+            Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe.
+            Desde un pequeño grupo de jugadores ha crecido hasta convertirse en la academia de fútbol
+            más importante de la región.
+          </p>
+          <p class="text-block">
+            A lo largo de nuestros más de 10 años de trayectoria, hemos formado cientos de jugadores
+            que han llegado a competir en ligas profesionales nacionales e internacionales.
+          </p>
           <a href="/inscribete" class="btn btn--sky">Únete al Club</a>
         </div>
         <div class="image-placeholder">
@@ -100,15 +95,27 @@ const teamMembers = clubEntries
       <p class="eyebrow">Equipo Directivo</p>
       <h2 class="h-section">Liderazgo con Visión</h2>
       <div class="team-grid">
-        {teamMembers.map((member) => (
-          <div class="team-card">
-            <div class="team-avatar">
-              <StockImage name="directivo" alt={member.imageAlt ?? "Miembro del equipo directivo de Punta Cana FC"} className="team-avatar-img" loading="eager" width={200} height={200} />
-            </div>
-            <h3 class="h-card">{member.name}</h3>
-            <p class="team-role">{member.role ?? "Equipo Directivo"}</p>
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
           </div>
-        ))}
+          <h3 class="h-card">Director General</h3>
+          <p class="team-role">Dirección Estratégica</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
+          </div>
+          <h3 class="h-card">Director Deportivo</h3>
+          <p class="team-role">Área Técnica</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">
+            <StockImage name="directivo" alt="Miembro del equipo directivo de Punta Cana FC" className="team-avatar-img" loading="eager" width={200} height={200} />
+          </div>
+          <h3 class="h-card">Coordinador Académico</h3>
+          <p class="team-role">Formación Integral</p>
+        </div>
       </div>
     </div>
   </section>
@@ -162,6 +169,27 @@ const teamMembers = clubEntries
     object-fit: cover;
     border-radius: 12px;
     display: block;
+  }
+
+  .placeholder-box {
+    width: 100%;
+    height: 100%;
+    background: var(--color-navy-05);
+    border: 2px dashed var(--color-navy-10);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--color-navy-30);
+    font-size: 1rem;
+  }
+
+  .placeholder-box i {
+    font-size: 3rem;
+    color: var(--color-sky);
+    opacity: 0.5;
   }
 
   .mv-section {

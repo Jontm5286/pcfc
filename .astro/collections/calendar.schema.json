@@ -70,17 +70,6 @@
       "minimum": -9007199254740991,
       "maximum": 9007199254740991
     },
-    "equipoId": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string",
-          "const": ""
-        }
-      ]
-    },
     "$schema": {
       "type": "string"
     }
@@ -91,6 +80,7 @@
     "time",
     "category",
     "home",
-    "away"
+    "away",
+    "venue"
   ]
 }

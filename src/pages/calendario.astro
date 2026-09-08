@@ -10,49 +10,135 @@ import StockImage from "../components/StockImage.astro";
 import CalendarFilters from "../components/CalendarFilters.astro";
 import MatchListItem from "../components/MatchListItem.astro";
 import SectionHeader from "../components/SectionHeader.astro";
-import { getCollection } from "astro:content";
 
-// ── Fixtures EDITABLES via EmDash CMS (src/content/calendar/) ──
-// El cliente agrega/edita partidos desde /_emdash/admin/ → collection "calendar".
-// next-match.json (hero index) migrado a collection "next-match".
-// Mapea schema interno → MatchListItem props (categoryLabel derivado del slug).
-const CATEGORY_LABELS: Record<string, string> = {
-  elite: "Elite / Reserva",
-  "form-alta": "Formativas Altas",
-  "form-baja": "Formativas Bajas",
-  pre: "Pre-Formativas",
-};
-
-const calendarEntries = await getCollection("calendar");
-const upcomingMatches = (calendarEntries || [])
-  .filter((e) => e.data.kind === "upcoming")
-  .sort((a, b) => ((a.data.order as number) ?? 99) - ((b.data.order as number) ?? 99))
-  .map((e) => ({
-    categorySlug: e.data.categorySlug ?? "form-baja",
-    categoryLabel: CATEGORY_LABELS[e.data.categorySlug ?? ""] ?? e.data.category,
-    date: e.data.date,
-    time: e.data.time,
-    team1: e.data.home,
-    team2: e.data.away,
-    venue: e.data.venue,
-    photosHref: e.data.photosHref,
+// Próximos partidos (anticipación)
+const upcomingMatches = [
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Sáb 13 sep",
+    time: "10:00 AM",
+    team1: "PCFC",
+    team2: "Atlético Bávaro",
+    venue: "Cancha Principal · PCFC",
+    photosHref: undefined,
     past: false,
-  }));
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Dom 14 sep",
+    time: "9:00 AM",
+    team1: "PCFC Sub-15",
+    team2: "Moca FC",
+    venue: "Cancha Auxiliar · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "form-baja",
+    categoryLabel: "Formativas Bajas",
+    date: "Sáb 20 sep",
+    time: "11:00 AM",
+    team1: "PCFC Sub-12",
+    team2: "San Cristóbal FC",
+    venue: "Estadio Garrik",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "pre",
+    categoryLabel: "Pre-Formativas",
+    date: "Dom 21 sep",
+    time: "10:30 AM",
+    team1: "PCFC Sub-8",
+    team2: "Escuela Bavaro",
+    venue: "Cancha 3 · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 27 sep",
+    time: "4:00 PM",
+    team1: "PCFC Sub-14",
+    team2: "Selección Federativa",
+    venue: "Florer Puerto",
+    photosHref: undefined,
+    past: false,
+  },
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Dom 28 sep",
+    time: "3:00 PM",
+    team1: "PCFC Reserva",
+    team2: "Higüey United",
+    venue: "Cancha Principal · PCFC",
+    photosHref: undefined,
+    past: false,
+  },
+];
 
-const pastMatches = calendarEntries
-  .filter((e) => e.data.kind === "past")
-  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
-  .map((e) => ({
-    categorySlug: e.data.categorySlug ?? "form-baja",
-    categoryLabel: CATEGORY_LABELS[e.data.categorySlug ?? ""] ?? e.data.category,
-    date: e.data.date,
-    time: e.data.time,
-    team1: e.data.home,
-    team2: e.data.away,
-    venue: e.data.venue,
-    photosHref: e.data.photosHref ?? undefined,
+// Partidos jugados (recuerdo)
+const pastMatches = [
+  {
+    categorySlug: "elite",
+    categoryLabel: "Elite / Reserva",
+    date: "Sáb 6 sep",
+    time: "10:00 AM",
+    team1: "PCFC",
+    team2: "Atlántico FC",
+    venue: "Cancha Principal · PCFC",
+    photosHref: "/fotos/pcfc-vs-atlantico-6sep",
     past: true,
-  }));
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 30 ago",
+    time: "4:00 PM",
+    team1: "PCFC Sub-15",
+    team2: "Santiago FC",
+    venue: "Cancha Auxiliar · PCFC",
+    photosHref: "/fotos/pcfc-sub15-vs-santiago-30ago",
+    past: true,
+  },
+  {
+    categorySlug: "form-baja",
+    categoryLabel: "Formativas Bajas",
+    date: "Dom 24 ago",
+    time: "11:00 AM",
+    team1: "PCFC Sub-10",
+    team2: "Canay FC",
+    venue: "Caseral",
+    photosHref: "/fotos/pcfc-sub10-vs-canay-24ago",
+    past: true,
+  },
+  {
+    categorySlug: "pre",
+    categoryLabel: "Pre-Formativas",
+    date: "Sáb 16 ago",
+    time: "9:30 AM",
+    team1: "PCFC Sub-6",
+    team2: "Casa España",
+    venue: "Casa España",
+    photosHref: "/fotos/pcfc-sub6-vs-casa-espana-16ago",
+    past: true,
+  },
+  {
+    categorySlug: "form-alta",
+    categoryLabel: "Formativas Altas",
+    date: "Sáb 9 ago",
+    time: "4:00 PM",
+    team1: "PCFC Sub-13",
+    team2: "Casa España",
+    venue: "Casa España",
+    photosHref: undefined,
+    past: true,
+  },
+];
 ---
 
 <Base

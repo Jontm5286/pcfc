@@ -2,24 +2,30 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "categorySlug": {
-      "default": "elite",
+    "type": {
+      "type": "string",
+      "enum": [
+        "history",
+        "teamMember"
+      ]
+    },
+    "name": {
       "type": "string"
     },
-    "categoryLabel": {
-      "default": "Elite / Reserva",
+    "role": {
       "type": "string"
     },
-    "team1": {
+    "roleDescription": {
       "type": "string"
     },
-    "team2": {
-      "type": "string"
+    "content": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
-    "date": {
-      "type": "string"
-    },
-    "thumbnail": {
+    "image": {
       "anyOf": [
         {
           "type": "string",
@@ -31,23 +37,21 @@
         }
       ]
     },
-    "thumbnailAlt": {
+    "imageAlt": {
       "type": "string",
       "minLength": 3
     },
-    "published": {
-      "default": true,
-      "type": "boolean"
+    "order": {
+      "default": 99,
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
     },
     "$schema": {
       "type": "string"
     }
   },
   "required": [
-    "team1",
-    "team2",
-    "date",
-    "thumbnail",
-    "thumbnailAlt"
+    "type"
   ]
 }

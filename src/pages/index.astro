@@ -8,38 +8,34 @@ import CommunityMosaic from "../components/CommunityMosaic.astro";
 import PathwayCards from "../components/PathwayCards.astro";
 import Sponsors from "../components/Sponsors.astro";
 import EnrollmentCta from "../components/EnrollmentCta.astro";
-
-// ── Datos EDITABLES via EmDash CMS (src/content/ + content.config.ts) ──
-// El cliente edita estos en /_emdash/admin/ (hero stats, nextMatch, sponsors, gallery, categorías).
-// Los SVG iconos de value-pillars + pathway-cards quedan en homeData.ts (Design-fixed, NO editable).
 import {
-  getNextMatch,
-  getCategories,
-  getStats,
-  getPillars,
-  getGalleryImages,
-} from "../lib/content";
-import { getSponsorsFromEmDash } from "../lib/content";
-// Value-pillars + pathway-cards: iconos SVG fixed (no cliente edita) → datos estáticos.
-import { getValuePillarsData, getPathwayCardsData } from "../data/homeData";
+  getNextMatchData,
+  getCategoriesData,
+  getPillarsData,
+  getStatsData,
+  getGalleryImagesData,
+  getValuePillarsData,
+  getPathwayCardsData,
+  getSponsorsData,
+} from "../data/homeData";
 
-// Cargar datos editable del CMS (async → await en frontmatter Astro).
-const nextMatch = await getNextMatch();
-const categories = await getCategories();
-const stats = await getStats();
-const pillars = await getPillars();
-const galleryImages = await getGalleryImages();
-const valuePillars = getValuePillarsData(); // SVG iconos — no editable
-const pathwayCards = getPathwayCardsData(); // iconos — no editable
-const sponsors = await getSponsorsFromEmDash();
+// Load static datasets for home page sections
+const nextMatch = getNextMatchData();
+const categories = getCategoriesData();
+const pillars = getPillarsData();
+const stats = getStatsData();
+const galleryImages = getGalleryImagesData();
+const valuePillars = getValuePillarsData();
+const pathwayCards = getPathwayCardsData();
+const sponsors = getSponsorsData();
 ---
 
 <Base title="Inicio" showFixtures={true}>
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero
-    eyebrow="Academia Punta Cana FC"
+    eyebrow="Academia · Punta Cana"
     title="Pasión por el Fútbol"
-    description="Academia premium de alto rendimiento en la Rep. Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
+    description="Academia premium de alto rendimiento en el Caribe dominicano. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
     bullets={[
       "Plan formativo por etapa biológica, no por edad cronológica.",
       "Entrenadores con licencias UEFA y experiencia en academias de élite.",
@@ -58,14 +54,6 @@ const sponsors = await getSponsorsFromEmDash();
     title="¿POR QUÉ UNIRSE A PCFC?"
     pillars={valuePillars}
   />
-
-  <!-- PATROCINADORES — aliados del club -->
-  <Sponsors
-    eyebrow="Aliados"
-    title="PATROCINADORES Y ALIADOS"
-    sponsors={sponsors}
-  />
-
   <!-- POR QUÉ PCFC — confianza: números + pilares -->
   <WhyPcfc stats={stats} pillars={pillars} />
 
@@ -74,6 +62,13 @@ const sponsors = await getSponsorsFromEmDash();
 
   <!-- PATHWAY CARDS — dos caminos: padres y jugadores -->
   <PathwayCards cards={pathwayCards} />
+
+  <!-- PATROCINADORES — aliados del club -->
+  <Sponsors
+    eyebrow="Aliados"
+    title="PATROCINADORES Y ALIADOS"
+    sponsors={sponsors}
+  />
 
   <!-- CTA INSCRIPCIÓN — acción: el siguiente paso -->
   <EnrollmentCta />

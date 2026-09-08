@@ -109,10 +109,11 @@
       ],
       "hidden": false,
       "fields": [
-        {
-          "slug": "item_slug",
-          "label": "Slug",
-          "type": "string",
+{
+          "slug": "category",
+          "label": "Categoría",
+          "type": "reference",
+          "target": "categories",
           "required": true,
           "unique": false
         },
@@ -790,6 +791,58 @@
           "required": false,
           "unique": false,
           "defaultValue": 99
+        }
+      ]
+    },
+    {
+      "slug": "teams",
+      "label": "Teams",
+      "label_singular": "Team",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "titleField": "name",
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "short_name",
+          "label": "Short Name",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "logo",
+          "label": "Logo",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "city",
+          "label": "City",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "category",
+          "label": "Category",
+          "type": "reference",
+          "required": false,
+          "target": "categories",
+          "displayField": "name"
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
         }
       ]
     }

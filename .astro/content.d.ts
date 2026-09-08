@@ -151,11 +151,11 @@ declare module 'astro:content' {
   filePath?: string;
   digest?: string | number;
 }>;
-"club_history": Record<string, {
+"club-history": Record<string, {
   id: string;
   body?: string;
-  collection: "club_history";
-  data: InferEntrySchema<"club_history">;
+  collection: "club-history";
+  data: InferEntrySchema<"club-history">;
   rendered?: RenderedContent;
   filePath?: string;
   digest?: string | number;
@@ -178,15 +178,6 @@ declare module 'astro:content' {
   filePath?: string;
   digest?: string | number;
 }>;
-"match_photos": Record<string, {
-  id: string;
-  body?: string;
-  collection: "match_photos";
-  data: InferEntrySchema<"match_photos">;
-  rendered?: RenderedContent;
-  filePath?: string;
-  digest?: string | number;
-}>;
 "next_match": Record<string, {
   id: string;
   body?: string;
@@ -205,11 +196,11 @@ declare module 'astro:content' {
   filePath?: string;
   digest?: string | number;
 }>;
-"stats_pillars": Record<string, {
+"stats-pillars": Record<string, {
   id: string;
   body?: string;
-  collection: "stats_pillars";
-  data: InferEntrySchema<"stats_pillars">;
+  collection: "stats-pillars";
+  data: InferEntrySchema<"stats-pillars">;
   rendered?: RenderedContent;
   filePath?: string;
   digest?: string | number;
@@ -245,5 +236,5 @@ declare module 'astro:content' {
 	>;
 
 	export type ContentConfig = typeof import("../src/content.config.js");
-	export type LiveContentConfig = never;
+	export type LiveContentConfig = typeof import("../src/live.config.js");
 }

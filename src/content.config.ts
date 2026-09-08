@@ -1,204 +1,192 @@
-import { defineCollection } from "astro:content";
-import { z } from "zod";
+import { defineCollection } from 'astro:content';
+import { z } from 'zod';
 
 /**
- * PCFC Content Collections — EmDash CMS v0.36
- * =============================================
- * Este archivo define las **Content Collections** de Astro (filesystem-based).
+ * PCFC Content Collections — EmDash CMS
+ * ======================================
+ * Cada collection aquí es editable por el cliente en /_emdash/admin/.
+ * Los schemas Zod VALIDAN que los valores editados no rompan el layout:
+ *   - textos → strings con defaults (nunca empty para headings)
+ *   - imágenes → url string (puede ser /images/stock/<name>.webp local o EmDash media URL)
+ *   - CTAs → pares label/href (href validado contra rutas sitio)
+ *   - enum → categorías/estados (no input libre, evita typos)
  *
- * Las collections dinámicas (sponsors, categories, etc.) se consultan en tiempo real
- * desde la DB EmDash via `getEmDashCollection('slug')` en `src/lib/content.ts`.
- * Internamente EmDash usa una **Live Collection** llamada `_emdash` definida en
- * `src/live.config.ts` (REQUERIDO por Astro 7 — las Live Collections NO pueden
- * estar en `content.config.ts`).
- *
- * Flujo de datos:
- *   1. `getEmDashCollection('sponsors')` → Live Collection `_emdash` (SQLite)
- *   2. Fallback → `getCollection('sponsors')` → archivos JSON en src/content/
- *   3. Fallback final → datos estáticos en src/data/homeData.ts
- *
- * Collections estáticas (hero, club_history, blog) usan type:"content"/"data"
- * con archivos en src/content/.
- *
- * Ref: EmDash v0.36 + Astro 7.3.1.
+ * EL DISEÑO permanece fijo — el cliente cambia text/imagen, no class names ni layout.
+ * Ref: astro-cloudflare-deployment skill § Design System + WCAG contrast rules.
  */
 
-// Schema compartido para imágenes
-const ImageSchema = z.string().url().or(z.string().startsWith("/"));
+// Schema compartido para imágenes (local stock .webp o EmDash media URL)
+// Ejemplos válidos:
+//   /images/stock/historia.webp
+//   https://images.unsplash.com/photo-...
+//   https://assets.emdash.com/media/...
+const ImageSchema = z.string().url().or(z.string().startsWith('/'));
 
-// Schema compartido para CTAs
+// Schema shared para CTA (label + href interno)
 const CtaSchema = z.object({
-  label: z.string().min(1, "El label del CTA no puede estar vacío"),
-  href: z.string().startsWith("/"),
+  label: z.string().min(1, 'El label del CTA no puede estar vacío'),
+  href: z.string().url().startsWith('/'),
 });
 
 // ─────────────────────────────────────────────────────────
-// COLLECTION 1: hero (static — type:"data")
-// Hero principal — archivos JSON en src/content/hero/
+// COLLECTION 1: hero-section
+// Hero principal que aparece en index, categorias, calendario, blog.
+// El cliente edita eyebrow, title, desc, backgroundImage.
 // ─────────────────────────────────────────────────────────
 const heroCollection = defineCollection({
-  type: "data",
+  type: 'content',
   schema: z.object({
-    page: z.enum(["home", "categorias", "calendario", "blog"]),
-    eyebrow: z.string().default("PCFC"),
-    title: z.string().min(3, "El título debe tener al menos 3 caracteres"),
-    description: z.string().default("Formando campeones en el Caribe."),
-    backgroundImage: ImageSchema.default("/images/stock/jugadores-cancha.webp"),
+    // Identificador de página (home, categorias, calendario, blog)
+    page: z.enum(['home', 'categorias', 'calendario', 'blog']),
+    // Texto superpuesto (e.g. "Academia · Punta Cana", "Temporada 2026")
+    eyebrow: z.string().default('PCFC'),
+    // Headline (H1) — requerido, min 3 chars
+    title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
+    // Párrafo descriptivo
+    description: z.string().default('Formando campeones en el Caribe.'),
+    // Imagen fondo (local .webp o URL)
+    backgroundImage: ImageSchema.default('/images/stock/jugadores-cancha.webp'),
+    // Imagen alt (WCAG: siempre requerido)
     backgroundAlt: z
       .string()
-      .default("Jugadores de Punta Cana FC entrenando en cancha"),
+      .default('Jugadores de Punta Cana FC entrenando en cancha'),
+    // CTAs (opcionales)
     ctaPrimary: CtaSchema.optional(),
     ctaSecondary: CtaSchema.optional(),
+    // Gallery images para hero rotator (3-6 fotos)
     galleryImages: z
-      .array(z.object({ src: ImageSchema, alt: z.string().min(3) }))
+      .array(
+        z.object({
+          src: ImageSchema,
+          alt: z.string().min(3, 'Alt accesible requerido para WCAG'),
+        }),
+      )
       .default([]),
   }),
 });
 
 // ─────────────────────────────────────────────────────────
-// COLLECTION 2: club_history (static — type:"content")
-// Historia del club + equipo directivo — archivos .md en src/content/club_history/
+// COLLECTION 2: club-history + team-members
+// Página /club — historia del club + equipo directivo (3 miembros).
 // ─────────────────────────────────────────────────────────
 const clubCollection = defineCollection({
-  type: "content",
+  type: 'content',
   schema: z.object({
-    type: z.enum(["history", "teamMember"]),
+    // Tipo: 'history' = texto historia, 'teamMember' = miembro directivo
+    type: z.enum(['history', 'teamMember']),
+    // Para teamMember: nombre, rol, orden
     name: z.string().optional(),
     role: z.string().optional(),
     roleDescription: z.string().optional(),
-    content: z.array(z.string()).default([]),
+    // Texto (historia) o imagen
+    content: z.array(z.string()).default([]), // párrafos de historia
     image: ImageSchema.optional(),
-    imageAlt: z.string().min(3).optional(),
+    imageAlt: z.string().min(3, 'Alt accesible requerido').optional(),
+    // Orden en grid (default 99)
     order: z.number().int().default(99),
-    published: z.boolean().default(true),
   }),
 });
 
 // ─────────────────────────────────────────────────────────
-// COLLECTION 3: blog (static — type:"content")
-// Posts del blog — archivos .md en src/content/blog/
+// COLLECTION 3: categories
+// Las 4 categorías formativas de /categorias + CTA por categoría.
+// Client puede agregar/quitar categorías.
 // ─────────────────────────────────────────────────────────
-const blogCollection = defineCollection({
-  type: "content",
-  schema: z.object({
-    title: z.string().min(3),
-    description: z.string().optional(),
-    pubDate: z.coerce.date().optional(),
-    author: z.string().default("PCFC"),
-    image: ImageSchema.optional(),
-    imageAlt: z.string().min(3).optional(),
-    tags: z.array(z.string()).default([]),
-    draft: z.boolean().default(false),
-  }),
-});
-
-// ─────────────────────────────────────────────────────────
-// COLLECTIONS 4-9: Dinámicas (leídas via getEmDashCollection)
-// Definidas como type:"data" con archivos JSON de respaldo en src/content/.
-// Los datos principales vienen de la DB EmDash (Live Collection _emdash).
-// ─────────────────────────────────────────────────────────
-
-// COLLECTION 4: categories
 const categoriesCollection = defineCollection({
-  type: "data",
+  type: 'content',
   schema: z.object({
     slug: z.string(),
-    badge: z.enum([
-      "badge--pre",
-      "badge--form-baja",
-      "badge--form-alta",
-      "badge--elite",
-    ]),
-    ages: z.string(),
+    // Badge colores: pre/form-baja/form-alta/elite (enum para consistency)
+    badge: z.enum(['badge--pre', 'badge--form-baja', 'badge--form-alta', 'badge--elite']),
+    ages: z.string(), // e.g. "4 a 8 años"
     name: z.string(),
     copy: z.string(),
-    focus: z.string().optional(),
-    format: z.string().optional(),
-    schedule: z.string().optional(),
-    description: z.string().min(3),
-    ctaHref: z.string().default("/inscribete"),
-    order: z.number().int().default(99),
-    published: z.boolean().default(true),
+    focus: z.string(),
+    format: z.string(),
+    schedule: z.string(),
+    description: z.string().min(3, 'Descripción requerida'),
+    ctaHref: z.string().default('/inscribete'),
   }),
 });
 
-// COLLECTION 5: calendar (matches)
+// ─────────────────────────────────────────────────────────
+// COLLECTION 4: calendar-matches
+// Próximos + partidos jugados — /calendario + nextMatch hero en index.
+// Client edita fixture fechas/hora.
+// ─────────────────────────────────────────────────────────
 const calendarCollection = defineCollection({
-  type: "data",
+  type: 'data',
   schema: z.object({
-    kind: z.enum(["upcoming", "past", "nextMatch"]),
-    date: z.string(),
-    time: z.string(),
+    // 'upcoming' = próximos partidos, 'past' = jugados, 'nextMatch' = featured hero
+    kind: z.enum(['upcoming', 'past', 'nextMatch']),
+    date: z.string(), // e.g. "SÁB 13 SEP"
+    time: z.string(), // "10:00 AM"
     category: z.string(),
-    categorySlug: z.enum(["pre", "form-baja", "form-alta", "elite"]).optional(),
+    categorySlug: z.enum(['pre', 'form-baja', 'form-alta', 'elite']).optional(),
     home: z.string(),
     homeLogo: ImageSchema.optional(),
     away: z.string(),
     awayLogo: ImageSchema.optional(),
-    venue: z.string().optional(),
+    venue: z.string(),
+    // Para partidos pasados: foto galería (opcional)
     photosHref: z.string().optional(),
+    // orden de display (0 = nextMatch hero)
     order: z.number().int().default(0),
-    equipoId: z.string().optional().or(z.literal("")),
   }),
 });
 
-// COLLECTION 6: sponsors
+// ─────────────────────────────────────────────────────────
+// COLLECTION 5: sponsors
+// 6 patrocinadores en footer/hero — editable nombre/logo/href.
+// ─────────────────────────────────────────────────────────
 const sponsorsCollection = defineCollection({
-  type: "data",
+  type: 'data',
   schema: z.object({
     name: z.string(),
-    logo: ImageSchema,
-    href: z.string().optional().or(z.literal("")),
+    logo: ImageSchema, // puede ser local /Logo-PCFC.svg o external
+    href: z.string().url(),
     order: z.number().int().default(99),
-    published: z.boolean().default(true),
   }),
 });
 
-
-// COLLECTION 9: match-photos
-// Fotos por partido — cada entry es un partido con su galería de fotos.
-const matchPhotosCollection = defineCollection({
-  type: "content",
-  schema: z.object({
-    categorySlug: z.string().default("elite"),
-    categoryLabel: z.string().default("Elite / Reserva"),
-    team1: z.string(),
-    team2: z.string(),
-    date: z.string(),
-    thumbnail: ImageSchema,
-    thumbnailAlt: z.string().min(3),
-    published: z.boolean().default(true),
-  }),
-});
-
-// COLLECTION 7: gallery
+// ─────────────────────────────────────────────────────────
+// COLLECTION 6: gallery-images
+// Fotos community gallery en index hero grid (3x2 rotator).
+// ─────────────────────────────────────────────────────────
 const galleryCollection = defineCollection({
-  type: "content",
+  type: 'content',
   schema: z.object({
     src: ImageSchema,
-    alt: z.string().min(3),
+    alt: z.string().min(3, 'Alt accesible requerido para WCAG'),
     order: z.number().int().default(99),
-    published: z.boolean().default(true),
-    partidoId: z.string().optional().or(z.literal("")),
   }),
 });
 
-// COLLECTION 8: stats_pillars
+// ─────────────────────────────────────────────────────────
+// COLLECTION 7: stats-pillars
+// Stats hero (700+, 20+, etc.) + value pillars (3 cards).
+// ─────────────────────────────────────────────────────────
 const statsCollection = defineCollection({
-  type: "data",
+  type: 'data', // simple k/v, no markdown rendering needed
   schema: z.object({
-    kind: z.enum(["stat", "pillar"]),
-    value: z.string().optional(),
-    label: z.string().optional(),
-    n: z.string().optional(),
-    title: z.string().optional(),
+    // 'stat' = counter display, 'pillar' = value pillar card
+    kind: z.enum(['stat', 'pillar']),
+    // stat fields
+    value: z.string().optional(), // "700+"
+    label: z.string().optional(), // "Futbolistas"
+    // pillar fields
+    n: z.string().optional(), // "01"
+    title: z.string().optional(), // "Metodología europea"
     copy: z.string().optional(),
     order: z.number().int().default(99),
-    published: z.boolean().default(true),
   }),
 });
 
-// COLLECTION 9: next_match (singleton)
+// ─────────────────────────────────────────────────────────
+// EXPORT
+// ─────────────────────────────────────────────────────────
+
+// COLLECTION 8: next_match
 const nextMatchCollection = defineCollection({
   type: "data",
   schema: z.object({
@@ -211,20 +199,32 @@ const nextMatchCollection = defineCollection({
     away: z.string(),
     awayLogo: ImageSchema.optional(),
     venue: z.string(),
-    homeId: z.string().optional().or(z.literal("")),
-    awayId: z.string().optional().or(z.literal("")),
+  }),
+});
+
+// COLLECTION 9: blog
+const blogCollection = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string().min(3),
+    slug: z.string(),
+    category: z.string().default("Noticias"),
+    publishedAt: z.string(),
+    coverImage: ImageSchema.optional(),
+    coverAlt: z.string().optional(),
+    excerpt: z.string().optional(),
+    published: z.boolean().default(true),
   }),
 });
 
 export const collections = {
   hero: heroCollection,
-  club_history: clubCollection,
-  blog: blogCollection,
+  'club-history': clubCollection,
   categories: categoriesCollection,
   calendar: calendarCollection,
   sponsors: sponsorsCollection,
   gallery: galleryCollection,
-  "match_photos": matchPhotosCollection,
-  stats_pillars: statsCollection,
+  'stats-pillars': statsCollection,
   next_match: nextMatchCollection,
+  blog: blogCollection,
 };
