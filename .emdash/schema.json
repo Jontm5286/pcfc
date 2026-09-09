@@ -5,6 +5,7 @@
       "label": "Calendar Matches",
       "labelSingular": "Match",
       "description": "Proximos y partidos jugados - fixtures editables.",
+      "titleField": "home",
       "supports": [
         "drafts",
         "revisions",
@@ -101,6 +102,7 @@
       "label": "Categories",
       "labelSingular": "Category",
       "description": "Las 4 categorias formativas de /categorias.",
+      "titleField": "name",
       "supports": [
         "drafts",
         "revisions",
@@ -274,45 +276,10 @@
       ]
     },
     {
-      "slug": "equipos",
-      "label": "Equipos",
-      "labelSingular": "Equipo",
-      "supports": [
-        "drafts",
-        "revisions"
-      ],
-      "hidden": false,
-      "fields": [
-        {
-          "slug": "nombre",
-          "label": "Nombre",
-          "type": "string",
-          "required": true,
-          "unique": false
-        },
-        {
-          "slug": "escudo",
-          "label": "Escudo",
-          "type": "image",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "allowedMimeTypes": [
-              "image/png",
-              "image/jpeg",
-              "image/gif",
-              "image/webp",
-              "image/avif"
-            ]
-          },
-          "options": {}
-        }
-      ]
-    },
-    {
       "slug": "gallery",
       "label": "Gallery",
       "labelSingular": "Gallery Image",
+      "titleField": "alt",
       "supports": [
         "drafts",
         "preview",
@@ -591,6 +558,7 @@
       "slug": "partidos",
       "label": "Partidos",
       "labelSingular": "Partido",
+      "titleField": "fecha",
       "supports": [
         "drafts",
         "revisions",
@@ -689,6 +657,7 @@
       "slug": "sponsors",
       "label": "Sponsors",
       "labelSingular": "Sponsor",
+      "titleField": "name",
       "supports": [
         "drafts",
         "preview",
