@@ -28,6 +28,8 @@ const {
     { label: "Inicio", href: "/" },
     { label: "Inscríbete", href: "/inscribete" },
     { label: "Club", href: "/club" },
+    { label: "Calendario", href: "/calendario" },
+    { label: "Galería de fotos", href: "/fotos" },
     { label: "Área Deportiva", href: "/area-deportiva" },
     { label: "Tienda", href: "/tienda" },
     { label: "Blog", href: "/blog" },
@@ -57,7 +59,10 @@ const isCurrent = (href: string) =>
     </a>
 
     <!-- Nav -->
-    <nav class="flex items-center gap-8 flex-1 h-full justify-center" aria-label="Principal">
+    <nav
+      class="flex items-center gap-8 flex-1 h-full justify-center"
+      aria-label="Principal"
+    >
       {
         navItems.map((item) => (
           <div class="relative h-full flex items-center">
@@ -166,11 +171,7 @@ const isCurrent = (href: string) =>
   </div>
 
   <!-- Mobile Menu -->
-  <div
-    id="mobile-menu"
-    class="bg-navy-dark border-t border-white/5"
-    hidden
-  >
+  <div id="mobile-menu" class="bg-navy-dark border-t border-white/5" hidden>
     <nav class="container-x flex flex-col gap-1 py-6" aria-label="Móvil">
       {
         navItems.map((item) => (
@@ -200,8 +201,9 @@ const isCurrent = (href: string) =>
           </div>
         ))
       }
-      <a href="/inscribete" class="btn btn--sky btn--on-navy btn--lg self-start mt-5"
-        >Inscríbete</a
+      <a
+        href="/inscribete"
+        class="btn btn--sky btn--on-navy btn--lg self-start mt-5">Inscríbete</a
       >
     </nav>
   </div>

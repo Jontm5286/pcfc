@@ -825,12 +825,6 @@
           "required": false
         },
         {
-          "slug": "city",
-          "label": "City",
-          "type": "string",
-          "required": false
-        },
-        {
           "slug": "category",
           "label": "Category",
           "type": "reference",
