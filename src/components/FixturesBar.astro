@@ -1,5 +1,31 @@
 ---
-import { fixtures, categoryColors } from '../data/fixtures';
+import { fixtures as fallbackFixtures, categoryColors, type Fixture } from '../data/fixtures';
+import {
+  fetchAcademyFeed,
+  academyCategoryToWeb,
+  formatMatchDate,
+  formatMatchTime,
+} from '../lib/academy-feed';
+
+// Marquee con partidos en vivo de FutbolPro Academy (próximos).
+// Si el feed falla o viene vacío, se usan los fixtures locales de respaldo.
+const feed = await fetchAcademyFeed();
+const fixtures: Fixture[] =
+  feed.upcoming.length > 0
+    ? feed.upcoming.map((m, i) => {
+        const cat = academyCategoryToWeb(m.category);
+        return {
+          id: m.id || `live-${i}`,
+          category: cat.short,
+          team1: { name: `PCFC ${cat.short}`, color: '#00285C' },
+          team2: { name: m.opponent || 'Rival por confirmar', color: '#64748b' },
+          venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
+          date: formatMatchDate(m.matchDate),
+          time: formatMatchTime(m.matchTime) ?? '--:--',
+          label: cat.label,
+        };
+      })
+    : fallbackFixtures;
 ---
 
 <div

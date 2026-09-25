@@ -3,7 +3,8 @@ dist/
 node_modules/
 
 # EmDash local dev DB + media (NOT committed — prod uses D1/R2)
-data/
+# Solo raíz: src/data/ SÍ se commitea (fixtures, homeData del sitio).
+/data/
 uploads/
 *.db-shm
 *.db-wal
