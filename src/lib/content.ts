@@ -63,6 +63,18 @@ export async function getSponsors() {
     .map((i) => i.data) as unknown as SponsorItem[];
 }
 
+/** Alias legacy: páginas/debug usan este nombre. */
+export const getSponsorsFromEmDash = getSponsors;
+
+/** Normaliza logo (string | ImageMetadata) a URL string para <img>. */
+export function resolveLogoUrl(logo: unknown): string {
+  if (typeof logo === 'string') return logo;
+  if (logo && typeof logo === 'object' && 'src' in (logo as Record<string, unknown>)) {
+    return String((logo as Record<string, unknown>).src);
+  }
+  return String(logo ?? '');
+}
+
 // ── calendar (nextMatch already handled via next-match) ──
 export async function getCalendar(kind: 'upcoming' | 'past') {
   const all = await getCollection('calendar');
