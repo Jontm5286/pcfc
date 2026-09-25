@@ -1,62 +1,57 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
-import sitemap from "@astrojs/sitemap";
-// import react from "@astrojs/react";
-import emdash, { local } from "emdash/astro";
-import { sqlite } from "emdash/db";
-import node from "@astrojs/node";
-
-import react from "@astrojs/react";
+import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
+import emdash, { local } from 'emdash/astro';
+import { sqlite } from 'emdash/db';
+import node from '@astrojs/node';
+import react from '@astrojs/react';
 
 // ============================================================
 // PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
 // ============================================================
 // El cliente edita content collections desde /_emdash/admin/
 // SIN tocar diseño/código. Schemas en src/content.config.ts.
-// Dev: SQLite local (data/emdash.db).  Prod: Cloudflare D1 (DB).
-// Ref: astro-cloudflare-deployment skill (Eter Studio pattern)
+// Dev: SQLite local (data/emdash.db). Prod: Cloudflare D1 (DB).
 // ============================================================
 
 export default defineConfig({
-  site: "https://puntacanafc.com",
-  trailingSlash: "ignore",
-  output: "server", // EmDash requiere SSR para endpoints /_emdash/*
+  site: 'https://puntacanafc.com',
+  trailingSlash: 'ignore',
+  output: 'server', // EmDash requiere SSR para endpoints /_emdash/*
   adapter: node({
-    // Dev/local: Node standalone. Prod: @astrojs/cloudflare.
-    mode: "standalone",
+    mode: 'standalone', // Dev/local: Node. Prod: cambiar a @astrojs/cloudflare
   }),
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        ignored: ['**/data/**', '**/src/content/**', '**/.emdash/**'],
+      },
+    },
     ssr: {
-      noExternal: ["@emdash-cms/cloudflare", "emdash", "kysely"],
+      noExternal: ['@emdash-cms/cloudflare', 'emdash', 'kysely'],
     },
   },
-  integrations: [sitemap(), // react(),
-  emdash({
-    // Dev DB → SQLite local. EmDash auto-detecta EMDASH_DATABASE_URL=.
-    database: sqlite({ url: "file:./data.db" }),
-    storage: local({
-      directory: "./uploads",
-      baseUrl: "/_emdash/api/media/file",
+  integrations: [
+    sitemap(),
+    react(), // Requerido antes de EmDash para renderizar el Admin UI
+    emdash({
+      // Alineado con el comentario: apunta a data/emdash.db para evitar el error 'unable to open database file'
+      database: sqlite({
+        url: process.env.EMDASH_DATABASE_URL || 'file:./data/emdash.db',
+      }),
+      storage: local({
+        directory: './data/media',
+        baseUrl: '/_emdash/api/media/file',
+      }),
+      contentCollections: {
+        enabled: true,
+        dir: 'src/content',
+      },
+      auth: {
+        mode: process.env.NODE_ENV === 'production' ? 'email' : 'dev',
+      },
     }),
-    // Local dev DB — creado por `emdash init` (data/emdash.db)
-
-    // Content collections editable por el cliente (schemas Zod en content.config.ts).
-    // Schema valida que los values editados no rompan el layout.
-    contentCollections: {
-      enabled: true,
-      dir: "src/content",
-    },
-    // Media uploads → R2 (prod) / ./data/media (dev).
-    media: {
-      enabled: true,
-      provider: "local",
-      // Local dev: uploads en data/media/. Prod: R2 bucket (R2 binding).
-    },
-    // Auth: dev bypass (localhost). Prod: Cloudflare Access o email.
-    auth: {
-      mode: process.env.NODE_ENV === "production" ? "email" : "dev",
-    },
-  }), react()],
+  ],
 });

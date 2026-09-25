@@ -5,19 +5,15 @@
 
 import type { ContentBylineCredit, TaxonomyTerm } from "emdash";
 
-export interface Calendar {
+export interface Equipo {
   id: string;
   slug: string | null;
   status: string;
-  kind: string;
-  date: string;
-  time: string;
-  category: string;
-  category_slug?: string;
-  home: string;
-  home_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  away: string;
-  away_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  club: string;
+  abreviacion?: string;
+  escudo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  orden?: number;
+  nombre: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -25,57 +21,18 @@ export interface Calendar {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
-export interface Category {
+export interface Partido {
   id: string;
   slug: string | null;
   status: string;
   name: string;
-  item_slug: string;
-  badge: string;
-  ages: string;
-  copy: string;
-  focus?: string;
-  format?: string;
-  schedule?: string;
-  description: string;
-  cta_href?: string;
-  order?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface ClubHistory {
-  id: string;
-  slug: string | null;
-  status: string;
-  type: string;
-  name?: string;
-  role?: string;
-  role_description?: string;
-  content?: unknown;
-  image?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  image_alt: string;
-  order?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface Team {
-  id: string;
-  slug: string | null;
-  status: string;
-  name: string;
-  short_name?: string;
-  logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  city?: string;
-  category?: string;
-  order?: number;
+  local?: string;
+  visitante?: string;
+  goles_local?: number;
+  goles_visitante?: number;
+  tipo?: string;
+  categoria?: string;
+  fecha?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -85,9 +42,7 @@ export interface Team {
 
 declare module "emdash" {
   interface EmDashCollections {
-    calendar: Calendar;
-    categories: Category;
-    club_history: ClubHistory;
-    teams: Team;
+    equipos: Equipo;
+    partidos: Partido;
   }
 }

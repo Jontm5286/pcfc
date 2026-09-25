@@ -4,6 +4,9 @@ node_modules/
 
 # EmDash local dev DB + media (NOT committed — prod uses D1/R2)
 data/
+uploads/
+*.db-shm
+*.db-wal
 .env*
 !.env.example
 

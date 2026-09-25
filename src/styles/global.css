@@ -90,6 +90,36 @@
 }
 
 /* ============================================ */
+/* Accessibility: Skip link */
+/* ============================================ */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 1000;
+  background: var(--color-sky);
+  color: var(--color-navy-dark);
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 0.5rem 0;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  outline: 3px solid var(--color-navy);
+  outline-offset: 2px;
+}
+
+/* ============================================ */
 /* Componentes utilitarios (lo que el DESIGN.md exige) */
 /* ============================================ */
 @layer components {

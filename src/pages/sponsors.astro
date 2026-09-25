@@ -3,87 +3,66 @@
  * Sponsors Page — PCFC
  * Página dedicada a patrocinadores y aliados del club.
  * Solo muestra sponsors gestionados vía /_emdash/admin/ (EmDash CMS).
- * NO usa stock/JSON fallback para garantizar datos de producción.
  */
 
+import Base from '../layouts/Base.astro';
 import { getSponsorsFromEmDash } from '../lib/content';
 
 const sponsors = await getSponsorsFromEmDash();
 ---
 
-<!DOCTYPE html>
-<html lang="es-DO">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Patrocinadores y Aliados | Punta Cana FC</title>
-    <meta name="description" content="Conoce los patrocinadores y aliados del Punta Cana FC" />
-  </head>
-  <body class="font-sans antialiased bg-navy-dark text-white">
-    
-    <section
-      class="relative w-full py-14 md:py-16 border-t border-b border-white/5"
-      data-component="sponsors-page"
-    >
-      <div class="max-w-[1280px] mx-auto px-8">
-        {/* Section Header */}
-        {
-          (sponsors.length > 0) && (
-            <header class="mb-10 text-center">
-              <p class="eyebrow text-sky mb-3">Patrocinadores</p>
-              <h1 class="h-section h-section--on-navy">Nuestros Aliados</h1>
-            </header>
-          )
-        }
+<Base title="Patrocinadores y Aliados" description="Conoce los patrocinadores y aliados del Punta Cana FC. Marcas que apoyan el fútbol formativo en el Caribe.">
+  <section class="section bg-navy-dark">
+    <div class="container-x">
+      {sponsors.length > 0 ? (
+        <>
+          <div class="text-center mb-10">
+            <p class="eyebrow eyebrow--on-navy">Aliados</p>
+            <h1 class="h-section h-section--on-navy">Nuestros Patrocinadores</h1>
+            <p class="lede lede--on-navy max-w-[60ch] mx-auto mt-4">
+              Marcas y empresas que apoyan la formación de campeones en el Caribe.
+            </p>
+          </div>
 
-        {/* Sponsors Grid */}
-        {
-          sponsors.length > 0 && (
-            <div
-              class="sponsors-track flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
-              role="list"
-            >
-              {sponsors.map((sponsor) => (
-                <div role="listitem" class="sponsor-item group">
-                  {sponsor.href ? (
-                    <a
-                      href={sponsor.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Visitar ${sponsor.name}`}
-                      class="block"
-                    >
-                      <img
-                        src={sponsor.logo}
-                        alt={`Logo de ${sponsor.name}`}
-                        loading="lazy"
-                        class="sponsor-logo h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
-                      />
-                    </a>
-                  ) : (
+          <div
+            class="flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
+            role="list"
+            aria-label="Lista de patrocinadores"
+          >
+            {sponsors.map((sponsor) => (
+              <div role="listitem" class="group">
+                {sponsor.href ? (
+                  <a
+                    href={sponsor.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visitar sitio de ${sponsor.name}`}
+                    class="block opacity-70 hover:opacity-100 transition-opacity duration-200"
+                  >
                     <img
                       src={sponsor.logo}
                       alt={`Logo de ${sponsor.name}`}
                       loading="lazy"
-                      class="sponsor-logo h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                      class="h-10 md:h-12 w-auto object-contain"
                     />
-                  )}
-                </div>
-              ))}
-            </div>
-          )
-        }
-
-        {/* Empty State */}
-        {
-          sponsors.length === 0 && (
-            <p class="text-center text-white/30 text-sm">
-              Patrocinadores próximamente
-            </p>
-          )
-        }
-      </div>
-    </section>
-    
-  </body>
-</html>
+                  </a>
+                ) : (
+                  <img
+                    src={sponsor.logo}
+                    alt={`Logo de ${sponsor.name}`}
+                    loading="lazy"
+                    class="h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div class="text-center py-16">
+          <p class="lede lede--on-navy opacity-50">Patrocinadores próximamente</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Base>

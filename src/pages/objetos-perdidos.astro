@@ -113,25 +113,30 @@ import Base from '../layouts/Base.astro';
 <style>
   .page-hero {
     padding: 10rem 0 4rem;
-    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
-    border-bottom: 1px solid var(--border-glow);
+    background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
+    border-bottom: 1px solid var(--color-navy-10);
   }
 
   .page-hero-title {
+    font-family: var(--font-display);
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 900;
     text-transform: uppercase;
+    color: var(--color-white);
     margin-bottom: 1rem;
+    letter-spacing: -0.01em;
   }
 
   .page-hero-desc {
-    color: var(--text-secondary);
+    color: var(--color-white);
+    opacity: 0.78;
     font-size: 1.1rem;
     max-width: 600px;
   }
 
   .section {
-    padding: var(--section-padding);
+    padding-top: clamp(4rem, 8vw, 6rem);
+    padding-bottom: clamp(4rem, 8vw, 6rem);
   }
 
   .lost-layout {
@@ -141,13 +146,16 @@ import Base from '../layouts/Base.astro';
   }
 
   .lost-info h2 {
+    font-family: var(--font-display);
     font-size: 1.8rem;
     font-weight: 800;
     margin-bottom: 1rem;
+    text-transform: uppercase;
+    color: var(--color-navy);
   }
 
   .text-block {
-    color: var(--text-secondary);
+    color: var(--color-navy-60);
     font-size: 1rem;
     line-height: 1.8;
     margin-bottom: 2rem;
@@ -166,72 +174,78 @@ import Base from '../layouts/Base.astro';
     gap: 1rem;
     align-items: center;
     padding: 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border-glow);
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
     border-radius: 10px;
     transition: border-color 0.3s;
   }
 
   .found-item:hover {
-    border-color: var(--border-glow-strong);
+    border-color: var(--color-sky-30);
   }
 
   .found-icon {
     width: 45px; height: 45px;
     min-width: 45px;
-    background: rgba(0, 255, 255, 0.1);
+    background: var(--color-sky-10);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--accent-cyan);
+    color: var(--color-sky);
     font-size: 1rem;
   }
 
   .found-details h4 {
+    font-family: var(--font-body);
     font-size: 0.95rem;
     font-weight: 700;
     margin-bottom: 0.2rem;
+    color: var(--color-navy);
   }
 
   .found-details p {
-    color: var(--text-muted);
+    color: var(--color-navy-30);
     font-size: 0.8rem;
   }
 
   .notice-box {
-    background: rgba(255, 193, 7, 0.05);
-    border: 1px solid rgba(255, 193, 7, 0.2);
+    background: var(--color-cat-form-alta);
+    opacity: 0.05;
+    border: 1px solid var(--color-cat-form-alta);
     border-radius: 12px;
     padding: 1.5rem;
   }
 
   .notice-box h4 {
-    color: #ffc107;
+    color: var(--color-cat-form-alta);
+    font-family: var(--font-body);
     font-size: 0.95rem;
+    font-weight: 700;
     margin-bottom: 0.7rem;
   }
 
   .notice-box p {
-    color: var(--text-secondary);
+    color: var(--color-navy-60);
     font-size: 0.9rem;
     line-height: 1.6;
   }
 
   /* Form */
   .lost-form-container {
-    background: var(--bg-card);
-    border: 1px solid var(--border-glow);
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
     border-radius: 16px;
     padding: 2.5rem;
   }
 
   .lost-form h3 {
+    font-family: var(--font-body);
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     text-align: center;
-    color: var(--accent-cyan);
+    color: var(--color-sky);
   }
 
   .form-group {
@@ -240,10 +254,11 @@ import Base from '../layouts/Base.astro';
 
   .form-group label {
     display: block;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
-    color: var(--text-secondary);
+    color: var(--color-navy-30);
   }
 
   .form-group input,
@@ -251,11 +266,11 @@ import Base from '../layouts/Base.astro';
   .form-group textarea {
     width: 100%;
     padding: 0.8rem 1rem;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-glow);
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
     border-radius: 8px;
-    color: var(--text-primary);
-    font-family: 'Montserrat', sans-serif;
+    color: var(--color-navy);
+    font-family: var(--font-body);
     font-size: 0.95rem;
     transition: border-color 0.3s;
   }
@@ -264,8 +279,8 @@ import Base from '../layouts/Base.astro';
   .form-group select:focus,
   .form-group textarea:focus {
     outline: none;
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.1);
+    border-color: var(--color-sky);
+    box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.18);
   }
 
   .form-group textarea {

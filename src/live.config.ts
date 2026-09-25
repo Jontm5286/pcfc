@@ -16,8 +16,8 @@
  *
  * Ref: emdash v0.36 Live Content API docs.
  */
-import { defineLiveCollection } from "astro:content";
-import { emdashLoader } from "emdash/runtime";
+import { defineLiveCollection } from 'astro:content';
+import { emdashLoader } from 'emdash/runtime';
 
 // Live Collection proxy para EmDash CMS.
 // Nombre "_emdash" es REQUERIDO (interno de EmDash v0.36).

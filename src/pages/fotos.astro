@@ -9,11 +9,12 @@
  *   - Lightbox al hacer click en foto
  *   - Botón "Ver todas las fotos" → navega al post individual
  */
-import Base from "../layouts/Base.astro";
-import PostCard from "../components/PostCard.astro";
-import GalleryGrid from "../components/GalleryGrid.astro";
-import Lightbox from "../components/Lightbox.astro";
-import type { Photo } from "../components/GalleryGrid.astro";
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import Lightbox from '../components/Lightbox.astro';
+import type { Photo } from '../components/GalleryGrid.astro';
+import StockImage from '../components/StockImage.astro';
 
 // ──────────────────────────────────────────────────────────────
 // Datos hardcodeados — 8 posts mínimos tal como exige la tarea
@@ -21,7 +22,7 @@ import type { Photo } from "../components/GalleryGrid.astro";
 
 interface MatchPost {
   id: string;
-  categorySlug: "pre" | "form-baja" | "form-alta" | "elite";
+  categorySlug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
   categoryLabel: string;
   team1: string;
   team2: string;
@@ -34,135 +35,135 @@ interface MatchPost {
 
 const posts: MatchPost[] = [
   {
-    id: "pcfc-vs-atlantico-6sep",
-    categorySlug: "elite",
-    categoryLabel: "Elite / Reserva",
-    team1: "PCFC",
-    team2: "Atlántico FC",
-    date: "6 sep 2026",
+    id: 'pcfc-vs-atlantico-6sep',
+    categorySlug: 'elite',
+    categoryLabel: 'Elite / Reserva',
+    team1: 'PCFC',
+    team2: 'Atlántico FC',
+    date: '6 sep 2026',
     photoCount: 24,
-    thumbnail: "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80",
-    thumbnailAlt: "PCFC vs Atlántico FC — Partido Elite en Cancha Principal",
+    thumbnail: 'https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80',
+    thumbnailAlt: 'PCFC vs Atlántico FC — Partido Elite en Cancha Principal',
     photos: Array.from({ length: 24 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-elite-6sep-${i + 1}/1200/800`,
       alt: `PCFC vs Atlántico FC — Foto ${i + 1}`,
-      caption: i === 0 ? "El once inicial" : i === 11 ? "Gol de cabeza" : undefined,
-      downloadName: `pcfc-atlantico-6sep-${String(i + 1).padStart(2, "0")}.jpg`,
+      caption: i === 0 ? 'El once inicial' : i === 11 ? 'Gol de cabeza' : undefined,
+      downloadName: `pcfc-atlantico-6sep-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub15-vs-santiago-30ago",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-15",
-    team2: "Santiago FC",
-    date: "30 ago 2026",
+    id: 'pcfc-sub15-vs-santiago-30ago',
+    categorySlug: 'form-alta',
+    categoryLabel: 'Formativas Altas',
+    team1: 'PCFC Sub-15',
+    team2: 'Santiago FC',
+    date: '30 ago 2026',
     photoCount: 18,
-    thumbnail: "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-15 vs Santiago FC — Partido Formativas Altas",
+    thumbnail: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-15 vs Santiago FC — Partido Formativas Altas',
     photos: Array.from({ length: 18 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub15-santiago-${i + 1}/1200/800`,
       alt: `PCFC Sub-15 vs Santiago FC — Foto ${i + 1}`,
-      caption: i === 0 ? "Alineación del equipo" : undefined,
-      downloadName: `pcfc-sub15-santiago-30ago-${String(i + 1).padStart(2, "0")}.jpg`,
+      caption: i === 0 ? 'Alineación del equipo' : undefined,
+      downloadName: `pcfc-sub15-santiago-30ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub10-vs-canay-24ago",
-    categorySlug: "form-baja",
-    categoryLabel: "Formativas Bajas",
-    team1: "PCFC Sub-10",
-    team2: "Canay FC",
-    date: "24 ago 2026",
+    id: 'pcfc-sub10-vs-canay-24ago',
+    categorySlug: 'form-baja',
+    categoryLabel: 'Formativas Bajas',
+    team1: 'PCFC Sub-10',
+    team2: 'Canay FC',
+    date: '24 ago 2026',
     photoCount: 15,
-    thumbnail: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-10 vs Canay FC — Partido Formativas Bajas",
+    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-10 vs Canay FC — Partido Formativas Bajas',
     photos: Array.from({ length: 15 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub10-canay-${i + 1}/1200/800`,
       alt: `PCFC Sub-10 vs Canay FC — Foto ${i + 1}`,
-      downloadName: `pcfc-sub10-canay-24ago-${String(i + 1).padStart(2, "0")}.jpg`,
+      downloadName: `pcfc-sub10-canay-24ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub8-vs-escuela-bavaro-21ago",
-    categorySlug: "pre",
-    categoryLabel: "Pre-Formativas",
-    team1: "PCFC Sub-8",
-    team2: "Escuela Bávaro",
-    date: "21 ago 2026",
+    id: 'pcfc-sub8-vs-escuela-bavaro-21ago',
+    categorySlug: 'pre',
+    categoryLabel: 'Pre-Formativas',
+    team1: 'PCFC Sub-8',
+    team2: 'Escuela Bávaro',
+    date: '21 ago 2026',
     photoCount: 12,
-    thumbnail: "https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-8 vs Escuela Bávaro — Partido Pre-Formativas",
+    thumbnail: 'https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-8 vs Escuela Bávaro — Partido Pre-Formativas',
     photos: Array.from({ length: 12 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub8-bavaro-${i + 1}/1200/800`,
       alt: `PCFC Sub-8 vs Escuela Bávaro — Foto ${i + 1}`,
-      caption: i === 0 ? "¡El equipo al completo!" : undefined,
-      downloadName: `pcfc-sub8-bavaro-21ago-${String(i + 1).padStart(2, "0")}.jpg`,
+      caption: i === 0 ? '¡El equipo al completo!' : undefined,
+      downloadName: `pcfc-sub8-bavaro-21ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-reserva-vs-higuey-28sep",
-    categorySlug: "elite",
-    categoryLabel: "Elite / Reserva",
-    team1: "PCFC Reserva",
-    team2: "Higüey United",
-    date: "28 sep 2026",
+    id: 'pcfc-reserva-vs-higuey-28sep',
+    categorySlug: 'elite',
+    categoryLabel: 'Elite / Reserva',
+    team1: 'PCFC Reserva',
+    team2: 'Higüey United',
+    date: '28 sep 2026',
     photoCount: 22,
-    thumbnail: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80",
-    thumbnailAlt: "PCFC Reserva vs Higüey United — Partido Elite",
+    thumbnail: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80',
+    thumbnailAlt: 'PCFC Reserva vs Higüey United — Partido Elite',
     photos: Array.from({ length: 22 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-reserva-higuey-${i + 1}/1200/800`,
       alt: `PCFC Reserva vs Higüey United — Foto ${i + 1}`,
-      downloadName: `pcfc-reserva-higuey-28sep-${String(i + 1).padStart(2, "0")}.jpg`,
+      downloadName: `pcfc-reserva-higuey-28sep-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub14-vs-seleccion-16ago",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-14",
-    team2: "Selección Federativa",
-    date: "16 ago 2026",
+    id: 'pcfc-sub14-vs-seleccion-16ago',
+    categorySlug: 'form-alta',
+    categoryLabel: 'Formativas Altas',
+    team1: 'PCFC Sub-14',
+    team2: 'Selección Federativa',
+    date: '16 ago 2026',
     photoCount: 16,
-    thumbnail: "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-14 vs Selección Federativa — Partido Formativas Altas",
+    thumbnail: 'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-14 vs Selección Federativa — Partido Formativas Altas',
     photos: Array.from({ length: 16 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub14-fed-16ago-${i + 1}/1200/800`,
       alt: `PCFC Sub-14 vs Selección Federativa — Foto ${i + 1}`,
-      downloadName: `pcfc-sub14-fed-16ago-${String(i + 1).padStart(2, "0")}.jpg`,
+      downloadName: `pcfc-sub14-fed-16ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub6-vs-casa-espana-9ago",
-    categorySlug: "pre",
-    categoryLabel: "Pre-Formativas",
-    team1: "PCFC Sub-6",
-    team2: "Casa España",
-    date: "9 ago 2026",
+    id: 'pcfc-sub6-vs-casa-espana-9ago',
+    categorySlug: 'pre',
+    categoryLabel: 'Pre-Formativas',
+    team1: 'PCFC Sub-6',
+    team2: 'Casa España',
+    date: '9 ago 2026',
     photoCount: 10,
-    thumbnail: "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-6 vs Casa España — Partido Pre-Formativas",
+    thumbnail: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-6 vs Casa España — Partido Pre-Formativas',
     photos: Array.from({ length: 10 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub6-casa-espana-${i + 1}/1200/800`,
       alt: `PCFC Sub-6 vs Casa España — Foto ${i + 1}`,
-      caption: i === 0 ? "Nuestros pequeños cracks" : undefined,
-      downloadName: `pcfc-sub6-casa-espana-9ago-${String(i + 1).padStart(2, "0")}.jpg`,
+      caption: i === 0 ? 'Nuestros pequeños cracks' : undefined,
+      downloadName: `pcfc-sub6-casa-espana-9ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
   {
-    id: "pcfc-sub13-vs-casa-espana-2sep",
-    categorySlug: "form-alta",
-    categoryLabel: "Formativas Altas",
-    team1: "PCFC Sub-13",
-    team2: "Casa España",
-    date: "2 sep 2026",
+    id: 'pcfc-sub13-vs-casa-espana-2sep',
+    categorySlug: 'form-alta',
+    categoryLabel: 'Formativas Altas',
+    team1: 'PCFC Sub-13',
+    team2: 'Casa España',
+    date: '2 sep 2026',
     photoCount: 14,
-    thumbnail: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=80",
-    thumbnailAlt: "PCFC Sub-13 vs Casa España — Partido Formativas Altas",
+    thumbnail: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=80',
+    thumbnailAlt: 'PCFC Sub-13 vs Casa España — Partido Formativas Altas',
     photos: Array.from({ length: 14 }, (_, i) => ({
       src: `https://picsum.photos/seed/pcfc-sub13-casa-espana-${i + 1}/1200/800`,
       alt: `PCFC Sub-13 vs Casa España — Foto ${i + 1}`,
-      downloadName: `pcfc-sub13-casa-espana-2sep-${String(i + 1).padStart(2, "0")}.jpg`,
+      downloadName: `pcfc-sub13-casa-espana-2sep-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
   },
 ];
@@ -179,33 +180,38 @@ const posts: MatchPost[] = [
   <!-- HERO — Galería de fotos                   -->
   <!-- ============================================ -->
   <section
-    class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]"
+    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
   >
-    <div class="container-x">
+    <StockImage
+      name="partido-sub13"
+      alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
       <p class="eyebrow eyebrow--on-navy">PARTIDOS RECIENTES</p>
-      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[18ch]">
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
         Galería de fotos
       </h1>
       <p class="lede lede--on-navy max-w-[52ch]">
-        Porque cada partido es un recuerdo. Descarga las fotos de tu hijo en
-        acción. Galería completa de todos los partidos de las cuatro categorías
-        formativas.
+        Porque cada partido es un recuerdo. Descarga las fotos de tu hijo en acción. Galería
+        completa de todos los partidos de las cuatro categorías formativas.
       </p>
     </div>
   </section>
-
   <!-- ============================================ -->
   <!-- GRID DE POSTS POR PARTIDO — descubrimiento  -->
   <!-- ============================================ -->
   <section class="section bg-white">
     <div class="container-x">
       <div class="mb-10">
-        <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] mb-2">
-          Partidos recientes
-        </h2>
+        <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] mb-2">Partidos recientes</h2>
         <p class="lede text-[0.95rem]">
-          {posts.length} partidos con galería de fotos. Haz clic en una tarjeta
-          para ver todas las imágenes del encuentro.
+          {posts.length} partidos con galería de fotos. Haz clic en una tarjeta para ver todas las imágenes
+          del encuentro.
         </p>
       </div>
 
@@ -246,19 +252,14 @@ const posts: MatchPost[] = [
           {/* Encabezado del post individual */}
           <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10">
             <div>
-              <span class={`badge badge--${post.categorySlug} mb-3`}>
-                {post.categoryLabel}
-              </span>
+              <span class={`badge badge--${post.categorySlug} mb-3`}>{post.categoryLabel}</span>
               <h2
                 id={`post-heading-${post.id}`}
                 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]"
               >
                 {post.team1} vs {post.team2}
               </h2>
-              <time
-                datetime={post.date}
-                class="mt-2 text-[0.9rem] text-navy-60 font-medium"
-              >
+              <time datetime={post.date} class="mt-2 text-[0.9rem] text-navy-60 font-medium">
                 {post.date} · {post.photoCount} fotos
               </time>
             </div>
@@ -299,7 +300,7 @@ const posts: MatchPost[] = [
     const target = document.querySelector(window.location.hash);
     if (target) {
       setTimeout(() => {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
   }
