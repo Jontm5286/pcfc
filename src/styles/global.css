@@ -226,16 +226,16 @@
     border-color: var(--color-navy-60);
   }
   /* Variante para usar sobre fondo navy (Hero / secciones oscuras).
-     Mantiene contraste 4.5:1+ invirtiendo el esquema: fondo navy + texto sky-30. */
+     Botón sky sólido + texto navy: visible sobre el fondo y 4.5:1+. */
   .btn--sky.btn--on-navy {
-    background: var(--color-navy);
-    color: var(--color-sky-30);
-    border-color: var(--color-navy);
+    background: var(--color-sky);
+    color: var(--color-navy);
+    border-color: var(--color-sky);
   }
   .btn--sky.btn--on-navy:hover {
-    background: var(--color-navy-60);
-    color: var(--color-white);
-    border-color: var(--color-navy-60);
+    background: var(--color-white);
+    color: var(--color-navy);
+    border-color: var(--color-white);
   }
   .btn--outline {
     background: transparent;
