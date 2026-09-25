@@ -17,10 +17,43 @@ import {
   getValuePillarsData,
   getPathwayCardsData,
   getSponsorsData,
+  type NextMatch,
 } from "../data/homeData";
+import {
+  fetchAcademyFeed,
+  academyCategoryToWeb,
+  formatMatchDate,
+  formatMatchTime,
+  type AcademyMatch,
+} from "../lib/academy-feed";
 
 // Load static datasets for home page sections
-const nextMatch = getNextMatchData();
+// Próximo partido: el más cercano del feed Academy; respaldo local si falla.
+const feed = await fetchAcademyFeed();
+const nearestUpcoming: AcademyMatch | undefined = [...feed.upcoming].sort((a, b) =>
+  a.matchDate.localeCompare(b.matchDate),
+)[0];
+
+function toNextMatch(m: AcademyMatch): NextMatch {
+  const cat = academyCategoryToWeb(m.category);
+  const pcfc = `PCFC ${cat.short}`;
+  const rival = m.opponent || "Rival por confirmar";
+  const homeTeam = m.isHome ? pcfc : rival;
+  const awayTeam = m.isHome ? rival : pcfc;
+  return {
+    date: formatMatchDate(m.matchDate),
+    time: formatMatchTime(m.matchTime) ?? "--:--",
+    category: cat.short,
+    categorySlug: cat.slug,
+    home: homeTeam,
+    homeLogo: m.isHome ? "/Logo-PCFC.svg" : m.opponentLogo || "/Logo-PCFC.svg",
+    away: awayTeam,
+    awayLogo: m.isHome ? m.opponentLogo || "/Logo-PCFC.svg" : "/Logo-PCFC.svg",
+    venue: m.location || (m.isHome ? "Cancha Principal · PCFC" : "Por confirmar"),
+  };
+}
+
+const nextMatch: NextMatch = nearestUpcoming ? toNextMatch(nearestUpcoming) : getNextMatchData();
 const categories = getCategoriesData();
 const pillars = getPillarsData();
 const stats = getStatsData();
