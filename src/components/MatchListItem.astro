@@ -17,6 +17,7 @@
  *   - photosHref?: string          Enlace a fotos (si existe, muestra el botón)
  *   - past?: boolean               Si true, es un partido jugado (muestra "Ver fotos")
  *   - score?: string               Marcador opcional para partidos jugados (e.g. "3 - 1")
+ *   - opponentLogo?: string        Escudo del rival (feed Academy) — se muestra junto al nombre
  */
 
 interface Props {
@@ -30,6 +31,7 @@ interface Props {
   photosHref?: string;
   past?: boolean;
   score?: string;
+  opponentLogo?: string;
 }
 
 const {
@@ -43,6 +45,7 @@ const {
   photosHref,
   past = false,
   score,
+  opponentLogo,
 } = Astro.props;
 ---
 
@@ -82,7 +85,19 @@ const {
           <span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>
         )
       }
-      <span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate">
+      <span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate inline-flex items-center gap-1.5">
+        {
+          opponentLogo && (
+            <img
+              src={opponentLogo}
+              alt={`Escudo de ${team2}`}
+              loading="lazy"
+              width="20"
+              height="20"
+              class="w-5 h-5 rounded-full object-cover shrink-0"
+            />
+          )
+        }
         {team2}
       </span>
     </div>

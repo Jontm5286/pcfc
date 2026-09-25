@@ -16,6 +16,7 @@ export interface AcademyMatch {
   title: string;
   category: string;
   opponent: string;
+  opponentLogo?: string | null;
   matchType: string;
   matchDate: string;
   matchTime?: string | null;

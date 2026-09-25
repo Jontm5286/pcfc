@@ -19,6 +19,7 @@ const fixtures: Fixture[] =
           category: cat.short,
           team1: { name: `PCFC ${cat.short}`, color: '#00285C' },
           team2: { name: m.opponent || 'Rival por confirmar', color: '#64748b' },
+          team2Logo: m.opponentLogo || undefined,
           venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
           date: formatMatchDate(m.matchDate),
           time: formatMatchTime(m.matchTime) ?? '--:--',
@@ -65,10 +66,23 @@ const fixtures: Fixture[] =
 
           <div class="flex items-center justify-between">
             <span class="inline-flex items-center gap-1.5 text-[12px] font-normal text-navy-60 font-body">
-              <span
-                class="w-2 h-2 rounded-full shrink-0"
-                style={`background: ${fixture.team2.color}`}
-              ></span>
+              {
+                fixture.team2Logo ? (
+                  <img
+                    src={fixture.team2Logo}
+                    alt={`Escudo de ${fixture.team2.name}`}
+                    loading="lazy"
+                    width="14"
+                    height="14"
+                    class="w-3.5 h-3.5 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <span
+                    class="w-2 h-2 rounded-full shrink-0"
+                    style={`background: ${fixture.team2.color}`}
+                  ></span>
+                )
+              }
               {fixture.team2.name}
             </span>
             <span class="text-[10px] font-normal text-navy-60 font-body">

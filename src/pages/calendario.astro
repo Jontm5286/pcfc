@@ -39,6 +39,7 @@ interface CalendarMatchItem {
   photosHref?: string;
   past: boolean;
   score?: string;
+  opponentLogo?: string;
 }
 
 function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
@@ -54,6 +55,7 @@ function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
     photosHref: undefined,
     past,
     score: m.result ? `${m.result.home} - ${m.result.away}` : undefined,
+    opponentLogo: m.opponentLogo || undefined,
   };
 }
 
@@ -295,6 +297,7 @@ const displayPast: CalendarMatchItem[] =
               photosHref={match.photosHref}
               past={match.past}
               score={match.score}
+              opponentLogo={match.opponentLogo}
             />
           ))
         }
@@ -331,6 +334,7 @@ const displayPast: CalendarMatchItem[] =
               photosHref={match.photosHref}
               past={match.past}
               score={match.score}
+              opponentLogo={match.opponentLogo}
             />
           ))
         }

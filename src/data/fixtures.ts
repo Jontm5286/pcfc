@@ -14,6 +14,7 @@ export interface Fixture {
   category: string;
   team1: Team;
   team2: Team;
+  team2Logo?: string;
   venue: string;
   date: string;
   time: string;
