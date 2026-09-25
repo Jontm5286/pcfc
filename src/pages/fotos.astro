@@ -15,6 +15,7 @@ import GalleryGrid from '../components/GalleryGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
 import type { Photo } from '../components/GalleryGrid.astro';
 import StockImage from '../components/StockImage.astro';
+import { getCollection } from 'astro:content';
 
 // ──────────────────────────────────────────────────────────────
 // Datos hardcodeados — 8 posts mínimos tal como exige la tarea
@@ -167,6 +168,35 @@ const posts: MatchPost[] = [
     })),
   },
 ];
+
+// Galerías gestionadas en la colección `match_photos` (incluye drafts del
+// feed vía `pnpm sync:match-photos`). Solo publicadas + con fotos.
+// Se omiten las que ya existen hardcodeadas arriba (mismos ids).
+const managedIds = new Set(posts.map((p) => p.id));
+const managedPosts: MatchPost[] = (
+  await getCollection('match_photos')
+)
+  .filter((e) => e.data.published && (e.data.photos?.length ?? 0) > 0)
+  .filter((e) => !managedIds.has(e.slug))
+  .map((e) => ({
+    id: e.slug,
+    categorySlug: e.data.categorySlug,
+    categoryLabel: e.data.categoryLabel,
+    team1: e.data.team1,
+    team2: e.data.team2,
+    date: e.data.date,
+    photoCount: e.data.photos.length,
+    thumbnail: e.data.thumbnail,
+    thumbnailAlt: e.data.thumbnailAlt,
+    photos: e.data.photos.map((ph, i) => ({
+      src: ph.src,
+      alt: ph.alt,
+      caption: ph.caption,
+      downloadName: `${e.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
+    })),
+  }));
+
+const allPosts: MatchPost[] = [...posts, ...managedPosts];
 ---
 
 <Base
@@ -210,7 +240,7 @@ const posts: MatchPost[] = [
       <div class="mb-10">
         <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] mb-2">Partidos recientes</h2>
         <p class="lede text-[0.95rem]">
-          {posts.length} partidos con galería de fotos. Haz clic en una tarjeta para ver todas las imágenes
+          {allPosts.length} partidos con galería de fotos. Haz clic en una tarjeta para ver todas las imágenes
           del encuentro.
         </p>
       </div>
@@ -220,7 +250,7 @@ const posts: MatchPost[] = [
         id="posts-grid"
       >
         {
-          posts.map((post) => (
+          allPosts.map((post) => (
             <PostCard
               href={`#${post.id}`}
               thumbnail={post.thumbnail}
@@ -242,7 +272,7 @@ const posts: MatchPost[] = [
   <!-- POSTS INDIVIDUALES — emoción + propiedad    -->
   <!-- ============================================ -->
   {
-    posts.map((post) => (
+    allPosts.map((post) => (
       <section
         id={post.id}
         class="section bg-pure-white border-t border-navy/10"

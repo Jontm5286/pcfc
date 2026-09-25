@@ -22,7 +22,8 @@
     "db:seed": "emdash seed",
     "db:export": "emdash export-seed",
     "types": "emdash types",
-    "db:clean": "rm -f data.db data.db-shm data.db-wal && echo DB cleaned"
+    "db:clean": "rm -f data.db data.db-shm data.db-wal && echo DB cleaned",
+    "sync:match-photos": "node scripts/sync-match-photos.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.0",

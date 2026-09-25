@@ -10,9 +10,118 @@ import StockImage from '../components/StockImage.astro';
 import CalendarFilters from '../components/CalendarFilters.astro';
 import MatchListItem from '../components/MatchListItem.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import { getCollection } from 'astro:content';
+import { buildMatchSlug } from '../lib/match-photos';
 
-// Próximos partidos (anticipación)
-const upcomingMatches = [
+// ---------------------------------------------------------------------------
+// Feed en vivo: convocatorias de la app de gestión (FutbolPro Academy).
+// GET {ACADEMY_API_URL}/api/public/matches -> { upcoming, played }.
+// Sin auth y con CORS abierto; solo expone datos aptos para publicar.
+// Si el feed falla o viene vacío, se usan los arreglos locales de respaldo.
+// ---------------------------------------------------------------------------
+
+interface CalendarMatchItem {
+  categorySlug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
+  categoryLabel: string;
+  date: string;
+  time?: string;
+  team1: string;
+  team2: string;
+  venue: string;
+  photosHref?: string;
+  past: boolean;
+  score?: string;
+}
+
+interface AcademyMatch {
+  id: string;
+  title: string;
+  category: string;
+  opponent: string;
+  matchType: string;
+  matchDate: string;
+  matchTime?: string | null;
+  meetingTime?: string | null;
+  location?: string | null;
+  isHome: boolean;
+  status: 'convocada' | 'jugada' | 'suspendida';
+  result?: { home: number; away: number } | null;
+}
+
+const ACADEMY_API_URL =
+  import.meta.env.PUBLIC_ACADEMY_API_URL ||
+  'https://futbolpro-academy.johantavarez89.workers.dev';
+
+function academyCategoryToWeb(category: string): {
+  slug: CalendarMatchItem['categorySlug'];
+  label: string;
+  short: string;
+} {
+  const c = (category || '').toLowerCase();
+  const short = (category || '').split('(')[0].trim() || 'Cantera';
+  // Grupos reales de la app (donde están los jugadores) -> niveles web.
+  // Elite/Reserva es grupo propio: no cae en form-alta.
+  if (c.includes('elite') || c.includes('reserva')) {
+    return { slug: 'elite', label: 'Elite / Reserva', short };
+  }
+  if (c.includes('sub-6') || c.includes('sub-8')) {
+    return { slug: 'pre', label: 'Pre-Formativas', short };
+  }
+  if (c.includes('sub-10') || c.includes('sub-12')) {
+    return { slug: 'form-baja', label: 'Formativas Bajas', short };
+  }
+  if (c.includes('femen')) {
+    return { slug: 'form-alta', label: 'Femenino', short };
+  }
+  return { slug: 'form-alta', label: 'Formativas Altas', short };
+}
+
+function formatMatchDate(iso: string): string {
+  try {
+    const d = new Date(`${iso}T12:00:00`);
+    if (Number.isNaN(d.getTime())) return iso;
+    const s = d
+      .toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+      .replace(/,/g, '');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  } catch {
+    return iso;
+  }
+}
+
+function formatMatchTime(t?: string | null): string | undefined {
+  if (!t) return undefined;
+  const m = t.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)?$/i);
+  if (!m) return t;
+  if (m[3]) return t.toUpperCase();
+  let h = parseInt(m[1], 10);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${m[2]} ${suffix}`;
+}
+
+function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
+  const cat = academyCategoryToWeb(m.category);
+  return {
+    categorySlug: cat.slug,
+    categoryLabel: cat.label,
+    date: formatMatchDate(m.matchDate),
+    time: formatMatchTime(m.matchTime),
+    team1: `PCFC ${cat.short}`,
+    team2: m.opponent || 'Rival por confirmar',
+    venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
+    photosHref: undefined,
+    past,
+    score: m.result ? `${m.result.home} - ${m.result.away}` : undefined,
+  };
+}
+
+// NOTA: el fetch del feed en vivo y las listas display van DESPUÉS de los
+// arreglos de respaldo (const no admite uso anticipado).
+
+// Próximos partidos (anticipación) — datos locales de respaldo.
+// Si el feed en vivo de la app de gestión responde, se usa ese en su lugar.
+const fallbackUpcomingMatches: CalendarMatchItem[] = [
   {
     categorySlug: 'elite',
     categoryLabel: 'Elite / Reserva',
@@ -81,8 +190,8 @@ const upcomingMatches = [
   },
 ];
 
-// Partidos jugados (recuerdo)
-const pastMatches = [
+// Partidos jugados (recuerdo) — respaldo local si el feed en vivo falla.
+const fallbackPastMatches: CalendarMatchItem[] = [
   {
     categorySlug: 'elite',
     categoryLabel: 'Elite / Reserva',
@@ -91,7 +200,7 @@ const pastMatches = [
     team1: 'PCFC',
     team2: 'Atlántico FC',
     venue: 'Cancha Principal · PCFC',
-    photosHref: '/fotos/pcfc-vs-atlantico-6sep',
+    photosHref: '/fotos#pcfc-vs-atlantico-6sep',
     past: true,
   },
   {
@@ -102,7 +211,7 @@ const pastMatches = [
     team1: 'PCFC Sub-15',
     team2: 'Santiago FC',
     venue: 'Cancha Auxiliar · PCFC',
-    photosHref: '/fotos/pcfc-sub15-vs-santiago-30ago',
+    photosHref: '/fotos#pcfc-sub15-vs-santiago-30ago',
     past: true,
   },
   {
@@ -113,7 +222,7 @@ const pastMatches = [
     team1: 'PCFC Sub-10',
     team2: 'Canay FC',
     venue: 'Caseral',
-    photosHref: '/fotos/pcfc-sub10-vs-canay-24ago',
+    photosHref: '/fotos#pcfc-sub10-vs-canay-24ago',
     past: true,
   },
   {
@@ -124,7 +233,7 @@ const pastMatches = [
     team1: 'PCFC Sub-6',
     team2: 'Casa España',
     venue: 'Casa España',
-    photosHref: '/fotos/pcfc-sub6-vs-casa-espana-16ago',
+    photosHref: '/fotos#pcfc-sub6-vs-casa-espana-16ago',
     past: true,
   },
   {
@@ -139,6 +248,45 @@ const pastMatches = [
     past: true,
   },
 ];
+
+// Galerías publicadas (colección match_photos): solo esas enlazan "Ver fotos".
+// Las nuevas fechas del feed se crean como draft (published: false) vía
+// `pnpm sync:match-photos` y no enlazan hasta tener fotos.
+const publishedGalleries = new Set(
+  (await getCollection('match_photos'))
+    .filter((e) => e.data.published && (e.data.photos?.length ?? 0) > 0)
+    .map((e) => e.slug),
+);
+
+// Feed en vivo (después de los respaldos por el TDZ de const).
+let liveUpcoming: CalendarMatchItem[] = [];
+let livePlayed: CalendarMatchItem[] = [];
+try {
+  const apiRes = await fetch(`${ACADEMY_API_URL}/api/public/matches`, {
+    signal: AbortSignal.timeout(8000),
+  });
+  if (apiRes.ok) {
+    const apiData = await apiRes.json();
+    if (Array.isArray(apiData?.upcoming)) {
+      liveUpcoming = apiData.upcoming.map((m: AcademyMatch) => toCalendarItem(m, false));
+    }
+    if (Array.isArray(apiData?.played)) {
+      livePlayed = apiData.played.map((m: AcademyMatch) => {
+        const item = toCalendarItem(m, true);
+        const slug = buildMatchSlug(item.team1, item.team2, m.matchDate);
+        if (publishedGalleries.has(slug)) item.photosHref = `/fotos#${slug}`;
+        return item;
+      });
+    }
+  }
+} catch {
+  // Sin conexión con la app de gestión: se usan los datos locales.
+}
+
+const displayUpcoming: CalendarMatchItem[] =
+  liveUpcoming.length > 0 ? liveUpcoming : fallbackUpcomingMatches;
+const displayPast: CalendarMatchItem[] =
+  livePlayed.length > 0 ? livePlayed : fallbackPastMatches;
 ---
 
 <Base
@@ -207,7 +355,7 @@ const pastMatches = [
         aria-label="Próximos partidos"
       >
         {
-          upcomingMatches.map((match) => (
+          displayUpcoming.map((match) => (
             <MatchListItem
               categorySlug={match.categorySlug}
               categoryLabel={match.categoryLabel}
@@ -218,6 +366,7 @@ const pastMatches = [
               venue={match.venue}
               photosHref={match.photosHref}
               past={match.past}
+              score={match.score}
             />
           ))
         }
@@ -242,7 +391,7 @@ const pastMatches = [
         aria-label="Partidos jugados"
       >
         {
-          pastMatches.map((match) => (
+          displayPast.map((match) => (
             <MatchListItem
               categorySlug={match.categorySlug}
               categoryLabel={match.categoryLabel}
@@ -253,6 +402,7 @@ const pastMatches = [
               venue={match.venue}
               photosHref={match.photosHref}
               past={match.past}
+              score={match.score}
             />
           ))
         }

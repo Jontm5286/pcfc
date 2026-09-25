@@ -16,6 +16,7 @@
  *   - venue: string                Ubicación
  *   - photosHref?: string          Enlace a fotos (si existe, muestra el botón)
  *   - past?: boolean               Si true, es un partido jugado (muestra "Ver fotos")
+ *   - score?: string               Marcador opcional para partidos jugados (e.g. "3 - 1")
  */
 
 interface Props {
@@ -28,6 +29,7 @@ interface Props {
   venue: string;
   photosHref?: string;
   past?: boolean;
+  score?: string;
 }
 
 const {
@@ -40,6 +42,7 @@ const {
   venue,
   photosHref,
   past = false,
+  score,
 } = Astro.props;
 ---
 
@@ -70,7 +73,15 @@ const {
       <span class="font-body font-semibold text-[0.95rem] text-navy shrink-0">
         {team1}
       </span>
-      <span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>
+      {
+        score ? (
+          <span class="text-[0.8rem] font-bold text-navy bg-sky-05 border border-navy/10 rounded px-1.5 py-0.5 shrink-0">
+            {score}
+          </span>
+        ) : (
+          <span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>
+        )
+      }
       <span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate">
         {team2}
       </span>
