@@ -1,14 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
 ---
 
 <Base title="Objetos Perdidos" description="Recupera tus pertenencias perdidas en las instalaciones de Punta Cana FC.">
   <!-- Hero -->
-  <section class="page-hero">
-    <div class="container">
-      <p class="section-title">Objetos Perdidos</p>
-      <h1 class="page-hero-title">Perdiste Algo?</h1>
-      <p class="page-hero-desc">Revisa los objetos encontrados o contactanos para reportar una perdida.</p>
+  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+    <StockImage
+      name="partido-sub13"
+      alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
+      <p class="eyebrow eyebrow--on-navy">Objetos Perdidos</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
+        ¿Perdiste algo?
+      </h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Revisa los objetos encontrados o contáctanos para reportar una pérdida.
+      </p>
     </div>
   </section>
 

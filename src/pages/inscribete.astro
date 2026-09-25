@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
 import FaqSection from '../components/FaqSection.astro';
 ---
 
@@ -11,8 +12,17 @@ import FaqSection from '../components/FaqSection.astro';
   <!-- ============================================================
        HERO — section con SectionHeader eyebrow + título + subtitle
        ============================================================ -->
-  <section class="bg-navy pt-[clamp(7rem,14vw,10rem)] pb-[clamp(3.5rem,7vw,5rem)]">
-    <div class="container-x">
+  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+    <StockImage
+      name="jugadores-cancha"
+      alt="Jugadores de Punta Cana FC entrenando en cancha al atardecer"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
       <div class="max-w-[720px]">
         <p class="eyebrow eyebrow--on-navy">Inscripciones abiertas · Temporada 2026</p>
         <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5">

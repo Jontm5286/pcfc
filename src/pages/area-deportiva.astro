@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import GalleryGrid from '../components/GalleryGrid.astro';
 
@@ -34,8 +35,17 @@ const facilityPhotos = [
   <!-- ============================================ -->
   <!-- HERO -->
   <!-- ============================================ -->
-  <section class="bg-navy text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)]">
-    <div class="container-x">
+  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+    <StockImage
+      name="entrenamiento"
+      alt="Entrenamiento de jugadores de Punta Cana FC por categorías de 4 a 19 años"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
       <p class="eyebrow eyebrow--on-navy">Formación 4–19 años</p>
       <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[18ch]">
         Área Deportiva

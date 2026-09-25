@@ -6,24 +6,39 @@
  */
 
 import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
 import { getSponsorsFromEmDash } from '../lib/content';
 
 const sponsors = await getSponsorsFromEmDash();
 ---
 
 <Base title="Patrocinadores y Aliados" description="Conoce los patrocinadores y aliados del Punta Cana FC. Marcas que apoyan el fútbol formativo en el Caribe.">
+  <!-- Hero -->
+  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+    <StockImage
+      name="directivo"
+      alt="Aliados y directivos de Punta Cana FC que apoyan el fútbol formativo en el Caribe"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
+      <p class="eyebrow eyebrow--on-navy">Aliados</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
+        Nuestros Patrocinadores
+      </h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Marcas y empresas que apoyan la formación de campeones en el Caribe.
+      </p>
+    </div>
+  </section>
+
   <section class="section bg-navy-dark">
     <div class="container-x">
       {sponsors.length > 0 ? (
         <>
-          <div class="text-center mb-10">
-            <p class="eyebrow eyebrow--on-navy">Aliados</p>
-            <h1 class="h-section h-section--on-navy">Nuestros Patrocinadores</h1>
-            <p class="lede lede--on-navy max-w-[60ch] mx-auto mt-4">
-              Marcas y empresas que apoyan la formación de campeones en el Caribe.
-            </p>
-          </div>
-
           <div
             class="flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
             role="list"
