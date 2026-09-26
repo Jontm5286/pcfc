@@ -217,37 +217,6 @@ const blogCollection = defineCollection({
   }),
 });
 
-// ─────────────────────────────────────────────────────────
-// COLLECTION 10: match_photos
-// Galería de fotos por partido — /fotos.
-// Cada fecha del calendario (feed FutbolPro Academy) genera un draft
-// (`published: false`, sin fotos) vía `pnpm sync:match-photos`.
-// Solo `published: true` + fotos renderiza galería y enlaza desde /calendario.
-// ─────────────────────────────────────────────────────────
-const matchPhotosCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    categorySlug: z.enum(['pre', 'form-baja', 'form-alta', 'elite']),
-    categoryLabel: z.string(),
-    team1: z.string(),
-    team2: z.string(),
-    date: z.string(),
-    thumbnail: ImageSchema.default('/images/stock/partido-sub13.webp'),
-    thumbnailAlt: z.string().default('Partido de Punta Cana FC'),
-    // Draft por defecto: sin fotos no hay galería.
-    published: z.boolean().default(false),
-    photos: z
-      .array(
-        z.object({
-          src: ImageSchema,
-          alt: z.string().min(3, 'Alt accesible requerido para WCAG'),
-          caption: z.string().optional(),
-        }),
-      )
-      .default([]),
-  }),
-});
-
 export const collections = {
   hero: heroCollection,
   'club-history': clubCollection,
@@ -258,5 +227,4 @@ export const collections = {
   'stats-pillars': statsCollection,
   next_match: nextMatchCollection,
   blog: blogCollection,
-  match_photos: matchPhotosCollection,
 };

@@ -107,3 +107,117 @@ export async function fetchAcademyFeed(timeoutMs = 8000): Promise<AcademyFeed> {
     return empty;
   }
 }
+
+// ─────────────────────────────────────────────────────────
+// Galerías EmDash (colección `partidos`) — fuente de verdad de /fotos.
+// Un partido = una galería. Solo published + con fotos enlaza/renderiza.
+// entry.id es el slug (para /fotos#<slug>); academy_id traza el feed.
+// ─────────────────────────────────────────────────────────
+
+const ES_MONTHS_LONG = [
+  'ene',
+  'feb',
+  'mar',
+  'abr',
+  'may',
+  'jun',
+  'jul',
+  'ago',
+  'sep',
+  'oct',
+  'nov',
+  'dic',
+];
+
+/** "2026-09-06" -> "6 sep 2026". */
+export function formatDisplayDate(iso: string): string {
+  const m = (iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso;
+  const mon = ES_MONTHS_LONG[parseInt(m[2], 10) - 1] || '';
+  return `${parseInt(m[3], 10)} ${mon} ${m[1]}`.trim();
+}
+
+/** Label de categoría EmDash -> slug web. */
+export function categoryLabelToSlug(label: string): WebCategorySlug {
+  const c = (label || '').toLowerCase();
+  if (c.includes('pre-formativas') || c.includes('preformativas')) return 'pre';
+  if (c.includes('bajas') || c.includes('baja')) return 'form-baja';
+  if (c.includes('elite') || c.includes('reserva')) return 'elite';
+  return 'form-alta';
+}
+
+export interface GalleryPhoto {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export interface PublishedGallery {
+  slug: string;
+  academyId?: string;
+  categorySlug: WebCategorySlug;
+  categoryLabel: string;
+  team1: string;
+  team2: string;
+  date: string;
+  thumbnail: string;
+  thumbnailAlt: string;
+  photos: GalleryPhoto[];
+}
+
+/** Galerías publicadas con fotos desde EmDash. Vacío si falla. */
+export async function fetchPublishedGalleries(): Promise<{
+  galleries: PublishedGallery[];
+  cacheHint?: unknown;
+}> {
+  try {
+    const { getEmDashCollection } = await import('emdash');
+    const { entries, cacheHint } = await getEmDashCollection('partidos', {
+      status: 'published',
+      limit: 100,
+      orderBy: { published_at: 'desc' },
+    });
+    const galleries: PublishedGallery[] = [];
+    for (const entry of entries ?? []) {
+      const d = entry.data as Record<string, unknown>;
+      const rawPhotos = Array.isArray(d.images) ? d.images : [];
+      const photos: GalleryPhoto[] = rawPhotos
+        .filter(
+          (p): p is Record<string, unknown> =>
+            !!p && typeof p === 'object' && typeof (p as Record<string, unknown>).src === 'string',
+        )
+        .map((p) => ({
+          src: String((p as Record<string, unknown>).src),
+          alt: String((p as Record<string, unknown>).alt || 'Foto del partido'),
+          caption:
+            typeof (p as Record<string, unknown>).caption === 'string'
+              ? String((p as Record<string, unknown>).caption)
+              : undefined,
+        }));
+      if (photos.length === 0) continue;
+      const thumb =
+        d.thumbnail && typeof d.thumbnail === 'object'
+          ? (d.thumbnail as Record<string, unknown>)
+          : null;
+      const team1 = String(d.local || 'PCFC');
+      const team2 = String(d.visitante || 'Rival');
+      const label = String(d.categoria || 'Formativas Altas');
+      galleries.push({
+        slug: entry.id,
+        academyId: typeof d.academy_id === 'string' ? d.academy_id : undefined,
+        categorySlug: categoryLabelToSlug(label),
+        categoryLabel: label,
+        team1,
+        team2,
+        date: formatDisplayDate(String(d.fecha || '')),
+        thumbnail: typeof thumb?.src === 'string' ? thumb.src : photos[0].src,
+        thumbnailAlt:
+          typeof thumb?.alt === 'string' ? thumb.alt : `${team1} vs ${team2}`,
+        photos,
+      });
+    }
+    return { galleries, cacheHint };
+  } catch {
+    return { galleries: [] };
+  }
+}

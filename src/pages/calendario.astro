@@ -10,10 +10,10 @@ import StockImage from '../components/StockImage.astro';
 import CalendarFilters from '../components/CalendarFilters.astro';
 import MatchListItem from '../components/MatchListItem.astro';
 import SectionHeader from '../components/SectionHeader.astro';
-import { getCollection } from 'astro:content';
 import { buildMatchSlug } from '../lib/match-photos';
 import {
   fetchAcademyFeed,
+  fetchPublishedGalleries,
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
@@ -192,13 +192,15 @@ const fallbackPastMatches: CalendarMatchItem[] = [
   },
 ];
 
-// Galerías publicadas (colección match_photos): solo esas enlazan "Ver fotos".
-// Las nuevas fechas del feed se crean como draft (published: false) vía
-// `pnpm sync:match-photos` y no enlazan hasta tener fotos.
-const publishedGalleries = new Set(
-  (await getCollection('match_photos'))
-    .filter((e) => e.data.published && (e.data.photos?.length ?? 0) > 0)
-    .map((e) => e.slug),
+// Galerías publicadas en EmDash (colección `partidos`): solo esas enlazan "Ver fotos".
+// Las nuevas fechas del feed se crean como draft vía `pnpm sync:match-photos`
+// y no enlazan hasta tener fotos. Match por academy_id, fallback al slug.
+const { galleries: publishedGalleries, cacheHint: galleriesCacheHint } =
+  await fetchPublishedGalleries();
+if (galleriesCacheHint) Astro.cache.set(galleriesCacheHint);
+const publishedGallerySlugs = new Set(publishedGalleries.map((g) => g.slug));
+const gallerySlugByAcademyId = new Map(
+  publishedGalleries.flatMap((g) => (g.academyId ? [[g.academyId, g.slug] as const] : [])),
 );
 
 // Feed en vivo (después de los respaldos por el TDZ de const).
@@ -208,8 +210,9 @@ let liveUpcoming: CalendarMatchItem[] = feed.upcoming.map((m: AcademyMatch) =>
 );
 let livePlayed: CalendarMatchItem[] = feed.played.map((m: AcademyMatch) => {
   const item = toCalendarItem(m, true);
-  const slug = buildMatchSlug(item.team1, item.team2, m.matchDate);
-  if (publishedGalleries.has(slug)) item.photosHref = `/fotos#${slug}`;
+  const slug =
+    gallerySlugByAcademyId.get(m.id) ?? buildMatchSlug(item.team1, item.team2, m.matchDate);
+  if (publishedGallerySlugs.has(slug)) item.photosHref = `/fotos#${slug}`;
   return item;
 });
 

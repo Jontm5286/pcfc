@@ -15,7 +15,7 @@ import GalleryGrid from '../components/GalleryGrid.astro';
 import Lightbox from '../components/Lightbox.astro';
 import type { Photo } from '../components/GalleryGrid.astro';
 import StockImage from '../components/StockImage.astro';
-import { getCollection } from 'astro:content';
+import { fetchPublishedGalleries } from '../lib/academy-feed';
 
 // ──────────────────────────────────────────────────────────────
 // Datos hardcodeados — 8 posts mínimos tal como exige la tarea
@@ -169,34 +169,31 @@ const posts: MatchPost[] = [
   },
 ];
 
-// Galerías gestionadas en la colección `match_photos` (incluye drafts del
-// feed vía `pnpm sync:match-photos`). Solo publicadas + con fotos.
-// Se omiten las que ya existen hardcodeadas arriba (mismos ids).
-const managedIds = new Set(posts.map((p) => p.id));
-const managedPosts: MatchPost[] = (
-  await getCollection('match_photos')
-)
-  .filter((e) => e.data.published && (e.data.photos?.length ?? 0) > 0)
-  .filter((e) => !managedIds.has(e.slug))
-  .map((e) => ({
-    id: e.slug,
-    categorySlug: e.data.categorySlug,
-    categoryLabel: e.data.categoryLabel,
-    team1: e.data.team1,
-    team2: e.data.team2,
-    date: e.data.date,
-    photoCount: e.data.photos.length,
-    thumbnail: e.data.thumbnail,
-    thumbnailAlt: e.data.thumbnailAlt,
-    photos: e.data.photos.map((ph, i) => ({
-      src: ph.src,
-      alt: ph.alt,
-      caption: ph.caption,
-      downloadName: `${e.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  }));
+// Galerías desde EmDash (colección `partidos`, un partido = una galería).
+// Solo publicadas + con fotos. Si EmDash viene vacío, se usa el respaldo local.
+const { galleries: emdashGalleries, cacheHint: galleriesCacheHint } =
+  await fetchPublishedGalleries();
+if (galleriesCacheHint) Astro.cache.set(galleriesCacheHint);
 
-const allPosts: MatchPost[] = [...posts, ...managedPosts];
+const emdashPosts: MatchPost[] = emdashGalleries.map((g) => ({
+  id: g.slug,
+  categorySlug: g.categorySlug,
+  categoryLabel: g.categoryLabel,
+  team1: g.team1,
+  team2: g.team2,
+  date: g.date,
+  photoCount: g.photos.length,
+  thumbnail: g.thumbnail,
+  thumbnailAlt: g.thumbnailAlt,
+  photos: g.photos.map((ph, i) => ({
+    src: ph.src,
+    alt: ph.alt,
+    caption: ph.caption,
+    downloadName: `${g.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
+  })),
+}));
+
+const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
 ---
 
 <Base

@@ -2,24 +2,17 @@
 /**
  * sync-match-photos — PCFC
  * =========================
- * Por cada partido JUGADO del feed FutbolPro Academy crea un draft en
- * src/content/match_photos/<slug>.md con `published: false` y sin fotos.
- * Ahí es donde luego se suben las fotos de ese partido.
- * Sin fotos no hay galería: /fotos y /calendario solo enlazan entradas
- * con `published: true` + fotos.
+ * Por cada partido JUGADO del feed FutbolPro Academy crea un draft en la
+ * colección EmDash `partidos` (un partido = una galería).
+ * Ahí es donde luego se suben las fotos en /_emdash/admin y se publica.
+ * Sin fotos no hay galería: /fotos y /calendario solo usan publicadas con fotos.
  *
  * El slug DEBE coincidir con src/lib/match-photos.ts (buildMatchSlug).
  * Si cambias el algoritmo aquí, cámbialo allá también.
  *
  * Uso: pnpm sync:match-photos
  */
-
-import { mkdirSync, existsSync, writeFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = join(root, 'src', 'content', 'match_photos');
+import { openRepo } from './emdash-db.mjs';
 
 const ACADEMY_API_URL =
   process.env.PUBLIC_ACADEMY_API_URL ||
@@ -47,21 +40,15 @@ function buildMatchSlug(team1, team2, isoDate) {
   return `${slugifyTeam(team1)}-vs-${slugifyTeam(team2)}-${shortDateEs(isoDate)}`;
 }
 
-// ——— Mismo mapeo que academyCategoryToWeb en calendario.astro ———
+// ——— Mismo mapeo que academyCategoryToWeb (label EmDash para el select) ———
 function academyCategoryToWeb(category) {
   const c = (category || '').toLowerCase();
   const short = (category || '').split('(')[0].trim() || 'Cantera';
-  if (c.includes('elite') || c.includes('reserva')) return { slug: 'elite', label: 'Elite / Reserva', short };
+  if (c.includes('elite') || c.includes('reserva')) return { slug: 'elite', label: 'Elite y Reserva', short };
   if (c.includes('sub-6') || c.includes('sub-8')) return { slug: 'pre', label: 'Pre-Formativas', short };
   if (c.includes('sub-10') || c.includes('sub-12')) return { slug: 'form-baja', label: 'Formativas Bajas', short };
-  if (c.includes('femen')) return { slug: 'form-alta', label: 'Femenino', short };
+  // Nota: el select EmDash solo tiene los 4 niveles; Femenino va a Formativas Altas.
   return { slug: 'form-alta', label: 'Formativas Altas', short };
-}
-
-function displayDate(iso) {
-  const m = (iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (!m) return iso;
-  return `${parseInt(m[3], 10)} ${ES_MONTHS[parseInt(m[2], 10) - 1]} ${m[1]}`;
 }
 
 const res = await fetch(`${ACADEMY_API_URL}/api/public/matches`, { signal: AbortSignal.timeout(15000) });
@@ -73,20 +60,32 @@ const data = await res.json();
 const played = Array.isArray(data?.played) ? data.played : [];
 console.log(`Partidos jugados en feed: ${played.length}`);
 
-mkdirSync(outDir, { recursive: true });
-const existing = new Set(readdirSync(outDir).map((f) => f.replace(/\.md$/, '')));
-
+const { repo, close } = await openRepo();
 let created = 0;
 for (const m of played) {
   const cat = academyCategoryToWeb(m.category);
   const team1 = `PCFC ${cat.short}`;
   const team2 = m.opponent || 'Rival por confirmar';
   const slug = buildMatchSlug(team1, team2, m.matchDate);
-  if (existing.has(slug)) continue;
-  const md = `---\ncategorySlug: "${cat.slug}"\ncategoryLabel: "${cat.label}"\nteam1: "${team1}"\nteam2: "${team2}"\ndate: "${displayDate(m.matchDate)}"\nthumbnail: "/images/stock/partido-sub13.webp"\nthumbnailAlt: "${team1} vs ${team2} — Partido ${cat.label}"\npublished: false\nphotos: []\n---\n\n<!-- Draft auto-generado desde FutbolPro Academy (id: ${m.id || 'n/a'}). Subir fotos y poner published: true. -->\n`;
-  writeFileSync(join(outDir, `${slug}.md`), md);
-  existing.add(slug);
+  const exists = await repo.findBySlug('partidos', slug).catch(() => null);
+  if (exists) continue;
+  await repo.create({
+    type: 'partidos',
+    slug,
+    status: 'draft',
+    data: {
+      name: `${team1} vs ${team2}`,
+      local: team1,
+      visitante: team2,
+      categoria: cat.label,
+      fecha: (m.matchDate || '').slice(0, 10) || undefined,
+      academy_id: m.id || undefined,
+      thumbnail: { src: '/images/stock/partido-sub13.webp', alt: `${team1} vs ${team2}` },
+      images: [],
+    },
+  });
   created++;
   console.log(`  + draft ${slug}`);
 }
-console.log(`Drafts creados: ${created}. Existen ${existing.size} entradas en match_photos.`);
+console.log(`Drafts creados: ${created}.`);
+await close();

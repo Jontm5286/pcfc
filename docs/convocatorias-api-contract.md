@@ -44,10 +44,12 @@ GET http://localhost:3001/api/public/matches   (app en local)
 
 ## Reglas lado PCFC
 
-1. **Galería es nuestra** — por cada fecha jugada, `pnpm sync:match-photos`
-   crea un draft (`published: false`, sin fotos) en `src/content/match_photos/`.
-   Sin fotos no hay galería: `/fotos` y `/calendario` solo enlazan entradas
-   publicadas con fotos (`/fotos#<slug>`).
+1. **Galería en EmDash** — colección `partidos`: un partido = una galería
+   (campos `images`, `thumbnail`, `categoria`, `academy_id`).
+   Por cada fecha jugada, `pnpm sync:match-photos` crea un draft.
+   Las fotos se suben en `/_emdash/admin` y al publicar aparece la galería.
+   Sin fotos no hay galería: `/fotos` y `/calendario` solo usan publicadas
+   con fotos (`/fotos#<slug>`).
 2. **Slug determinista** — `pcfc-<equipo>-vs-<rival>-<DDmmm>`
    (ej. `pcfc-sub-10-vs-atlantico-fc-cantera-29ago`).
    Algoritmo en `src/lib/match-photos.ts` (¡mantener igual en el script!).
