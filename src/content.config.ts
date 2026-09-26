@@ -136,18 +136,9 @@ const calendarCollection = defineCollection({
 });
 
 // ─────────────────────────────────────────────────────────
-// COLLECTION 5: sponsors
-// 6 patrocinadores en footer/hero — editable nombre/logo/href.
+// (Sponsors: fuente única en src/data/homeData.ts getSponsorsData()
+// con logos en src/assets/sponsors/ — sin colección Astro.)
 // ─────────────────────────────────────────────────────────
-const sponsorsCollection = defineCollection({
-  type: 'data',
-  schema: z.object({
-    name: z.string(),
-    logo: ImageSchema, // puede ser local /Logo-PCFC.svg o external
-    href: z.string().url(),
-    order: z.number().int().default(99),
-  }),
-});
 
 // ─────────────────────────────────────────────────────────
 // COLLECTION 6: gallery-images
@@ -217,14 +208,37 @@ const blogCollection = defineCollection({
   }),
 });
 
+// COLLECTION 10: players
+// Jugadores destacados de la home — editable nombre/foto/posición/stats.
+// El cliente cambia datos, nunca layout.
+const playersCollection = defineCollection({
+  type: "data",
+  schema: z.object({
+    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+    slug: z.string(),
+    position: z.enum(["Portero", "Defensa", "Centrocampista", "Atacante"]),
+    number: z.number().int().min(1).max(99),
+    photo: ImageSchema,
+    photoAlt: z.string().min(3, "Alt accesible requerido para WCAG"),
+    category: z.enum(["pre", "form-baja", "form-alta", "elite"]).optional(),
+    featured: z.boolean().default(true),
+    order: z.number().int().default(99),
+    // Stats temporada actual (opcionales)
+    matches: z.number().int().default(0),
+    goals: z.number().int().default(0),
+    assists: z.number().int().default(0),
+    season: z.string().default("2026/2027"),
+  }),
+});
+
 export const collections = {
   hero: heroCollection,
   'club-history': clubCollection,
   categories: categoriesCollection,
   calendar: calendarCollection,
-  sponsors: sponsorsCollection,
   gallery: galleryCollection,
   'stats-pillars': statsCollection,
   next_match: nextMatchCollection,
   blog: blogCollection,
+  players: playersCollection,
 };

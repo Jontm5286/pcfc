@@ -15,14 +15,15 @@ import galleryEquipo from "../assets/gallery/equipo-formativas-altas.jpg";
 // NOTA: photo-1431324173062 ("Jugadores en cancha") fue eliminada de Unsplash
 // (404). Se reutiliza cesped-natural.jpg como reemplazo temático.
 import cespedNatural from "../assets/facilities/cesped-natural.jpg";
-// NOTA: los logos de sponsors son placeholders genéricos de Unsplash, NO los
-// logos reales de las marcas. Pendiente: reemplazar por logos oficiales.
-import sponsorPuntaCanaResort from "../assets/sponsors/placeholder-punta-cana-resort.jpg";
-import sponsorBancoPopular from "../assets/sponsors/placeholder-banco-popular.jpg";
-import sponsorScotiabank from "../assets/sponsors/placeholder-scotiabank.jpg";
-import sponsorClaro from "../assets/sponsors/placeholder-claro-rd.jpg";
-import sponsorCocaCola from "../assets/sponsors/placeholder-coca-cola.jpg";
-import sponsorNike from "../assets/sponsors/placeholder-nike.jpg";
+// Logos oficiales de patrocinadores (Green Corp pendiente de logo).
+import sponsorCongreMax from "../assets/sponsors/concremax.webp";
+import sponsorDrKatherine from "../assets/sponsors/dr-katherine.svg";
+import sponsorEsperilla from "../assets/sponsors/esperilla-motors.svg";
+import sponsorFormaLegal from "../assets/sponsors/forma-legal.webp";
+import sponsorGreenStudio from "../assets/sponsors/green-studio.webp";
+import sponsorGrupoDuplax from "../assets/sponsors/grupo-duplax.webp";
+import sponsorPuntaCanaParty from "../assets/sponsors/punta-cana-party.webp";
+import sponsorStresscrete from "../assets/sponsors/stresscrete-group.svg";
 
 export interface NextMatch {
   date: string;
@@ -89,6 +90,20 @@ export interface SponsorItem {
   name: string;
   logo: string;
   href: string;
+}
+
+export interface FeaturedPlayer {
+  name: string;
+  slug: string;
+  position: "Portero" | "Defensa" | "Centrocampista" | "Atacante";
+  number: number;
+  photo: string;
+  photoAlt: string;
+  category?: string;
+  matches: number;
+  goals: number;
+  assists: number;
+  season: string;
 }
 
 /**
@@ -301,44 +316,112 @@ export function getPathwayCardsData(): PathwayCardItem[] {
 export function getSponsorsData(): SponsorItem[] {
   return [
     {
-      name: "Punta Cana Resort",
-      logo: sponsorPuntaCanaResort.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Banco Popular",
-      logo: sponsorBancoPopular.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Scotiabank",
-      logo: sponsorScotiabank.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Claro RD",
-      logo: sponsorClaro.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Coca-Cola",
-      logo: sponsorCocaCola.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Nike",
-      logo: sponsorNike.src,
-      href: "https://example.com",
-    },
-    {
-      name: "Green Studio",
-      logo: "/_emdash/api/media/file/01M1WPNKQ1QVY6JCZY6140M0XJ.01M1WPNKRECW7GJ238XSVQ1D7M.png",
-      href: "https://greenstudiord.com/",
+      name: "Congre Max",
+      logo: sponsorCongreMax.src,
+      href: "",
     },
     {
       name: "Dr. Katherine",
-      logo: "/_emdash/api/media/file/01M1WQ4A98TX1WDX56EZ78NA9E.01M1WQ4A9MY591QGWXVX18NCZ5.png",
+      logo: sponsorDrKatherine.src,
       href: "",
+    },
+    {
+      name: "Esperilla Motors",
+      logo: sponsorEsperilla.src,
+      href: "",
+    },
+    {
+      name: "Forma Legal",
+      logo: sponsorFormaLegal.src,
+      href: "",
+    },
+    {
+      name: "Green Studio",
+      logo: sponsorGreenStudio.src,
+      href: "https://greenstudiord.com/",
+    },
+    {
+      name: "Grupo Duplax",
+      logo: sponsorGrupoDuplax.src,
+      href: "",
+    },
+    {
+      name: "Punta Cana Party",
+      logo: sponsorPuntaCanaParty.src,
+      href: "",
+    },
+    {
+      name: "Stresscrete Group",
+      logo: sponsorStresscrete.src,
+      href: "",
+    },
+  ];
+}
+
+/**
+ * Gets featured players fallback for the home carousel.
+ * Primary source is the `players` content collection (EmDash);
+ * this static list keeps the home working when the collection is empty.
+ * Photos are portrait crops; replace with official player portraits.
+ * @returns Array of FeaturedPlayer items
+ */
+export function getFeaturedPlayersData(): FeaturedPlayer[] {
+  return [
+    {
+      name: "Diego Ramírez",
+      slug: "diego-ramirez",
+      position: "Atacante",
+      number: 11,
+      photo:
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=1200&fit=crop&crop=top&q=80",
+      photoAlt: "Diego Ramírez, atacante de Punta Cana FC",
+      category: "elite",
+      matches: 24,
+      goals: 18,
+      assists: 7,
+      season: "2026/2027",
+    },
+    {
+      name: "Lamine Tavárez",
+      slug: "lamine-tavarez",
+      position: "Atacante",
+      number: 10,
+      photo:
+        "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&h=1200&fit=crop&crop=top&q=80",
+      photoAlt: "Lamine Tavárez, atacante de Punta Cana FC",
+      category: "form-alta",
+      matches: 22,
+      goals: 15,
+      assists: 11,
+      season: "2026/2027",
+    },
+    {
+      name: "Rodrigo Peña",
+      slug: "rodrigo-pena",
+      position: "Centrocampista",
+      number: 16,
+      photo:
+        "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&h=1200&fit=crop&crop=top&q=80",
+      photoAlt: "Rodrigo Peña, centrocampista de Punta Cana FC",
+      category: "elite",
+      matches: 24,
+      goals: 6,
+      assists: 14,
+      season: "2026/2027",
+    },
+    {
+      name: "Jean Castillo",
+      slug: "jean-castillo",
+      position: "Defensa",
+      number: 4,
+      photo:
+        "https://images.unsplash.com/photo-151860466860-9ed391f76460?w=800&h=1200&fit=crop&crop=top&q=80",
+      photoAlt: "Jean Castillo, defensa de Punta Cana FC",
+      category: "form-alta",
+      matches: 23,
+      goals: 2,
+      assists: 3,
+      season: "2026/2027",
     },
   ];
 }

@@ -7,9 +7,9 @@
 
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
-import { getSponsorsFromEmDash } from '../lib/content';
+import { getSponsorsData } from '../data/homeData';
 
-const sponsors = await getSponsorsFromEmDash();
+const sponsors = getSponsorsData();
 ---
 
 <Base title="Patrocinadores y Aliados" description="Conoce los patrocinadores y aliados del Punta Cana FC. Marcas que apoyan el fútbol formativo en el Caribe.">
