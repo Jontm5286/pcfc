@@ -8,6 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:cf": "DEPLOY_TARGET=cloudflare astro build",
+    "deploy": "pnpm build:cf && wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro",
@@ -55,6 +57,7 @@
     "prettier-plugin-astro": "^0.13.0",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
+    "wrangler": "^4.139.0",
     "zod": "^4.5.4"
   }
 }

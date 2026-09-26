@@ -1,0 +1,25 @@
+{
+  // PCFC en Cloudflare Workers + D1 + R2 + dominio puntacanafc.com
+  // Deploy: pnpm deploy  (build con DEPLOY_TARGET=cloudflare + wrangler deploy)
+  "name": "pcfc",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pcfc-db",
+      "database_id": "27dc5fee-64bc-4247-962a-9d04cf876d5d"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "pcfc-media"
+    }
+  ],
+  "routes": [
+    { "pattern": "puntacanafc.com/*", "zone_id": "1932f24b89698444d10590e3aec6ca8a" },
+    { "pattern": "www.puntacanafc.com/*", "zone_id": "1932f24b89698444d10590e3aec6ca8a" }
+  ]
+}
