@@ -304,7 +304,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       heading: "PARA JUGADORES:",
       subtitle: "Competencia, Diversión, Crecimiento",
       copy: "Partidos intensos, tours de scouting y torneos para medir tu potencial al máximo.",
-      cta: { label: "SABER MÁS", href: "/area-deportiva" },
+      cta: { label: "SABER MÁS", href: "/jugadores" },
       image: galleryEntrenamiento.src,
       imageAlt: "Jugador juvenil corriendo por la banda",
     },

@@ -1,0 +1,259 @@
+---
+/**
+ * /jugadores — PCFC
+ * Página de ruta competitiva: pruebas, scouting, torneos y requisitos.
+ * La card "PARA JUGADORES" del home enlaza aquí.
+ */
+
+import Base from '../layouts/Base.astro';
+import StockImage from '../components/StockImage.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import FaqSection from '../components/FaqSection.astro';
+import EnrollmentCta from '../components/EnrollmentCta.astro';
+---
+
+<Base
+  title="Jugadores"
+  description="Tu camino competitivo en Punta Cana FC: pruebas de admisión, scouting, tours y torneos para medir tu potencial al máximo."
+>
+  <!-- ============================================ -->
+  <!-- HERO -->
+  <!-- ============================================ -->
+  <section
+    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
+  >
+    <StockImage
+      name="partido-sub13"
+      alt="Partido competitivo de juveniles en Punta Cana FC"
+      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+      width={1600}
+      height={1200}
+      loading="eager"
+    />
+    <div class="hero-overlay"></div>
+    <div class="container-x relative z-10">
+      <p class="eyebrow eyebrow--on-navy">Para jugadores</p>
+      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
+        Mide tu potencial al máximo
+      </h1>
+      <p class="lede lede--on-navy max-w-[52ch]">
+        Competencia real, scouting profesional y torneos. Este es tu camino
+        si quieres llevar tu fútbol al siguiente nivel.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- EL CAMINO -->
+  <!-- ============================================ -->
+  <section class="section bg-white" id="camino">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Ruta competitiva"
+        title="TU CAMINO<br />EMPIEZA AQUÍ"
+        subtitle="Tres pasos claros desde tu primera prueba hasta competir al máximo nivel de tu categoría."
+      />
+
+      <ol class="grid grid-cols-1 md:grid-cols-3 gap-6 list-none p-0">
+        <li class="card">
+          <p class="step-num" aria-hidden="true">01</p>
+          <h3 class="h-card mb-2">Prueba de admisión</h3>
+          <p class="text-block">
+            Te evaluamos en cancha: técnica, físico y actitud. Sin
+            compromiso — solo ven a mostrar lo que tienes.
+          </p>
+        </li>
+        <li class="card">
+          <p class="step-num" aria-hidden="true">02</p>
+          <h3 class="h-card mb-2">Scouting y seguimiento</h3>
+          <p class="text-block">
+            Nuestros entrenadores y ojeadores siguen tu progreso partido a
+            partido, con reportes claros de en qué mejorar.
+          </p>
+        </li>
+        <li class="card">
+          <p class="step-num" aria-hidden="true">03</p>
+          <h3 class="h-card mb-2">Tours y torneos</h3>
+          <p class="text-block">
+            Compite en ligas, copas y tours de scouting donde te ven clubes
+            y selecciones. Vitrina real para tu talento.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- COMPETENCIA -->
+  <!-- ============================================ -->
+  <section class="section bg-pure-white border-t border-navy/10" id="competencia">
+    <div class="container-x">
+      <div class="two-col">
+        <div>
+          <p class="eyebrow">Competencia</p>
+          <h2 class="h-section">Partidos intensos cada semana</h2>
+          <p class="text-block">
+            Ligas formativas, copas y amistosos contra las mejores canteras
+            del país. Juegas donde te exigen — porque ahí es donde creces.
+          </p>
+          <p class="text-block">
+            Consulta el calendario de tu categoría y no te pierdas ningún
+            encuentro.
+          </p>
+          <div class="flex flex-wrap gap-3 mt-6">
+            <a href="/calendario" class="btn btn--primary">Ver calendario</a>
+            <a href="/categorias" class="btn btn--outline">Mi categoría</a>
+          </div>
+        </div>
+        <div class="image-placeholder">
+          <StockImage
+            name="jugadores-cancha"
+            alt="Jugadores compitiendo en partido oficial de Punta Cana FC"
+            className="placeholder-img"
+            loading="lazy"
+            width={1600}
+            height={1200}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- REQUISITOS -->
+  <!-- ============================================ -->
+  <section class="section bg-navy-dark" id="requisitos">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Requisitos"
+        title="¿QUÉ NECESITAS<br />PARA EMPEZAR?"
+        subtitle="Sin experiencia previa requerida. Solo ganas, disciplina y estos básicos."
+      />
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 list-none p-0">
+        <li class="req-card">
+          <h3 class="h-card h-card--on-navy mb-2">Edad</h3>
+          <p class="req-desc">De 4 a 19 años, ubicado en tu categoría ideal.</p>
+        </li>
+        <li class="req-card">
+          <h3 class="h-card h-card--on-navy mb-2">Documentos</h3>
+          <p class="req-desc">Acta de nacimiento, cédula o pasaporte y certificado médico.</p>
+        </li>
+        <li class="req-card">
+          <h3 class="h-card h-card--on-navy mb-2">Equipo básico</h3>
+          <p class="req-desc">Botas, espinilleras y ganas. El uniforme oficial va por nosotros.</p>
+        </li>
+        <li class="req-card">
+          <h3 class="h-card h-card--on-navy mb-2">Actitud</h3>
+          <p class="req-desc">Disciplina, respeto y hambre de mejorar cada día.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- FAQ JUGADORES -->
+  <!-- ============================================ -->
+  <FaqSection
+    eyebrow="Dudas de jugadores"
+    title="Antes de probarte, resuelve tus dudas"
+    subtitle="Si tu pregunta no está aquí, escríbenos y te respondemos directamente."
+    faqs={[
+      {
+        question: "¿Cómo son las pruebas de admisión?",
+        answer: "Te citamos a una sesión con tu categoría: ejercicios técnicos, físico y un partido de evaluación. Nuestros entrenadores observan tu nivel actual y tu potencial. Al final te decimos en qué grupo entras y qué trabajar."
+      },
+      {
+        question: "¿Nunca he jugado en un club, puedo entrar?",
+        answer: "Sí. Las categorías Pre-Formativas (4–8 años) están diseñadas para el primer contacto con el fútbol. Y en cualquier edad, si tienes actitud y disciplina, hay un grupo para ti."
+      },
+      {
+        question: "¿Qué es el scouting y los tours?",
+        answer: "Nuestro cuerpo técnico hace seguimiento partido a partido con reportes de progreso. Los jugadores destacados participan en tours y torneos donde los observan clubes profesionales y selecciones: una vitrina real para tu talento."
+      },
+      {
+        question: "¿En qué torneos compiten?",
+        answer: "Ligas formativas regionales y nacionales, copas por categoría y amistosos contra las mejores canteras del país. El calendario de tu categoría está siempre actualizado en la web."
+      },
+      {
+        question: "¿Puedo llegar a profesional desde aquí?",
+        answer: "Ese es el objetivo de la ruta Elite (16–19 años): alta intensidad, gimnasio, análisis de vídeo y seguimiento individual. Varios de nuestros jugadores han sido captados por clubes profesionales."
+      },
+      {
+        question: "¿Qué necesito para mi primer entrenamiento?",
+        answer: "Botas o tenis deportivos, espinilleras, ropa cómoda y tu botella de agua. El resto (uniforme oficial, material) lo gestionamos al inscribirte."
+      }
+    ]}
+    contactEmail="admisiones@puntacanafc.com"
+    contactPhone="+1 809-652-9450"
+  />
+
+  <EnrollmentCta
+    eyebrow="Es tu momento"
+    title="¿TE PRUEBAS<br />ESTA SEMANA?"
+    copy="Inscríbete y te citamos a tu prueba de admisión. Sin compromiso: ven, juega y decide."
+  />
+</Base>
+
+<style>
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .text-block {
+    color: var(--color-navy-60);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+  }
+  .placeholder-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
+
+  .card {
+    background: var(--color-white);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+  }
+
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--color-sky);
+    margin: 0 0 0.75rem;
+    line-height: 1;
+  }
+
+  .req-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+  }
+  .req-desc {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  @media (max-width: 992px) {
+    .two-col {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>
