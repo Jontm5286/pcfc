@@ -2,7 +2,8 @@
 /**
  * Sponsors — PCFC
  * Sección de patrocinadores / aliados del club.
- * Logos en fila, grayscale → color al hover.
+ * Grid asimétrico 12 columnas: cards de distinto tamaño + CTA final.
+ * Logos grayscale → color al hover.
  *
  * Props:
  *   - eyebrow?: string       Texto superpuesto
@@ -29,6 +30,21 @@ interface Props {
 }
 
 const { eyebrow, title, sponsors } = Astro.props;
+
+// Mosaico asimétrico (se repite si hay más/menos logos):
+// fila 1: 7+5 (alto) · fila 2: 4+4+4 · fila 3: 5+7 · resto: 6+6
+const SPANS = [
+  'lg:col-span-7',
+  'lg:col-span-5',
+  'lg:col-span-4',
+  'lg:col-span-4',
+  'lg:col-span-4',
+  'lg:col-span-5',
+  'lg:col-span-7',
+];
+const HEIGHTS = ['lg:h-44', 'lg:h-44', 'lg:h-32', 'lg:h-32', 'lg:h-32', 'lg:h-36', 'lg:h-36'];
+const spanFor = (i: number) => SPANS[i % SPANS.length];
+const heightFor = (i: number) => HEIGHTS[i % HEIGHTS.length];
 ---
 
 <section
@@ -51,36 +67,54 @@ const { eyebrow, title, sponsors } = Astro.props;
 
     {sponsors.length > 0 && (
       <div
-        class="sponsors-track flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
+        class="grid grid-cols-2 lg:grid-cols-12 gap-4 md:gap-5 items-stretch"
         role="list"
       >
-        {sponsors.map((sponsor) => (
-          <div role="listitem" class="sponsor-item group">
+        {sponsors.map((sponsor, i) => (
+          <div
+            role="listitem"
+            class={`group flex items-center justify-center rounded-2xl bg-white px-6 py-6 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5 ${spanFor(i)}`}
+          >
             {sponsor.href ? (
               <a
                 href={sponsor.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Visitar ${sponsor.name}`}
-                class="block"
+                class={`flex items-center justify-center w-full ${heightFor(i)}`}
               >
                 <img
                   src={sponsor.logo}
                   alt={`Logo de ${sponsor.name}`}
                   loading="lazy"
-                  class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
+                  class="max-h-12 md:max-h-14 lg:max-h-16 w-auto max-w-full object-contain"
                 />
               </a>
             ) : (
-              <img
-                src={sponsor.logo}
-                alt={`Logo de ${sponsor.name}`}
-                loading="lazy"
-                class="sponsor-logo h-10 md:h-12 w-auto object-contain brightness-50 group-hover:brightness-100 transition-[filter,opacity] duration-200"
-              />
+              <div class={`flex items-center justify-center w-full ${heightFor(i)}`}>
+                <img
+                  src={sponsor.logo}
+                  alt={`Logo de ${sponsor.name}`}
+                  loading="lazy"
+                  class="max-h-12 md:max-h-14 lg:max-h-16 w-auto max-w-full object-contain"
+                />
+              </div>
             )}
           </div>
         ))}
+
+        {/* CTA: cierra el mosaico y convierte */}
+        <div class="col-span-2 lg:col-span-12 flex flex-col sm:flex-row items-center justify-center gap-3 rounded-2xl border border-dashed border-white/20 px-6 py-5 text-center">
+          <p class="text-white/70 text-sm">
+            ¿Tu marca aquí? Sé parte de los aliados de Punta Cana FC.
+          </p>
+          <a
+            href="/inscribete"
+            class="btn btn--sky btn--on-navy shrink-0"
+          >
+            Ser patrocinador
+          </a>
+        </div>
       </div>
     )}
 
@@ -92,11 +126,3 @@ const { eyebrow, title, sponsors } = Astro.props;
     )}
   </div>
 </section>
-
-<style>
-  /* Separator visual entre sponsors */
-  .sponsor-item:not(:last-child)::after {
-    content: '';
-    display: none;
-  }
-</style>
