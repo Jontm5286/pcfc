@@ -8,6 +8,16 @@ import EnrollmentCta from "../../components/EnrollmentCta.astro";
 import GalleryGrid from "../../components/GalleryGrid.astro";
 import type { Photo } from "../../components/GalleryGrid.astro";
 
+// Fotos locales (src/assets/) — los posts reutilizan las imágenes de galería.
+// NOTA: photo-1431324173062 fue eliminada de Unsplash (404); se usa
+// cesped-natural.jpg como reemplazo temático.
+import galleryEntrenamiento from "../../assets/gallery/entrenamiento-sub15.jpg";
+import galleryPreformativas from "../../assets/gallery/partido-preformativas.jpg";
+import galleryCancha from "../../assets/gallery/cancha-principal.jpg";
+import galleryCelebracion from "../../assets/gallery/celebracion-gol-sub17.jpg";
+import galleryEquipo from "../../assets/gallery/equipo-formativas-altas.jpg";
+import cespedNatural from "../../assets/facilities/cesped-natural.jpg";
+
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 interface BlogPost {
@@ -59,8 +69,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección de Comunicación",
     date: "15 dic 2025",
     dateIso: "2025-12-15",
-    image:
-      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
+    image: galleryEntrenamiento.src,
     imageAlt: "Equipo PCFC celebrando el título del Torneo Invierno 2025",
     tags: [
       { slug: "torneos", label: "Torneos" },
@@ -69,22 +78,22 @@ export function getStaticPaths() {
     ],
     relatedImages: [
       {
-        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        src: galleryEntrenamiento.src,
         alt: "Celebración del equipo PCFC",
         caption: "El equipo celebra en la cancha",
       },
       {
-        src: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+        src: galleryPreformativas.src,
         alt: "Partido en la Cancha Principal",
         caption: "La final en Bávaro",
       },
       {
-        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+        src: galleryCancha.src,
         alt: "Jugadores recibiendo instrucciones",
         caption: "Reunión técnica previa al partido",
       },
       {
-        src: "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80",
+        src: galleryCelebracion.src,
         alt: "Jugadores con el trofeo",
         caption: "Trofeo del Torneo Invierno 2025",
       },
@@ -111,8 +120,7 @@ export function getStaticPaths() {
     authorTitle: "Departamento Técnico PCFC",
     date: "3 nov 2025",
     dateIso: "2025-11-03",
-    image:
-      "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=1200&q=80",
+    image: cespedNatural.src,
     imageAlt: "Cuerpo técnico de PCFC durante una sesión de entrenamiento",
     tags: [
       { slug: "noticias", label: "Noticias" },
@@ -121,12 +129,12 @@ export function getStaticPaths() {
     ],
     relatedImages: [
       {
-        src: "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80",
+        src: cespedNatural.src,
         alt: "Sesión de entrenamiento técnico",
         caption: "Práctica de definición",
       },
       {
-        src: "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80",
+        src: galleryEquipo.src,
         alt: "Reunión del cuerpo técnico",
         caption: "Planner semanal de entrenos",
       },
@@ -149,8 +157,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección de Comunicación",
     date: "20 oct 2025",
     dateIso: "2025-10-20",
-    image:
-      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
+    image: galleryCancha.src,
     imageAlt: "Scout observando un entrenamiento de PCFC",
     tags: [
       { slug: "scouting", label: "Scouting" },
@@ -159,12 +166,12 @@ export function getStaticPaths() {
     ],
     relatedImages: [
       {
-        src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+        src: galleryCancha.src,
         alt: "Scout tomando notas",
         caption: "Scout del Club A observando la práctica",
       },
       {
-        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        src: galleryEntrenamiento.src,
         alt: "Jugadores en ejercicio técnico",
         caption: "Ejercicio de regate bajo presión",
       },
@@ -189,8 +196,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección Administrativa",
     date: "1 sep 2025",
     dateIso: "2025-09-01",
-    image:
-      "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=1200&q=80",
+    image: galleryPreformativas.src,
     imageAlt: "Niños disfrutando una sesión de entrenamiento en PCFC",
     tags: [
       { slug: "inscripciones", label: "Inscripciones" },
@@ -198,17 +204,17 @@ export function getStaticPaths() {
     ],
     relatedImages: [
       {
-        src: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+        src: galleryPreformativas.src,
         alt: "Niños jugando en la academia",
         caption: "Categoría Pre-Formativa",
       },
       {
-        src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
+        src: galleryEntrenamiento.src,
         alt: "Partido de práctica",
         caption: "Formativas Bajas",
       },
       {
-        src: "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=800&q=80",
+        src: galleryEquipo.src,
         alt: "Equipo Elite en entrenamiento",
         caption: "Equipo Elite",
       },

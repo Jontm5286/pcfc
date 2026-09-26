@@ -6,7 +6,7 @@
 ## Endpoints
 
 ```
-GET https://futbolpro-academy.johantavarez89.workers.dev/api/public/matches
+GET https://app.puntacanafc.com/api/public/matches
 GET http://localhost:3001/api/public/matches   (app en local)
 ```
 

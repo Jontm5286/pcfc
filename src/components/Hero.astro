@@ -43,6 +43,9 @@ export interface CtaButton {
   href: string;
 }
 
+// Fondo por defecto: imagen local (src/assets/) optimizada por Astro en build.
+import heroBg from '../assets/gallery/entrenamiento-sub15.jpg';
+
 interface Props {
   eyebrow?: string;
   title: string;
@@ -60,7 +63,7 @@ const {
   eyebrow,
   title = "Pasión por el Fútbol",
   description,
-  backgroundImage = "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80",
+  backgroundImage = heroBg.src,
   bullets = [],
   ctaPrimary = { label: "Inscríbete", href: "/inscribete" },
   ctaSecondary = { label: "Conoce el club", href: "/club" },

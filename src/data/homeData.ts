@@ -1,7 +1,28 @@
 /**
  * Home page data definitions and static data structures.
  * Implements single responsibility by isolating page content from view rendering.
+ *
+ * Las fotos viven en src/assets/ (local, optimizadas por Astro en build).
+ * Se expone `.src` para mantener la API como string y no romper a los
+ * consumidores (Hero, CommunityMosaic, PathwayCards, Sponsors).
  */
+
+import galleryEntrenamiento from "../assets/gallery/entrenamiento-sub15.jpg";
+import galleryPreformativas from "../assets/gallery/partido-preformativas.jpg";
+import galleryCancha from "../assets/gallery/cancha-principal.jpg";
+import galleryCelebracion from "../assets/gallery/celebracion-gol-sub17.jpg";
+import galleryEquipo from "../assets/gallery/equipo-formativas-altas.jpg";
+// NOTA: photo-1431324173062 ("Jugadores en cancha") fue eliminada de Unsplash
+// (404). Se reutiliza cesped-natural.jpg como reemplazo temático.
+import cespedNatural from "../assets/facilities/cesped-natural.jpg";
+// NOTA: los logos de sponsors son placeholders genéricos de Unsplash, NO los
+// logos reales de las marcas. Pendiente: reemplazar por logos oficiales.
+import sponsorPuntaCanaResort from "../assets/sponsors/placeholder-punta-cana-resort.jpg";
+import sponsorBancoPopular from "../assets/sponsors/placeholder-banco-popular.jpg";
+import sponsorScotiabank from "../assets/sponsors/placeholder-scotiabank.jpg";
+import sponsorClaro from "../assets/sponsors/placeholder-claro-rd.jpg";
+import sponsorCocaCola from "../assets/sponsors/placeholder-coca-cola.jpg";
+import sponsorNike from "../assets/sponsors/placeholder-nike.jpg";
 
 export interface NextMatch {
   date: string;
@@ -83,7 +104,7 @@ export function getNextMatchData(): NextMatch {
     home: "PCFC",
     homeLogo: "/Logo-PCFC.svg",
     away: "Atlético Bávaro",
-    awayLogo: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&q=80",
+    awayLogo: galleryCancha.src,
     venue: "Cancha Principal · PCFC",
   };
 }
@@ -193,27 +214,27 @@ export function getPillarsData(): Pillar[] {
 export function getGalleryImagesData(): GalleryImage[] {
   return [
     {
-      src: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80",
+      src: galleryEntrenamiento.src,
       alt: "Entrenamiento Sub-15",
     },
     {
-      src: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80",
+      src: galleryPreformativas.src,
       alt: "Partido Pre-Formativas",
     },
     {
-      src: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=80",
+      src: galleryCancha.src,
       alt: "Cancha principal PCFC",
     },
     {
-      src: "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=600&q=80",
+      src: galleryCelebracion.src,
       alt: "Celebración de gol Sub-17",
     },
     {
-      src: "https://images.unsplash.com/photo-1518604666860-9ed391f76460?w=600&q=80",
+      src: galleryEquipo.src,
       alt: "Equipo Formativas Altas",
     },
     {
-      src: "https://images.unsplash.com/photo-1431324173062-725bfd060215?w=600&q=80",
+      src: cespedNatural.src,
       alt: "Jugadores en cancha",
     },
   ];
@@ -258,8 +279,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       subtitle: "Seguridad, Metodología, Valores",
       copy: "Visita nuestras instalaciones. Sesiones supervisadas y aprendizaje profundo asegurando que tu hijo progresa en un entorno seguro.",
       cta: { label: "SABER MÁS", href: "/club" },
-      image:
-        "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80",
+      image: galleryPreformativas.src,
       imageAlt: "Niños en la academia jugando con seguridad",
     },
     {
@@ -268,8 +288,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       subtitle: "Competencia, Diversión, Crecimiento",
       copy: "Partidos intensos, tours de scouting y torneos para medir tu potencial al máximo.",
       cta: { label: "SABER MÁS", href: "/area-deportiva" },
-      image:
-        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&q=80",
+      image: galleryEntrenamiento.src,
       imageAlt: "Jugador juvenil corriendo por la banda",
     },
   ];
@@ -283,32 +302,32 @@ export function getSponsorsData(): SponsorItem[] {
   return [
     {
       name: "Punta Cana Resort",
-      logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&q=80",
+      logo: sponsorPuntaCanaResort.src,
       href: "https://example.com",
     },
     {
       name: "Banco Popular",
-      logo: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=200&q=80",
+      logo: sponsorBancoPopular.src,
       href: "https://example.com",
     },
     {
       name: "Scotiabank",
-      logo: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=200&q=80",
+      logo: sponsorScotiabank.src,
       href: "https://example.com",
     },
     {
       name: "Claro RD",
-      logo: "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=200&q=80",
+      logo: sponsorClaro.src,
       href: "https://example.com",
     },
     {
       name: "Coca-Cola",
-      logo: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=200&q=80",
+      logo: sponsorCocaCola.src,
       href: "https://example.com",
     },
     {
       name: "Nike",
-      logo: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80",
+      logo: sponsorNike.src,
       href: "https://example.com",
     },
     {

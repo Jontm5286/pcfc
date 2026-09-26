@@ -15,8 +15,7 @@
 import { openRepo } from './emdash-db.mjs';
 
 const ACADEMY_API_URL =
-  process.env.PUBLIC_ACADEMY_API_URL ||
-  'https://futbolpro-academy.johantavarez89.workers.dev';
+  process.env.PUBLIC_ACADEMY_API_URL || 'https://app.puntacanafc.com';
 
 // ——— Mismo algoritmo que src/lib/match-photos.ts ———
 const ES_MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];

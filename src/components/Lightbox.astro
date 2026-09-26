@@ -327,6 +327,7 @@ const { defaultGalleryId } = Astro.props;
   };
 
   interface LightboxState {
+    galleryId: string;
     photos: PhotoEventDetail["photos"];
     index: number;
   }
@@ -364,7 +365,8 @@ const { defaultGalleryId } = Astro.props;
       imgEl.alt = photo.alt;
       captionEl.textContent = photo.caption ?? "";
       counterEl.textContent = `${state.index + 1} / ${state.photos.length}`;
-      downloadEl.href = photo.src;
+      // Descarga vía servidor (gate 4K primer mes / 2000px después).
+      downloadEl.href = `/api/foto-descarga?galeria=${encodeURIComponent(state.galleryId)}&foto=${state.index}`;
       downloadEl.setAttribute(
         "download",
         photo.downloadName || deriveDownloadName(photo.src),
@@ -374,8 +376,8 @@ const { defaultGalleryId } = Astro.props;
       nextBtn.hidden = !hasMany;
     };
 
-    const open = (photos: PhotoEventDetail["photos"], index: number) => {
-      state = { photos, index };
+    const open = (photos: PhotoEventDetail["photos"], index: number, galleryId: string) => {
+      state = { photos, index, galleryId };
       root.hidden = false;
       document.body.style.overflow = "hidden";
       render();
@@ -407,7 +409,7 @@ const { defaultGalleryId } = Astro.props;
       ) {
         return;
       }
-      open(e.detail.photos, e.detail.index);
+      open(e.detail.photos, e.detail.index, e.detail.galleryId);
     });
 
     closeBtns.forEach((btn) => btn.addEventListener("click", close));

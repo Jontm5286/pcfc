@@ -8,6 +8,10 @@ import { defineMiddleware } from 'astro:middleware';
 export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
 
+  // APIs y descargas: sin headers de página (algunas respuestas como
+  // redirects traen headers inmutables y el set() las rompería).
+  if (context.url.pathname.startsWith('/api/')) return response;
+
   // Content Security Policy — protección contra XSS e inyección
   response.headers.set(
     'Content-Security-Policy',

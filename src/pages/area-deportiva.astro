@@ -4,24 +4,30 @@ import StockImage from '../components/StockImage.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import GalleryGrid from '../components/GalleryGrid.astro';
 
+// Fotos locales de instalaciones (src/assets/) — optimizadas por Astro en build.
+import galleryEntrenamiento from '../assets/gallery/entrenamiento-sub15.jpg';
+import cespedNatural from '../assets/facilities/cesped-natural.jpg';
+import gimnasio from '../assets/facilities/gimnasio.jpg';
+import recuperacion from '../assets/facilities/recuperacion.jpg';
+
 const facilityPhotos = [
   {
-    src: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+    src: galleryEntrenamiento.src,
     alt: 'Canchas sintéticas FIFA Quality Pro con iluminación LED nocturna',
     caption: 'Canchas sintéticas',
   },
   {
-    src: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+    src: cespedNatural.src,
     alt: 'Campo de fútbol con césped natural de alta calidad',
     caption: 'Césped natural',
   },
   {
-    src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80',
+    src: gimnasio.src,
     alt: 'Gimnasio con equipamiento completo para entrenamiento funcional',
     caption: 'Gimnasio',
   },
   {
-    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+    src: recuperacion.src,
     alt: 'Área de recuperación con sauna, jacuzzi y piscina de hidroterapia',
     caption: 'Área de recuperación',
   },

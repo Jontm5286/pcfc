@@ -37,8 +37,7 @@ export interface WebCategory {
 }
 
 export const ACADEMY_API_URL =
-  import.meta.env.PUBLIC_ACADEMY_API_URL ||
-  'https://futbolpro-academy.johantavarez89.workers.dev';
+  import.meta.env.PUBLIC_ACADEMY_API_URL || 'https://app.puntacanafc.com';
 
 /** Grupos reales de la app -> niveles web (Elite/Reserva es grupo propio). */
 export function academyCategoryToWeb(category: string): WebCategory {
@@ -160,6 +159,8 @@ export interface PublishedGallery {
   team1: string;
   team2: string;
   date: string;
+  /** ISO publishedAt (para el gate de descarga 4K/2000px). */
+  publishedAtIso: string | null;
   thumbnail: string;
   thumbnailAlt: string;
   photos: GalleryPhoto[];
@@ -202,6 +203,13 @@ export async function fetchPublishedGalleries(): Promise<{
       const team1 = String(d.local || 'PCFC');
       const team2 = String(d.visitante || 'Rival');
       const label = String(d.categoria || 'Formativas Altas');
+      const rawPub = (d.publishedAt ?? d.published_at) as unknown;
+      const publishedAtIso =
+        rawPub instanceof Date
+          ? rawPub.toISOString()
+          : typeof rawPub === 'string' && rawPub
+            ? new Date(rawPub).toISOString()
+            : null;
       galleries.push({
         slug: entry.id,
         academyId: typeof d.academy_id === 'string' ? d.academy_id : undefined,
@@ -210,6 +218,7 @@ export async function fetchPublishedGalleries(): Promise<{
         team1,
         team2,
         date: formatDisplayDate(String(d.fecha || '')),
+        publishedAtIso,
         thumbnail: typeof thumb?.src === 'string' ? thumb.src : photos[0].src,
         thumbnailAlt:
           typeof thumb?.alt === 'string' ? thumb.alt : `${team1} vs ${team2}`,

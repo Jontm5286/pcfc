@@ -1,25 +1,23 @@
 ---
 /**
  * StockImage — PCFC / FutbolPro
- * Component reutilizable para imágenes de stock optimizadas a WebP.
+ * Component reutilizable para imágenes de stock optimizadas.
+ * Misma API de siempre; por dentro usa <Image /> de Astro + Sharp:
+ * genera AVIF + WebP (300/800/1600w) en build/primera petición.
  *
  * Props:
  *   - name: string   — clave del stock (historia, directivo, entrenamiento, partido-sub13, jugadores-cancha)
- *                    o URL directa (http(s)://...) cuando stock="external"
+ *                    o URL directa (http(s)://...) para externas (van con <img> directo)
  *   - alt: string    — texto accesible (REQUERIDO)
  *   - width?: number — ancho intrínseco (para layout shift)
  *   - height?: number
  *   - className?: string — clases Tailwind extra
  *   - loading?: "lazy"|"eager" — default "lazy"
  *
- * Genera <picture> con:
- *   - <source type="image/webp" srcset="...300.webp 300w, ...800.webp 800w, ...1600.webp 1600w">
- *   - <img> con sizes + loading lazy + decoding async
- *
- * Fallback: si el archivo .png original existe (foto real del usuario), usa el png.
- *
  * WCAG: siempre incluye alt accesible. Si alt vacío → aria-hidden.
  */
+import { Picture } from 'astro:assets';
+
 interface Props {
   name: string;
   alt: string;
@@ -41,53 +39,50 @@ const {
 // Si es URL externa, usar directamente (foto real post-semana)
 const isExternal = name.startsWith('http://') || name.startsWith('https://');
 
-// Clave base para archivos locales /public/images/stock/<name>.webp
-const base = isExternal
-  ? name
-  : `/images/stock/${name}`;
+// Fuentes locales en src/assets/stock (cualquier extensión soportada)
+const stockModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/stock/*.{webp,png,jpg,jpeg,avif}',
+  { eager: true },
+);
 
-const webp300 = base + '.webp';
-const webp800 = isExternal ? base : `/images/stock/${name}-800.webp`;
-const webp1600 = isExternal ? base : `/images/stock/${name}-1600.webp`;
+function resolveStock(key: string): ImageMetadata | undefined {
+  for (const ext of ['webp', 'png', 'jpg', 'jpeg', 'avif']) {
+    const mod = stockModules[`/src/assets/stock/${key}.${ext}`];
+    if (mod) return mod.default;
+  }
+  return undefined;
+}
 
-// El .png original (foto real) como último fallback — si existe, priorizar
-// Estrategia: <picture> con webp primero, luego img (webp o png)
+const stockSrc = isExternal ? undefined : resolveStock(name);
 ---
 
-<picture>
-  {isExternal ? (
-    <img
-      src={base}
-      alt={alt}
-      width={width}
-      height={height}
-      class:list={[className]}
-      loading={loading}
-      decoding="async"
-      style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
-    />
-  ) : (
-    <>
-      <source
-        type="image/webp"
-        srcset={
-          `${webp300} 300w, ${webp800} 800w, ${webp1600} 1600w`
-        }
-        sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
-      />
-      <img
-        src={base + '.webp'}
-        alt={alt}
-        width={width}
-        height={height}
-        class:list={[className]}
-        loading={loading}
-        decoding="async"
-        style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
-      />
-    </>
-  )}
-</picture>
+{isExternal || !stockSrc ? (
+  <img
+    src={isExternal ? name : '/images/stock/historia-800.webp'}
+    alt={alt}
+    width={width}
+    height={height}
+    class:list={[className]}
+    loading={loading}
+    decoding="async"
+    style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+  />
+) : (
+  <Picture
+    src={stockSrc}
+    alt={alt}
+    width={width}
+    height={height}
+    widths={[300, 800, 1600]}
+    sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
+    formats={['avif', 'webp']}
+    fallbackFormat="webp"
+    class:list={[className]}
+    loading={loading}
+    decoding="async"
+    style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+  />
+)}
 
 <style>
   /* Hero overlay pattern reutilizable */
