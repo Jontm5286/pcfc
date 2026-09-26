@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "build:cf": "DEPLOY_TARGET=cloudflare astro build",
-    "deploy": "pnpm build:cf && wrangler deploy",
+    "deploy:cf": "pnpm build:cf && wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro",
