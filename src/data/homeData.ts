@@ -295,7 +295,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       heading: "PARA PADRES:",
       subtitle: "Seguridad, Metodología, Valores",
       copy: "Visita nuestras instalaciones. Sesiones supervisadas y aprendizaje profundo asegurando que tu hijo progresa en un entorno seguro.",
-      cta: { label: "SABER MÁS", href: "/club" },
+      cta: { label: "SABER MÁS", href: "/padres" },
       image: galleryPreformativas.src,
       imageAlt: "Niños en la academia jugando con seguridad",
     },
