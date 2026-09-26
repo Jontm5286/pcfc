@@ -90,6 +90,8 @@ export interface SponsorItem {
   name: string;
   logo: string;
   href: string;
+  /** Tile oscuro para logos claros (texto blanco). */
+  dark?: boolean;
 }
 
 export interface FeaturedPlayer {
@@ -316,6 +318,11 @@ export function getPathwayCardsData(): PathwayCardItem[] {
 export function getSponsorsData(): SponsorItem[] {
   return [
     {
+      name: "Grupo Duplax",
+      logo: sponsorGrupoDuplax.src,
+      href: "",
+    },
+    {
       name: "Congre Max",
       logo: sponsorCongreMax.src,
       href: "",
@@ -341,11 +348,6 @@ export function getSponsorsData(): SponsorItem[] {
       href: "https://greenstudiord.com/",
     },
     {
-      name: "Grupo Duplax",
-      logo: sponsorGrupoDuplax.src,
-      href: "",
-    },
-    {
       name: "Punta Cana Party",
       logo: sponsorPuntaCanaParty.src,
       href: "",
@@ -354,6 +356,7 @@ export function getSponsorsData(): SponsorItem[] {
       name: "Stresscrete Group",
       logo: sponsorStresscrete.src,
       href: "",
+      dark: true,
     },
   ];
 }
