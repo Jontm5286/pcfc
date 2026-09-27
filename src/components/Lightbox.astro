@@ -152,8 +152,9 @@ const { defaultGalleryId } = Astro.props;
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: var(--color-navy-dark);
-    opacity: 0.92;
+    /* Overlay translúcido (DESIGN.md §7) — SOLO el fondo.
+       Nunca `opacity` en el contenedor: haría la foto semitransparente. */
+    background: rgba(0, 20, 40, 0.92);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -231,8 +232,7 @@ const { defaultGalleryId } = Astro.props;
   }
   .lightbox__btn:hover {
     border-color: var(--color-white);
-    background: var(--color-white);
-    opacity: 0.08;
+    background: rgba(255, 255, 255, 0.12);
   }
   .lightbox__btn:focus-visible {
     outline: 2px solid var(--color-sky);
