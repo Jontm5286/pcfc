@@ -1,96 +1,225 @@
 ---
-import { fixtures as fallbackFixtures, categoryColors, type Fixture } from '../data/fixtures';
+/**
+ * FixturesBar — cinta superior de partidos (marquee SSR, cero JS en cliente).
+ *
+ * Qué se renderiza (ciclo: JUGADO → PRÓXIMO → SPONSOR, un sponsor cada 2 partidos):
+ *   · JUGADO   resultado final, con marcador y color de estado (victoria/empate/derrota).
+ *   · PRÓXIMO  tarjeta oscura navy con `PCFC vs {rival}` y fecha · hora.
+ *   · SPONSOR  pausa visual: logo + "Con el apoyo de".
+ * Las tres tarjetas comparten el mismo alto (88px).
+ *
+ * Fuente de datos:
+ *   · Jugados/próximos: src/lib/academy-feed.ts → fetchAcademyFeed() { upcoming, played }.
+ *   · Respaldo local:   src/data/fixtures.ts   → playedFixtures (PLACEHOLDER) y fixtures.
+ *   · Sponsors:         src/data/homeData.ts   → getSponsorsData() (los mismos de la home).
+ *
+ * La mecánica del marquee (animación, duplicación de la lista, pausa al hover y
+ * movimiento reducido) está intacta: solo cambió QUÉ se renderiza.
+ */
+import {
+  fixtures as fallbackFixtures,
+  playedFixtures,
+  type PlayedFixture,
+} from '../data/fixtures';
+import { getSponsorsData, type SponsorItem } from '../data/homeData';
 import {
   fetchAcademyFeed,
   academyCategoryToWeb,
+  formatDisplayDate,
   formatMatchDate,
   formatMatchTime,
 } from '../lib/academy-feed';
 
-// Marquee con partidos en vivo de FutbolPro Academy (próximos).
-// Si el feed falla o viene vacío, se usan los fixtures locales de respaldo.
+type Outcome = 'win' | 'draw' | 'loss';
+
+/**
+ * Color + tinte por estado. Los hex viven en @theme (global.css) y se aplican con
+ * prioridad (`!important` en .fx-score / .fx-chip) para que ningún estilo los pise.
+ * Contraste texto sobre tinte: 5.0:1 / 5.1:1 / 6.0:1 (AA ✓).
+ */
+const OUTCOME: Record<Outcome, { label: string; hex: string; tint: string }> = {
+  win: { label: 'VICTORIA', hex: 'var(--color-win)', tint: '#F4FAF6' },
+  draw: { label: 'EMPATE', hex: 'var(--color-draw)', tint: '#FCF7F0' },
+  loss: { label: 'DERROTA', hex: 'var(--color-loss)', tint: '#FCF4F3' },
+};
+
+const outcomeOf = (pcfc: number, rival: number): Outcome =>
+  pcfc > rival ? 'win' : pcfc < rival ? 'loss' : 'draw';
+
+interface PlayedCard {
+  key: string;
+  category: string;
+  opponent: string;
+  date: string;
+  pcfc: number;
+  rival: number;
+  outcome: Outcome;
+}
+
+interface UpcomingCard {
+  key: string;
+  opponent: string;
+  when: string;
+}
+
+type Slot =
+  | { kind: 'played'; card: PlayedCard }
+  | { kind: 'upcoming'; card: UpcomingCard }
+  | { kind: 'sponsor'; card: SponsorItem };
+
 const feed = await fetchAcademyFeed();
-const fixtures: Fixture[] =
+
+// ── JUGADO · últimos 5 por matchDate, más reciente primero ───────────────
+let playedCards: PlayedCard[] = feed.played
+  .filter((m) => m.result)
+  .sort((a, b) => (a.matchDate < b.matchDate ? 1 : -1))
+  .slice(0, 5)
+  .map((m, i) => {
+    const pcfc = m.isHome ? m.result!.home : m.result!.away;
+    const rival = m.isHome ? m.result!.away : m.result!.home;
+    return {
+      key: m.id || `played-${i}`,
+      category: academyCategoryToWeb(m.category).short,
+      opponent: m.opponent || 'Rival',
+      date: formatDisplayDate(m.matchDate),
+      pcfc,
+      rival,
+      outcome: outcomeOf(pcfc, rival),
+    };
+  });
+
+// Respaldo SOLO en desarrollo: son resultados de maqueta y no deben publicarse.
+// En el sitio real la barra muestra únicamente los jugados que trae el feed.
+if (playedCards.length === 0 && import.meta.env.DEV) {
+  playedCards = playedFixtures.map((p: PlayedFixture) => ({
+    key: String(p.id),
+    category: p.category,
+    opponent: p.opponent,
+    date: formatDisplayDate(p.date),
+    pcfc: p.pcfcScore,
+    rival: p.rivalScore,
+    outcome: outcomeOf(p.pcfcScore, p.rivalScore),
+  }));
+}
+
+// ── PRÓXIMO · feed en vivo; si viene vacío, respaldo local ───────────────
+const upcomingCards: UpcomingCard[] =
   feed.upcoming.length > 0
     ? feed.upcoming.map((m, i) => {
-        const cat = academyCategoryToWeb(m.category);
         return {
-          id: m.id || `live-${i}`,
-          category: cat.short,
-          team1: { name: `PCFC ${cat.short}`, color: '#00285C' },
-          team2: { name: m.opponent || 'Rival por confirmar', color: '#64748b' },
-          team2Logo: m.opponentLogo || undefined,
-          venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
-          date: formatMatchDate(m.matchDate),
-          time: formatMatchTime(m.matchTime) ?? '--:--',
-          label: cat.label,
+          key: m.id || `live-${i}`,
+          opponent: m.opponent || 'Rival por confirmar',
+          when: [formatMatchDate(m.matchDate), formatMatchTime(m.matchTime)]
+            .filter(Boolean)
+            .join(' · '),
         };
       })
-    : fallbackFixtures;
+    : fallbackFixtures.map((f) => ({
+        key: String(f.id),
+        opponent: f.team2.name,
+        when: `${f.date} · ${formatMatchTime(f.time) ?? f.time}`,
+      }));
+
+// ── SPONSOR · mismos logos que la home, orden mezclado en cada carga ─────
+const sponsors = shuffle(getSponsorsData());
+
+/** Fisher-Yates: el orden rota en cada render del servidor. */
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// Ciclo JUGADO → PRÓXIMO → SPONSOR (1 sponsor cada 2 tarjetas de partido).
+const slots: Slot[] = [];
+playedCards.forEach((p, i) => {
+  slots.push({ kind: 'played', card: p });
+  if (upcomingCards.length > 0) {
+    slots.push({ kind: 'upcoming', card: upcomingCards[i % upcomingCards.length] });
+  }
+  if (sponsors.length > 0) {
+    slots.push({ kind: 'sponsor', card: sponsors[i % sponsors.length] });
+  }
+});
 ---
 
 <div
   class="bg-navy-05 border-b border-navy-10 shadow-[0_1px_1.75px_rgba(0,0,0,0.05)] overflow-hidden"
   role="region"
-  aria-label="Próximos partidos y eventos"
+  aria-label="Resultados y próximos partidos"
 >
   <div class="overflow-hidden">
     <div class="marquee-track flex w-max gap-6 py-2.5 px-[clamp(1.25rem,4vw,2.5rem)]">
-      {[...fixtures, ...fixtures].map((fixture) => (
-        <div class="fixture-card relative shrink-0 w-[280px] md:w-[280px] w-[80vw] py-2 px-1">
-          <div class="flex items-center justify-between mb-1">
-            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-navy-60 font-body">
-              <span
-                class="w-2 h-2 rounded-full shrink-0"
-                style={`background: ${categoryColors[fixture.category] || '#2563eb'}`}
-              ></span>
-              {fixture.team1.name}
-            </span>
-            <span class="text-[10px] font-normal text-navy-60 font-body">
-              {fixture.date}
-            </span>
-          </div>
+      {
+        [...slots, ...slots].map((slot) => {
+          if (slot.kind === 'played') {
+            const st = OUTCOME[slot.card.outcome];
+            return (
+              <a
+                href="/calendario"
+                class="fx-card fx-card--played"
+                style={`--state:${st.hex};--state-tint:${st.tint}`}
+                aria-label={`Resultado: PCFC ${slot.card.pcfc} - ${slot.card.rival} ${slot.card.opponent}`}
+              >
+                <div class="fx-top">
+                  <span class="fx-micro">JUGADO · FINAL</span>
+                  <span class="fx-chip">{st.label}</span>
+                </div>
+                <div class="fx-scoreline">
+                  <span class="fx-team">PCFC</span>
+                  <span class="fx-score">
+                    {slot.card.pcfc} – {slot.card.rival}
+                  </span>
+                  <span class="fx-team fx-team--rival">{slot.card.opponent}</span>
+                </div>
+                <div class="fx-sub">
+                  {slot.card.category} · {slot.card.date}
+                </div>
+              </a>
+            );
+          }
 
-          <div class="flex items-center justify-between mb-1">
-            <span class="inline-flex items-center gap-1.5 text-[12px] font-bold text-navy font-body">
-              <span
-                class="w-2 h-2 rounded-full shrink-0"
-                style={`background: ${fixture.team1.color}`}
-              ></span>
-              {fixture.category}
-            </span>
-            <span class="bg-navy-10 text-navy text-[11px] font-bold font-body py-0.5 px-1.5 rounded">
-              {fixture.time}
-            </span>
-          </div>
+          if (slot.kind === 'upcoming') {
+            return (
+              <div class="fx-card fx-card--upcoming">
+                <div class="fx-top">
+                  <span class="fx-micro fx-micro--on-navy">PRÓXIMO</span>
+                </div>
+                <div class="fx-match">PCFC vs {slot.card.opponent}</div>
+                <div class="fx-when">{slot.card.when}</div>
+              </div>
+            );
+          }
 
-          <div class="flex items-center justify-between">
-            <span class="inline-flex items-center gap-1.5 text-[12px] font-normal text-navy-60 font-body">
-              {
-                fixture.team2Logo ? (
-                  <img
-                    src={fixture.team2Logo}
-                    alt={`Escudo de ${fixture.team2.name}`}
-                    loading="lazy"
-                    width="14"
-                    height="14"
-                    class="w-3.5 h-3.5 rounded-full object-cover shrink-0"
-                  />
-                ) : (
-                  <span
-                    class="w-2 h-2 rounded-full shrink-0"
-                    style={`background: ${fixture.team2.color}`}
-                  ></span>
-                )
-              }
-              {fixture.team2.name}
-            </span>
-            <span class="text-[10px] font-normal text-navy-60 font-body">
-              {fixture.venue}
-            </span>
-          </div>
-        </div>
-      ))}
+          const sponsor = slot.card;
+          const inner = (
+            <>
+              <span class="fx-sponsor-label">Con el apoyo de</span>
+              <img
+                class={`fx-sponsor-logo${sponsor.dark ? ' fx-sponsor-logo--on-dark' : ''}`}
+                src={sponsor.logo}
+                alt={`Logo de ${sponsor.name}`}
+                loading="lazy"
+              />
+            </>
+          );
+          return sponsor.href ? (
+            <a
+              href={sponsor.href}
+              target="_blank"
+              rel="noopener"
+              class="fx-card fx-card--sponsor"
+            >
+              {inner}
+            </a>
+          ) : (
+            <div class="fx-card fx-card--sponsor">{inner}</div>
+          );
+        })
+      }
     </div>
   </div>
 </div>
@@ -98,8 +227,12 @@ const fixtures: Fixture[] =
 <style>
   /* Marquee animation — keeps the marquee logic isolated so Tailwind doesn't have to ship it */
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
   }
 
   .marquee-track {
@@ -108,8 +241,8 @@ const fixtures: Fixture[] =
   }
 
   /* Pause on hover for accessibility */
-  [role="region"]:hover .marquee-track,
-  [role="region"]:focus-within .marquee-track {
+  [role='region']:hover .marquee-track,
+  [role='region']:focus-within .marquee-track {
     animation-play-state: paused;
   }
 
@@ -120,8 +253,157 @@ const fixtures: Fixture[] =
     }
   }
 
+  /* ============================== TARJETAS ==============================
+     Mismo alto para las tres (88px), una sola fila. Todo el texto se cierra
+     DENTRO de su tarjeta (la cinta mezcla fondo claro y oscuro). */
+  .fx-card {
+    position: relative;
+    flex: 0 0 280px;
+    width: 280px;
+    height: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border-left: 5px solid var(--color-navy-60, #33547f);
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 20, 60, 0.06);
+    overflow: hidden;
+    text-decoration: none;
+  }
+
+  /* --- JUGADO: tinte suave del propio color de estado --- */
+  .fx-card--played {
+    border-left-color: var(--state, var(--color-navy-60, #33547f));
+    background: var(--state-tint, #ffffff);
+  }
+
+  /* --- PRÓXIMO: tarjeta oscura (navy). Todo el texto cierra dentro --- */
+  .fx-card--upcoming {
+    border-left-color: var(--color-sky, #429ac0);
+    background: var(--color-navy, #00285c);
+  }
+
+  /* --- SPONSOR: pausa visual, sin borde de color ni marcador --- */
+  .fx-card--sponsor {
+    border-left-width: 1px;
+    border-left-color: var(--color-navy-10, #d5e2ec);
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .fx-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .fx-micro {
+    font: 700 9.5px/1 var(--font-body, system-ui, sans-serif);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-navy-60, #33547f); /* 7.7:1 sobre blanco/tinte ✓ */
+  }
+
+  .fx-micro--on-navy {
+    color: var(--color-sky, #429ac0); /* 4.54:1 sobre navy ✓ AA */
+  }
+
+  .fx-chip {
+    flex: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font: 700 9.5px/1 var(--font-body, system-ui, sans-serif);
+    letter-spacing: 0.05em;
+    /* Hex del estado con prioridad — nunca lo pisa otro estilo. */
+    background: var(--state) !important;
+    color: #ffffff !important; /* 5.29:1 / 5.43:1 / 6.54:1 ✓ AA */
+  }
+
+  .fx-scoreline {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .fx-team {
+    font: 800 12px/1.1 var(--font-body, system-ui, sans-serif);
+    color: var(--color-navy, #00285c); /* 14.4:1 sobre blanco/tinte ✓ */
+    white-space: nowrap;
+  }
+
+  .fx-team--rival {
+    font-weight: 600;
+    color: var(--color-navy-60, #33547f);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .fx-score {
+    flex: none;
+    font: 800 21px/1 var(--font-body, system-ui, sans-serif);
+    font-variant-numeric: tabular-nums;
+    /* Hex del estado con prioridad. Nunca sky para JUGADO. */
+    color: var(--state) !important;
+  }
+
+  .fx-sub {
+    font: 600 10.5px/1.2 var(--font-body, system-ui, sans-serif);
+    color: var(--color-navy-60, #33547f);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* --- PRÓXIMO tipografía --- */
+  .fx-match {
+    font: 800 13px/1.2 var(--font-body, system-ui, sans-serif);
+    color: #ffffff; /* 13.8:1 sobre navy ✓ */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fx-when {
+    font: 600 11px/1.2 var(--font-body, system-ui, sans-serif);
+    color: var(--color-sky, #429ac0); /* 4.54:1 sobre navy ✓ AA */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* --- SPONSOR --- */
+  .fx-sponsor-label {
+    font: 700 9.5px/1 var(--font-body, system-ui, sans-serif);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-navy-60, #33547f);
+  }
+
+  .fx-sponsor-logo {
+    max-width: 158px;
+    max-height: 26px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Logos claros: tile navy para que no desaparezcan sobre el blanco. */
+  .fx-sponsor-logo--on-dark {
+    background: var(--color-navy, #00285c);
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
   /* Vertical divider on the right of each card, centered in the gap */
-  .fixture-card::after {
+  .fx-card::after {
     content: '';
     position: absolute;
     right: -0.75rem;
@@ -132,10 +414,23 @@ const fixtures: Fixture[] =
     background: var(--color-navy-10);
   }
 
+  .marquee-track > .fx-card:last-child::after {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .marquee-track {
       gap: 1rem;
       animation-duration: 28s;
+    }
+
+    .fx-card {
+      flex: 0 0 250px;
+      width: 250px;
+    }
+
+    .fx-card::after {
+      right: -0.5rem;
     }
   }
 </style>

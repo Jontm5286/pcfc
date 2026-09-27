@@ -124,6 +124,18 @@ Punta Cana FC es una academia premium de alto rendimiento del Caribe dominicano.
 
 > Los badges usan `font-family: Inter; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; padding: 4px 10px; border-radius: 4px;`. Fondos con opacidad 10% del color, texto con color sólido.
 
+### Colores de estado (resultado de partido)
+
+Tokens **exclusivos** para el marcador de un partido jugado. No se usan en badges de categoría ni en CTAs.
+
+| Estado | Token | HEX | Fondo de tarjeta | Ratio texto/fondo |
+|---|---|---|---|---|
+| Victoria | `--state-win` | `#0F7B4F` | `#F4FAF6` | 5,4:1 ✓ AA |
+| Empate | `--state-draw` | `#9A5B00` | `#FDF8EE` | 5,0:1 ✓ AA |
+| Derrota | `--state-loss` | `#B3261E` | `#FDF3F2` | 5,2:1 ✓ AA |
+
+> El **color nunca es el único indicador**: la etiqueta `VICTORIA` / `EMPATE` / `DERROTA` acompaña siempre al marcador. El badge va con fondo del color del estado y texto blanco (5,3–6,5:1). El borde izquierdo de la tarjeta usa el color del estado; la tarjeta de PRÓXIMO usa borde celeste y **nunca** un color de resultado.
+
 ---
 
 ## 5. Tipografía

@@ -70,3 +70,49 @@ export const fixtures: Fixture[] = [
     label: 'CASA',
   },
 ];
+
+/** Estado de un partido ya jugado (color de la tarjeta JUGADO). */
+export type MatchOutcome = 'win' | 'draw' | 'loss';
+
+/**
+ * Partido ya jugado, con marcador.
+ * PCFC siempre va primero: `pcfcScore` es el marcador del club y `rivalScore` el del rival,
+ * sin importar la localía. `date` en ISO ("2026-08-29") para poder ordenar por fecha.
+ */
+export interface PlayedFixture {
+  id: number | string;
+  category: string;
+  opponent: string;
+  date: string;
+  pcfcScore: number;
+  rivalScore: number;
+}
+
+// PLACEHOLDER — reemplazar cuando el feed Academy devuelva played[] real.
+// Cubre los tres estados (victoria / empate / derrota) para que la barra sea verificable.
+export const playedFixtures: PlayedFixture[] = [
+  {
+    id: 'played-1',
+    category: 'Sub-10',
+    opponent: 'Atlético Cibao',
+    date: '2026-08-29',
+    pcfcScore: 3,
+    rivalScore: 1,
+  },
+  {
+    id: 'played-2',
+    category: 'Sub-12',
+    opponent: 'San Cristóbal FC',
+    date: '2026-09-06',
+    pcfcScore: 2,
+    rivalScore: 2,
+  },
+  {
+    id: 'played-3',
+    category: 'Elite',
+    opponent: 'Cibao FC Cantera',
+    date: '2026-09-13',
+    pcfcScore: 0,
+    rivalScore: 2,
+  },
+];

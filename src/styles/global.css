@@ -34,6 +34,13 @@
   --color-cat-form-alta: #B8860B;
   --color-cat-elite: #001F42;
 
+  /* === Estados de partido (tarjetas JUGADO de FixturesBar) ===
+     @theme emite estas variables a :root y genera text-win/bg-win/etc.
+     Contraste sobre los tintes suaves: 5.0:1 / 5.1:1 / 6.0:1 (AA ✓). */
+  --color-win: #0F7B4F;
+  --color-draw: #9A5B00;
+  --color-loss: #B3261E;
+
   /* === Layout === */
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
