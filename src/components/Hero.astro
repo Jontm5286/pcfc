@@ -23,12 +23,8 @@
 import { Picture } from 'astro:assets';
 
 export interface GalleryImage {
-  src: ImageMetadata;
-  alt: string;
-}
-
-export interface GalleryImage {
-  src: string;
+  /** Import local (Picture optimizado) o URL EmDash (img directo). */
+  src: ImageMetadata | string;
   alt: string;
 }
 
@@ -198,17 +194,27 @@ const {
                   class="rotator-figure group relative aspect-square overflow-hidden bg-navy-30 rounded-2xl border border-white/10 transition-[border-color,box-shadow] duration-200"
                   data-index={i}
                 >
-                <Picture
-                  src={img.src}
-                  alt={img.alt}
-                  widths={[400, 800]}
-                  sizes="(max-width: 1280px) 400px, 800px"
-                  formats={['avif', 'webp']}
-                  quality={65}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  fetchpriority={i === 0 ? "high" : undefined}
-                  class="w-full h-full object-cover"
-                />
+                {typeof img.src === 'string' ? (
+                  <img
+                    src={img.src}
+                    alt={img.alt}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchpriority={i === 0 ? "high" : undefined}
+                    class="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Picture
+                    src={img.src}
+                    alt={img.alt}
+                    widths={[400, 800]}
+                    sizes="(max-width: 1280px) 400px, 800px"
+                    formats={['avif', 'webp']}
+                    quality={65}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchpriority={i === 0 ? "high" : undefined}
+                    class="w-full h-full object-cover"
+                  />
+                )}
                   <figcaption class="rotator-caption absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-[rgba(0,40,92,0.85)] via-[rgba(0,40,92,0.20)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                     <span class="text-sky-30 text-[0.65rem] font-semibold uppercase tracking-[0.14em] leading-tight">
                       Partido destacado

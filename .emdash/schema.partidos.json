@@ -117,6 +117,12 @@
           "slug": "academy_id",
           "label": "Academy ID",
           "type": "string"
+        },
+        {
+          "slug": "show_in_hero",
+          "label": "Mostrar en hero",
+          "type": "boolean",
+          "defaultValue": 0
         }
       ]
     }

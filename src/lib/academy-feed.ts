@@ -172,6 +172,13 @@ export interface PublishedGallery {
   thumbnail: string;
   thumbnailAlt: string;
   photos: GalleryPhoto[];
+  /** Flag EmDash `show_in_hero` — aparece en el rotador del hero. */
+  showInHero: boolean;
+}
+
+/** Normaliza el flag `show_in_hero` (true/1/"1"/"true"). */
+function parseShowInHero(v: unknown): boolean {
+  return v === true || v === 1 || v === '1' || v === 'true';
 }
 
 /** JSON.parse que nunca tira — devuelve fallback ante texto inválido. */
@@ -261,10 +268,46 @@ export async function fetchPublishedGalleries(): Promise<{
         thumbnailAlt:
           typeof thumb?.alt === 'string' ? thumb.alt : `${team1} vs ${team2}`,
         photos,
+        showInHero: parseShowInHero(d.show_in_hero),
       });
     }
     return { galleries, cacheHint };
   } catch {
     return { galleries: [] };
   }
+}
+
+/** Foto simple para hero/mosaico (src URL EmDash o import local). */
+export interface HeroGalleryImage {
+  src: string;
+  alt: string;
+}
+
+/**
+ * Fotos para el rotador del hero: partidos published con flag `show_in_hero`,
+ * ordenados por publicación (recientes primero), máx `limit` fotos.
+ */
+export async function fetchHeroGalleryImages(limit = 6): Promise<HeroGalleryImage[]> {
+  const { galleries } = await fetchPublishedGalleries();
+  return galleries
+    .filter((g) => g.showInHero)
+    .flatMap((g) =>
+      g.photos.map((p) => ({
+        src: p.src,
+        alt: p.alt || `${g.team1} vs ${g.team2}`,
+      })),
+    )
+    .slice(0, limit);
+}
+
+/**
+ * Portadas para Comunidad: thumbnail de los últimos `count` partidos
+ * published (sin flag — siempre lo más reciente).
+ */
+export async function fetchLatestGalleryImages(count = 5): Promise<HeroGalleryImage[]> {
+  const { galleries } = await fetchPublishedGalleries();
+  return galleries.slice(0, count).map((g) => ({
+    src: g.thumbnail,
+    alt: g.thumbnailAlt,
+  }));
 }

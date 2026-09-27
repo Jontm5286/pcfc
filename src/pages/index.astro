@@ -1,14 +1,14 @@
 ---
-import Base from "../layouts/Base.astro";
-import Hero from "../components/Hero.astro";
-import HomeCategories from "../components/HomeCategories.astro";
-import FeaturedPlayers from "../components/FeaturedPlayers.astro";
-import WhyPcfc from "../components/WhyPcfc.astro";
-import ValuePillars from "../components/ValuePillars.astro";
-import CommunityMosaic from "../components/CommunityMosaic.astro";
-import PathwayCards from "../components/PathwayCards.astro";
-import Sponsors from "../components/Sponsors.astro";
-import EnrollmentCta from "../components/EnrollmentCta.astro";
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import HomeCategories from '../components/HomeCategories.astro';
+import FeaturedPlayers from '../components/FeaturedPlayers.astro';
+import WhyPcfc from '../components/WhyPcfc.astro';
+import ValuePillars from '../components/ValuePillars.astro';
+import CommunityMosaic from '../components/CommunityMosaic.astro';
+import PathwayCards from '../components/PathwayCards.astro';
+import Sponsors from '../components/Sponsors.astro';
+import EnrollmentCta from '../components/EnrollmentCta.astro';
 import {
   getNextMatchData,
   getCategoriesData,
@@ -21,39 +21,41 @@ import {
   getFeaturedPlayersData,
   type NextMatch,
   type FeaturedPlayer,
-} from "../data/homeData";
+} from '../data/homeData';
 import {
   fetchAcademyFeed,
+  fetchHeroGalleryImages,
+  fetchLatestGalleryImages,
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
   type AcademyMatch,
-} from "../lib/academy-feed";
-import { getCollection } from "astro:content";
+} from '../lib/academy-feed';
+import { getCollection } from 'astro:content';
 
 // Load static datasets for home page sections
 // Próximo partido: el más cercano del feed Academy; respaldo local si falla.
 const feed = await fetchAcademyFeed();
 const nearestUpcoming: AcademyMatch | undefined = [...feed.upcoming].sort((a, b) =>
-  a.matchDate.localeCompare(b.matchDate),
+  a.matchDate.localeCompare(b.matchDate)
 )[0];
 
 function toNextMatch(m: AcademyMatch): NextMatch {
   const cat = academyCategoryToWeb(m.category);
   const pcfc = `PCFC ${cat.short}`;
-  const rival = m.opponent || "Rival por confirmar";
+  const rival = m.opponent || 'Rival por confirmar';
   const homeTeam = m.isHome ? pcfc : rival;
   const awayTeam = m.isHome ? rival : pcfc;
   return {
     date: formatMatchDate(m.matchDate),
-    time: formatMatchTime(m.matchTime) ?? "--:--",
+    time: formatMatchTime(m.matchTime) ?? '--:--',
     category: cat.short,
     categorySlug: cat.slug,
     home: homeTeam,
-    homeLogo: m.isHome ? "/Logo-PCFC.svg" : m.opponentLogo || "/Logo-PCFC.svg",
+    homeLogo: m.isHome ? '/Logo-PCFC.svg' : m.opponentLogo || '/Logo-PCFC.svg',
     away: awayTeam,
-    awayLogo: m.isHome ? m.opponentLogo || "/Logo-PCFC.svg" : "/Logo-PCFC.svg",
-    venue: m.location || (m.isHome ? "Cancha Principal · PCFC" : "Por confirmar"),
+    awayLogo: m.isHome ? m.opponentLogo || '/Logo-PCFC.svg' : '/Logo-PCFC.svg',
+    venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
   };
 }
 
@@ -62,13 +64,22 @@ const categories = getCategoriesData();
 const pillars = getPillarsData();
 const stats = getStatsData();
 const galleryImages = getGalleryImagesData();
+// Rotador del hero: fotos de partidos con flag `show_in_hero` (EmDash);
+// respaldo estático si ningún partido está marcado.
+const heroFromPartidos = await fetchHeroGalleryImages();
+const heroGalleryImages = heroFromPartidos.length > 0 ? heroFromPartidos : galleryImages;
+// Comunidad: portada de los últimos 5 partidos (EmDash);
+// respaldo estático si no hay partidos con fotos.
+const latestFromPartidos = await fetchLatestGalleryImages();
+const communityImages =
+  latestFromPartidos.length >= 5 ? latestFromPartidos : galleryImages;
 const valuePillars = getValuePillarsData();
 const pathwayCards = getPathwayCardsData();
 const sponsors = getSponsorsData();
 
 // Jugadores destacados: colección EmDash `players` (orden + featured);
 // respaldo estático si la colección está vacía.
-const playerEntries = await getCollection("players");
+const playerEntries = await getCollection('players');
 const featuredPlayers: FeaturedPlayer[] =
   playerEntries.length > 0
     ? playerEntries
@@ -93,15 +104,15 @@ const featuredPlayers: FeaturedPlayer[] =
 <Base title="Inicio" showFixtures={true}>
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero
-    eyebrow="Academia · Punta Cana"
+    eyebrow="Academia Punta Cana FC"
     title="Pasión por el Fútbol"
-    description="Academia premium de alto rendimiento en el Caribe dominicano. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
+    description="Academia premium de alto rendimiento en Punta Cana, Republica Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
     bullets={[
-      "Plan formativo por etapa biológica, no por edad cronológica.",
-      "Entrenadores con licencias UEFA y experiencia en academias de élite.",
-      "Instalaciones de primer nivel: 4 canchas, gimnasio y aula académica.",
+      'Plan formativo por etapa biológica, no por edad cronológica.',
+      'Entrenadores con licencias UEFA y experiencia en academias de élite.',
+      'Instalaciones de primer nivel: 2 canchas, gimnasio y aula académica.',
     ]}
-    galleryImages={galleryImages}
+    galleryImages={heroGalleryImages}
     nextMatch={nextMatch}
   />
 
@@ -112,26 +123,18 @@ const featuredPlayers: FeaturedPlayer[] =
   <FeaturedPlayers players={featuredPlayers} />
 
   <!-- VALUE PILLARS — beneficios de unirse al club -->
-  <ValuePillars
-    eyebrow="Beneficios"
-    title="¿POR QUÉ UNIRSE A PCFC?"
-    pillars={valuePillars}
-  />
+  <ValuePillars eyebrow="Beneficios" title="¿POR QUÉ UNIRSE A PCFC?" pillars={valuePillars} />
   <!-- POR QUÉ PCFC — confianza: números + pilares -->
   <WhyPcfc stats={stats} pillars={pillars} />
 
   <!-- ÚLTIMAS FOTOS — comunidad: somos muchos -->
-  <CommunityMosaic images={galleryImages} />
+  <CommunityMosaic images={communityImages} />
 
   <!-- PATHWAY CARDS — dos caminos: padres y jugadores -->
   <PathwayCards cards={pathwayCards} />
 
   <!-- PATROCINADORES — aliados del club -->
-  <Sponsors
-    eyebrow="Aliados"
-    title="PATROCINADORES Y ALIADOS"
-    sponsors={sponsors}
-  />
+  <Sponsors eyebrow="Aliados" title="PATROCINADORES Y ALIADOS" sponsors={sponsors} />
 
   <!-- CTA INSCRIPCIÓN — acción: el siguiente paso -->
   <EnrollmentCta />

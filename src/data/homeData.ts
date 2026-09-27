@@ -26,7 +26,7 @@ import sponsorFormaLegal from '../assets/sponsors/forma-legal.webp';
 import sponsorGreenStudio from '../assets/sponsors/green-studio.webp';
 import sponsorGrupoDuplax from '../assets/sponsors/grupo-duplax.webp';
 import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.webp';
-import sponsorStresscrete from '../assets/sponsors/stresscrete-group.svg';
+import sponsorStresscrete from '../assets/sponsors/stresscrete-group.png';
 
 export interface NextMatch {
   date: string;
@@ -65,7 +65,8 @@ export interface Stat {
 }
 
 export interface GalleryImage {
-  src: ImageMetadata;
+  /** Import local (Picture optimizado) o URL EmDash (img directo). */
+  src: ImageMetadata | string;
   alt: string;
 }
 
