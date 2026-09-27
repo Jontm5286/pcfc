@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import HomeCategories from "../components/HomeCategories.astro";
+import FeaturedPlayers from "../components/FeaturedPlayers.astro";
 import WhyPcfc from "../components/WhyPcfc.astro";
 import ValuePillars from "../components/ValuePillars.astro";
 import CommunityMosaic from "../components/CommunityMosaic.astro";
@@ -17,7 +18,9 @@ import {
   getValuePillarsData,
   getPathwayCardsData,
   getSponsorsData,
+  getFeaturedPlayersData,
   type NextMatch,
+  type FeaturedPlayer,
 } from "../data/homeData";
 import {
   fetchAcademyFeed,
@@ -26,6 +29,7 @@ import {
   formatMatchTime,
   type AcademyMatch,
 } from "../lib/academy-feed";
+import { getCollection } from "astro:content";
 
 // Load static datasets for home page sections
 // Próximo partido: el más cercano del feed Academy; respaldo local si falla.
@@ -61,6 +65,29 @@ const galleryImages = getGalleryImagesData();
 const valuePillars = getValuePillarsData();
 const pathwayCards = getPathwayCardsData();
 const sponsors = getSponsorsData();
+
+// Jugadores destacados: colección EmDash `players` (orden + featured);
+// respaldo estático si la colección está vacía.
+const playerEntries = await getCollection("players");
+const featuredPlayers: FeaturedPlayer[] =
+  playerEntries.length > 0
+    ? playerEntries
+        .filter((e) => e.data.featured)
+        .sort((a, b) => a.data.order - b.data.order)
+        .map((e) => ({
+          name: e.data.name,
+          slug: e.data.slug,
+          position: e.data.position,
+          number: e.data.number,
+          photo: e.data.photo,
+          photoAlt: e.data.photoAlt,
+          category: e.data.category,
+          matches: e.data.matches,
+          goals: e.data.goals,
+          assists: e.data.assists,
+          season: e.data.season,
+        }))
+    : getFeaturedPlayersData();
 ---
 
 <Base title="Inicio" showFixtures={true}>
@@ -80,6 +107,9 @@ const sponsors = getSponsorsData();
 
   <!-- CATEGORÍAS — progresión: tu hijo tiene camino -->
   <HomeCategories categories={categories} />
+
+  <!-- JUGADORES DESTACADOS — caras del club -->
+  <FeaturedPlayers players={featuredPlayers} />
 
   <!-- VALUE PILLARS — beneficios de unirse al club -->
   <ValuePillars

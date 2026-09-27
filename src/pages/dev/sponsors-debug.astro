@@ -57,27 +57,29 @@ const resolvedLogos = (helperResult || []).map(s => ({
     <title>Sponsors Debug | PCFC</title>
     <meta name="robots" content="noindex, nofollow" />
     <style>
-      body {
+      /* Scoped bajo .debug-page: esta página NO usa el layout Base y sus
+         estilos no deben fugar a otras páginas en dev (Vite HMR). */
+      .debug-page {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         background: #0a0e27;
         color: #e4e6eb;
         padding: 2rem;
         margin: 0;
       }
-      h1 { color: #4dd0e1; border-bottom: 2px solid #4dd0e1; padding-bottom: 0.5rem; }
-      h2 { color: #ffd54f; margin-top: 2rem; }
-      h3 { color: #81c784; margin-top: 1rem; }
-      .section {
+      .debug-page h1 { color: #4dd0e1; border-bottom: 2px solid #4dd0e1; padding-bottom: 0.5rem; }
+      .debug-page h2 { color: #ffd54f; margin-top: 2rem; }
+      .debug-page h3 { color: #81c784; margin-top: 1rem; }
+      .debug-page .debug-section {
         background: #1a1f3a;
         border: 1px solid #2d3561;
         border-radius: 8px;
         padding: 1.5rem;
         margin-bottom: 1.5rem;
       }
-      .ok { color: #81c784; }
-      .error { color: #ff5252; background: #2d1a1a; padding: 1rem; border-radius: 4px; }
-      .empty { color: #ff9800; background: #2d2719; padding: 1rem; border-radius: 4px; }
-      pre {
+      .debug-page .ok { color: #81c784; }
+      .debug-page .error { color: #ff5252; background: #2d1a1a; padding: 1rem; border-radius: 4px; }
+      .debug-page .empty { color: #ff9800; background: #2d2719; padding: 1rem; border-radius: 4px; }
+      .debug-page pre {
         background: #0a0e27;
         border: 1px solid #2d3561;
         border-radius: 4px;
@@ -85,7 +87,7 @@ const resolvedLogos = (helperResult || []).map(s => ({
         overflow-x: auto;
         font-size: 0.85rem;
       }
-      .count {
+      .debug-page .count {
         display: inline-block;
         background: #4dd0e1;
         color: #0a0e27;
@@ -94,14 +96,14 @@ const resolvedLogos = (helperResult || []).map(s => ({
         font-weight: bold;
         font-size: 0.9rem;
       }
-      .sponsor-card {
+      .debug-page .sponsor-card {
         background: #0a0e27;
         border: 1px solid #2d3561;
         border-radius: 6px;
         padding: 1rem;
         margin-bottom: 0.5rem;
       }
-      .logo-preview {
+      .debug-page .logo-preview {
         max-width: 100px;
         max-height: 40px;
         margin-top: 0.5rem;
@@ -111,12 +113,12 @@ const resolvedLogos = (helperResult || []).map(s => ({
       }
     </style>
   </head>
-  <body>
+  <body class="debug-page">
     <h1>🔍 Sponsors Debug — EmDash CMS</h1>
     <p>Diagnóstico de la colección <code>sponsors</code> desde múltiples fuentes.</p>
 
     <!-- 1. getEmDashCollection RAW -->
-    <div class="section">
+    <div class="debug-section">
       <h2>1. <code>getEmDashCollection('sponsors')</code> — RAW</h2>
       {emdashError && (
         <div class="error">
@@ -148,7 +150,7 @@ const resolvedLogos = (helperResult || []).map(s => ({
     </div>
 
     <!-- 2. getCollection (JSON) -->
-    <div class="section">
+    <div class="debug-section">
       <h2>2. <code>getCollection('sponsors')</code> — JSON Files</h2>
       {astroError && (
         <div class="error">
@@ -163,7 +165,7 @@ const resolvedLogos = (helperResult || []).map(s => ({
     </div>
 
     <!-- 3. Helper -->
-    <div class="section">
+    <div class="debug-section">
       <h2>3. <code>getSponsorsFromEmDash()</code> — Helper</h2>
       {helperError && (
         <div class="error">
@@ -196,7 +198,7 @@ const resolvedLogos = (helperResult || []).map(s => ({
     </div>
 
     <!-- 4. Checklist -->
-    <div class="section">
+    <div class="debug-section">
       <h2>4. 📋 Checklist de Configuración</h2>
       <ul>
         <li>✅ <code>src/live.config.ts</code> existe con Live Collection <code>_emdash</code></li>

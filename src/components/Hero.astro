@@ -206,6 +206,7 @@ const {
                   formats={['avif', 'webp']}
                   quality={65}
                   loading={i === 0 ? "eager" : "lazy"}
+                  fetchpriority={i === 0 ? "high" : undefined}
                   class="w-full h-full object-cover"
                 />
                   <figcaption class="rotator-caption absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-[rgba(0,40,92,0.85)] via-[rgba(0,40,92,0.20)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">

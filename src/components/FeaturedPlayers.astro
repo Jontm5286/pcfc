@@ -2,8 +2,9 @@
 /**
  * FeaturedPlayers — PCFC
  * Carrusel de jugadores destacados en la home.
- * Foto retrato vertical, dorsal fantasma, nombre, posición y
- * stats de la temporada (partidos / goles / asistencias).
+ *
+ * Hover interactivo: el nombre y las stats están ocultos en reposo,
+ * aparecen con animación escalonada al hover o al foco con teclado.
  *
  * Props:
  *   - players: FeaturedPlayer[]  Array de jugadores a mostrar
@@ -74,7 +75,8 @@ const {
         {players.map((player) => (
           <article
             role="listitem"
-            class="player-card group relative w-[78%] shrink-0 snap-start overflow-hidden bg-navy sm:w-[46%] lg:w-[31.8%]"
+            tabindex="0"
+            class="player-card group relative w-[78%] shrink-0 snap-start overflow-hidden bg-navy sm:w-[46%] lg:w-[31.8%] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
           >
             <div class="relative aspect-[3/4] w-full overflow-hidden">
               {typeof player.photo === 'string' ? (
@@ -82,7 +84,7 @@ const {
                   src={player.photo}
                   alt={player.photoAlt}
                   loading="lazy"
-                  class="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                  class="player-photo absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               ) : (
                 <Picture
@@ -91,8 +93,9 @@ const {
                   widths={[400, 800]}
                   sizes="(max-width: 768px) 400px, 800px"
                   formats={['avif', 'webp']}
+                  quality={65}
                   loading="lazy"
-                  class="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                  class="player-photo absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               )}
               <div class="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/35 to-transparent" aria-hidden="true" />
@@ -102,28 +105,28 @@ const {
               >
                 {player.number}
               </span>
-              <div class="absolute inset-x-0 bottom-0 p-5 text-center md:p-6">
-                <h3 class="font-display text-xl uppercase tracking-wide text-white md:text-2xl">
+              <div class="player-overlay absolute inset-x-0 bottom-0 border-t border-white/10 p-5 text-center md:p-6">
+                <h3 class="player-name font-display text-xl uppercase tracking-wide text-white md:text-2xl">
                   {player.name}
                 </h3>
-                <p class="mt-1 text-[0.8rem] font-semibold text-white/80">
+                <p class="player-position mt-1 text-[0.8rem] font-semibold text-white/80">
                   {player.position}
                 </p>
-                <dl class="mt-4 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 text-center">
+                <dl class="player-stats mt-4 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 text-center">
                   <div>
-                    <dt class="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Partidos</dt>
-                    <dd class="font-display text-xl text-white">{player.matches}</dd>
-                    <dd class="text-[0.65rem] text-white/50">Temp. {player.season}</dd>
+                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Partidos</dt>
+                    <dd class="stat-value font-display text-xl text-white">{player.matches}</dd>
+                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
                   </div>
                   <div>
-                    <dt class="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Goles</dt>
-                    <dd class="font-display text-xl text-white">{player.goals}</dd>
-                    <dd class="text-[0.65rem] text-white/50">Temp. {player.season}</dd>
+                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Goles</dt>
+                    <dd class="stat-value font-display text-xl text-white">{player.goals}</dd>
+                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
                   </div>
                   <div>
-                    <dt class="text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Asistencias</dt>
-                    <dd class="font-display text-xl text-white">{player.assists}</dd>
-                    <dd class="text-[0.65rem] text-white/50">Temp. {player.season}</dd>
+                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Asistencias</dt>
+                    <dd class="stat-value font-display text-xl text-white">{player.assists}</dd>
+                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
                   </div>
                 </dl>
               </div>
@@ -186,6 +189,51 @@ const {
     font-size: 1.5rem;
     line-height: 1;
     transform: translateY(-1px);
+  }
+
+  /* Hover: nombre + stats ocultos en reposo; suben con fade escalonado al hover/foco. */
+  .player-card .player-overlay {
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.32s ease, transform 0.32s ease;
+  }
+
+  /* En móvil (sin hover) el overlay está visible por defecto. */
+  @media (hover: none) {
+    .player-card .player-overlay {
+      opacity: 1;
+      transform: translateY(0);
+      transition: none;
+    }
+  }
+
+  .player-card:hover .player-overlay,
+  .player-card:focus-within .player-overlay {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stats con delay escalonado: nombre 0ms, cada stat-label +100ms, stat-value +150ms */
+  @media (hover: hover) and (pointer: fine) {
+    .player-card .player-name          { transition-delay: 0.00s; }
+    .player-card .player-position      { transition-delay: 0.05s; }
+    .player-card .player-stats         { transition-delay: 0.10s; }
+
+    .player-card .stat-label:nth-child(1) { transition-delay: 0.12s; }
+    .player-card .stat-value:nth-child(2) { transition-delay: 0.14s; }
+
+    .player-card .stat-label:nth-child(4) { transition-delay: 0.18s; }
+    .player-card .stat-value:nth-child(5) { transition-delay: 0.20s; }
+
+    .player-card .stat-label:nth-child(7) { transition-delay: 0.24s; }
+    .player-card .stat-value:nth-child(8) { transition-delay: 0.26s; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .player-card .player-overlay { transition: none; }
+    .player-card .stat-label,
+    .player-card .stat-value,
+    .player-card .stat-season { transition: none; }
   }
 </style>
 

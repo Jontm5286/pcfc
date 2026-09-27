@@ -44,20 +44,20 @@ const rowB = [...principals.slice(1), ...aliados].slice(0, 3);
 const rowBNames = new Set(rowB.map((s) => s.name));
 const rowC = aliados.filter((s) => s.name !== hero?.name && !rowBNames.has(s.name));
 
-// Tile oscuro para logos claros, blanco para el resto.
-const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-white/15' : 'bg-white');
+// Placa navy sólida solo para logos claros (sin caja para el resto).
+const tileClass = (s: Sponsor) => (s.dark ? 'rounded-xl bg-navy px-6 py-6' : '');
 ---
 
 <section
-  class="relative w-full py-14 md:py-16 border-t border-b border-white/5 bg-navy-dark"
+  class="relative w-full py-14 md:py-16 border-t border-b border-navy-10 bg-white"
   data-component="sponsors"
 >
   <div class="max-w-[1280px] mx-auto px-8">
     {
       (eyebrow || title) && (
         <header class="mb-10 flex flex-col items-center text-center">
-          {eyebrow && <p class="eyebrow text-sky mb-3">{eyebrow}</p>}
-          {title && <h2 class="h-section h-section--on-navy">{title}</h2>}
+          {eyebrow && <p class="eyebrow text-navy-60 mb-3">{eyebrow}</p>}
+          {title && <h2 class="h-section text-navy">{title}</h2>}
         </header>
       )
     }
@@ -68,7 +68,7 @@ const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-whit
           {/* FILA A — destacado (1) */}
           <div
             role="listitem"
-            class={`group flex items-center justify-center rounded-2xl ${tileBg(hero)} px-6 py-8 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+            class={`group flex items-center justify-center ${tileClass(hero)} transition-transform duration-200 hover:-translate-y-0.5`}
           >
             {hero.href ? (
               <a
@@ -102,7 +102,7 @@ const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-whit
             {rowB.map((sponsor) => (
               <div
                 role="listitem"
-                class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-6 py-6 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+                class={`group flex items-center justify-center ${tileClass(sponsor)} transition-transform duration-200 hover:-translate-y-0.5`}
               >
                 {sponsor.href ? (
                   <a
@@ -138,7 +138,7 @@ const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-whit
             {rowC.map((sponsor) => (
               <div
                 role="listitem"
-                class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-5 py-5 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+                class={`group flex items-center justify-center ${tileClass(sponsor)} transition-transform duration-200 hover:-translate-y-0.5`}
               >
                 {sponsor.href ? (
                   <a
@@ -169,9 +169,9 @@ const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-whit
             ))}
 
             {/* CTA: completa la fila de 5 y convierte */}
-            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 px-5 py-5 text-center">
-              <p class="text-white/70 text-sm leading-snug">¿Tu marca aquí?</p>
-              <a href="/inscribete" class="btn btn--sky btn--on-navy shrink-0">
+            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-navy-10 px-5 py-5 text-center">
+              <p class="text-navy-60 text-sm leading-snug">¿Tu marca aquí?</p>
+              <a href="/inscribete" class="btn btn--sky shrink-0">
                 Ser patrocinador
               </a>
             </div>
@@ -183,7 +183,7 @@ const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-whit
     {/* Placeholder cuando no hay datos */}
     {
       sponsors.length === 0 && (
-        <p class="text-center text-white/30 text-sm">Patrocinadores próximamente</p>
+        <p class="text-center text-navy-30 text-sm">Patrocinadores próximamente</p>
       )
     }
   </div>

@@ -16,11 +16,7 @@
  * La mecánica del marquee (animación, duplicación de la lista, pausa al hover y
  * movimiento reducido) está intacta: solo cambió QUÉ se renderiza.
  */
-import {
-  fixtures as fallbackFixtures,
-  playedFixtures,
-  type PlayedFixture,
-} from '../data/fixtures';
+import { fixtures as fallbackFixtures, playedFixtures, type PlayedFixture } from '../data/fixtures';
 import { getSponsorsData, type SponsorItem } from '../data/homeData';
 import {
   fetchAcademyFeed,
@@ -144,6 +140,29 @@ playedCards.forEach((p, i) => {
     slots.push({ kind: 'sponsor', card: sponsors[i % sponsors.length] });
   }
 });
+
+/* ── Ciclo del marquee (SSR, cero JS) ───────────────────────────────────────
+   El loop solo es perfecto si la cinta son N copias IDÉNTICAS del mismo ancho:
+     · separación por `margin-right` en cada tarjeta (flex `gap` no existe al
+       final del track y por eso translateX(-50%) no caía en el inicio de la
+       segunda copia);
+     · una sola copia cabe en <1920px, así que se repite N veces hasta cubrir
+       cualquier viewport (y el hueco derecho desaparece). */
+const STEP = 280 + 24; // ≥769px: tarjeta 280px + 1.5rem de separación
+const STEP_SM = 250 + 16; // ≤768px: tarjeta 250px + 1rem de separación
+const MAX_VW = 3840; // el viewport más ancho que debe quedar siempre cubierto
+/** Velocidad del diseño original: 1824px/40s ≈ 45.6px/s (móvil 1596px/28s ≈ 57px/s). */
+const SPEED = 45.6;
+const SPEED_SM = 57;
+
+const copyW = slots.length * STEP;
+const copyWSm = slots.length * STEP_SM;
+const narrowestCopy = Math.min(copyW, copyWSm);
+const COPIES = slots.length === 0 ? 0 : Math.max(2, Math.ceil(MAX_VW / narrowestCopy) + 1);
+/** Desplazamiento de un ciclo = exactamente una copia. */
+const shiftPct = `${(-100 / Math.max(COPIES, 1)).toFixed(6)}%`;
+const durS = `${(copyW / SPEED).toFixed(1)}s`;
+const durSmS = `${(copyWSm / SPEED_SM).toFixed(1)}s`;
 ---
 
 <div
@@ -152,91 +171,107 @@ playedCards.forEach((p, i) => {
   aria-label="Resultados y próximos partidos"
 >
   <div class="overflow-hidden">
-    <div class="marquee-track flex w-max gap-6 py-2.5 px-[clamp(1.25rem,4vw,2.5rem)]">
+    <div
+      class="marquee-track flex w-max py-2.5"
+      data-copies={COPIES}
+      style={`--fx-shift:${shiftPct};--fx-dur:${durS};--fx-dur-sm:${durSmS}`}
+    >
       {
-        [...slots, ...slots].map((slot) => {
-          if (slot.kind === 'played') {
-            const st = OUTCOME[slot.card.outcome];
-            return (
-              <a
-                href="/calendario"
-                class="fx-card fx-card--played"
-                style={`--state:${st.hex};--state-tint:${st.tint}`}
-                aria-label={`Resultado: PCFC ${slot.card.pcfc} - ${slot.card.rival} ${slot.card.opponent}`}
-              >
-                <div class="fx-top">
-                  <span class="fx-micro">JUGADO · FINAL</span>
-                  <span class="fx-chip">{st.label}</span>
-                </div>
-                <div class="fx-scoreline">
-                  <span class="fx-team">PCFC</span>
-                  <span class="fx-score">
-                    {slot.card.pcfc} – {slot.card.rival}
-                  </span>
-                  <span class="fx-team fx-team--rival">{slot.card.opponent}</span>
-                </div>
-                <div class="fx-sub">
-                  {slot.card.category} · {slot.card.date}
-                </div>
-              </a>
-            );
-          }
+        Array.from({ length: COPIES }).map((_, copy) =>
+          slots.map((slot) => {
+            // Copias 2..N: mismo contenido, oculto a lectores de pantalla.
+            const clone = copy > 0;
+            if (slot.kind === 'played') {
+              const st = OUTCOME[slot.card.outcome];
+              return (
+                <a
+                  href="/calendario"
+                  class="fx-card fx-card--played"
+                  style={`--state:${st.hex};--state-tint:${st.tint}`}
+                  aria-hidden={clone ? 'true' : undefined}
+                  tabindex={clone ? '-1' : undefined}
+                  aria-label={`Resultado: PCFC ${slot.card.pcfc} - ${slot.card.rival} ${slot.card.opponent}`}
+                >
+                  <div class="fx-top">
+                    <span class="fx-micro">JUGADO · FINAL</span>
+                    <span class="fx-chip">{st.label}</span>
+                  </div>
+                  <div class="fx-scoreline">
+                    <span class="fx-team">PCFC</span>
+                    <span class="fx-score">
+                      {slot.card.pcfc} – {slot.card.rival}
+                    </span>
+                    <span class="fx-team fx-team--rival">{slot.card.opponent}</span>
+                  </div>
+                  <div class="fx-sub">
+                    {slot.card.category} · {slot.card.date}
+                  </div>
+                </a>
+              );
+            }
 
-          if (slot.kind === 'upcoming') {
-            return (
-              <div class="fx-card fx-card--upcoming">
-                <div class="fx-top">
-                  <span class="fx-micro fx-micro--on-navy">PRÓXIMO</span>
+            if (slot.kind === 'upcoming') {
+              return (
+                <div class="fx-card fx-card--upcoming" aria-hidden={clone ? 'true' : undefined}>
+                  <div class="fx-top">
+                    <span class="fx-micro fx-micro--on-navy">PRÓXIMO</span>
+                  </div>
+                  <div class="fx-match">PCFC vs {slot.card.opponent}</div>
+                  <div class="fx-when">{slot.card.when}</div>
                 </div>
-                <div class="fx-match">PCFC vs {slot.card.opponent}</div>
-                <div class="fx-when">{slot.card.when}</div>
+              );
+            }
+
+            const sponsor = slot.card;
+            const inner = (
+              <>
+                <span class="fx-sponsor-label">Con el apoyo de</span>
+                <img
+                  class={`fx-sponsor-logo${sponsor.dark ? ' fx-sponsor-logo--on-dark' : ''}`}
+                  src={sponsor.logo}
+                  alt={`Logo de ${sponsor.name}`}
+                  loading="lazy"
+                />
+              </>
+            );
+            return sponsor.href ? (
+              <a
+                href={sponsor.href}
+                target="_blank"
+                rel="noopener"
+                class="fx-card fx-card--sponsor"
+                aria-hidden={clone ? 'true' : undefined}
+                tabindex={clone ? '-1' : undefined}
+              >
+                {inner}
+              </a>
+            ) : (
+              <div class="fx-card fx-card--sponsor" aria-hidden={clone ? 'true' : undefined}>
+                {inner}
               </div>
             );
-          }
-
-          const sponsor = slot.card;
-          const inner = (
-            <>
-              <span class="fx-sponsor-label">Con el apoyo de</span>
-              <img
-                class={`fx-sponsor-logo${sponsor.dark ? ' fx-sponsor-logo--on-dark' : ''}`}
-                src={sponsor.logo}
-                alt={`Logo de ${sponsor.name}`}
-                loading="lazy"
-              />
-            </>
-          );
-          return sponsor.href ? (
-            <a
-              href={sponsor.href}
-              target="_blank"
-              rel="noopener"
-              class="fx-card fx-card--sponsor"
-            >
-              {inner}
-            </a>
-          ) : (
-            <div class="fx-card fx-card--sponsor">{inner}</div>
-          );
-        })
+          })
+        )
       }
     </div>
   </div>
 </div>
 
 <style>
-  /* Marquee animation — keeps the marquee logic isolated so Tailwind doesn't have to ship it */
+  /* Marquee animation — keeps the marquee logic isolated so Tailwind doesn't have to ship it.
+     El desplazamiento es EXACTAMENTE UNA COPIA (--fx-shift = -100%/COPIES): al
+     terminar el ciclo la cinta queda igual que al inicio, sin salto. */
   @keyframes marquee {
     from {
       transform: translateX(0);
     }
     to {
-      transform: translateX(-50%);
+      transform: translateX(var(--fx-shift, -50%));
     }
   }
 
   .marquee-track {
-    animation: marquee 40s linear infinite;
+    animation: marquee var(--fx-dur, 40s) linear infinite;
     will-change: transform;
   }
 
@@ -260,6 +295,10 @@ playedCards.forEach((p, i) => {
     position: relative;
     flex: 0 0 280px;
     width: 280px;
+    /* Separación dentro de la tarjeta (no `gap` en el track): así el hueco
+       existe también tras la última tarjeta y cada copia mide exactamente
+       lo mismo → el ciclo reinicia sin hueco ni salto. */
+    margin-right: 1.5rem;
     height: 88px;
     display: flex;
     flex-direction: column;
@@ -267,7 +306,6 @@ playedCards.forEach((p, i) => {
     gap: 4px;
     padding: 9px 12px;
     border-radius: 8px;
-    border-left: 5px solid var(--color-navy-60, #33547f);
     background: #ffffff;
     box-shadow: 0 1px 2px rgba(0, 20, 60, 0.06);
     overflow: hidden;
@@ -276,23 +314,20 @@ playedCards.forEach((p, i) => {
 
   /* --- JUGADO: tinte suave del propio color de estado --- */
   .fx-card--played {
-    border-left-color: var(--state, var(--color-navy-60, #33547f));
     background: var(--state-tint, #ffffff);
   }
 
   /* --- PRÓXIMO: tarjeta oscura (navy). Todo el texto cierra dentro --- */
   .fx-card--upcoming {
-    border-left-color: var(--color-sky, #429ac0);
     background: var(--color-navy, #00285c);
   }
 
   /* --- SPONSOR: pausa visual, sin borde de color ni marcador --- */
   .fx-card--sponsor {
-    border-left-width: 1px;
-    border-left-color: var(--color-navy-10, #d5e2ec);
     align-items: center;
     justify-content: center;
     gap: 6px;
+    background: none !important;
   }
 
   .fx-top {
@@ -389,7 +424,7 @@ playedCards.forEach((p, i) => {
 
   .fx-sponsor-logo {
     max-width: 158px;
-    max-height: 26px;
+    max-height: 40px;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -398,7 +433,7 @@ playedCards.forEach((p, i) => {
   /* Logos claros: tile navy para que no desaparezcan sobre el blanco. */
   .fx-sponsor-logo--on-dark {
     background: var(--color-navy, #00285c);
-    padding: 3px 6px;
+    /* padding: 3px 6px; */
     border-radius: 4px;
   }
 
@@ -420,13 +455,13 @@ playedCards.forEach((p, i) => {
 
   @media (max-width: 768px) {
     .marquee-track {
-      gap: 1rem;
-      animation-duration: 28s;
+      animation-duration: var(--fx-dur-sm, 28s);
     }
 
     .fx-card {
       flex: 0 0 250px;
       width: 250px;
+      margin-right: 1rem;
     }
 
     .fx-card::after {
