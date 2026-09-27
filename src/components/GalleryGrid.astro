@@ -34,9 +34,11 @@ export interface Photo {
 interface Props {
   photos: Photo[];
   galleryId: string;
+  /** Solo el primer grid visible usa eager (LCP); el resto lazy. */
+  eager?: boolean;
 }
 
-const { photos, galleryId } = Astro.props;
+const { photos, galleryId, eager = false } = Astro.props;
 ---
 
 <div
@@ -48,15 +50,15 @@ const { photos, galleryId } = Astro.props;
     photos.map((photo, index) => (
       <button
         type="button"
-        class="gallery-item group relative aspect-[4/3] overflow-hidden bg-navy-05 border border-navy/10 rounded-md cursor-pointer transition-shadow duration-200 hover:shadow-[0_4px_20px_rgba(0,40,92,0.12)] hover:border-navy/25"
+        class="gallery-item group relative aspect-[4/3] overflow-hidden bg-navy-05 border border-navy/10 rounded-md cursor-pointer transition-[box-shadow,border-color,transform] duration-200 hover:shadow-[0_4px_20px_rgba(0,40,92,0.12)] hover:border-navy/25 active:scale-[0.98]"
         data-photo-index={index}
         aria-label={`Abrir foto ${index + 1} de ${photos.length}: ${photo.alt}`}
       >
         <img
           src={photo.src}
           alt={photo.alt}
-          loading={index < 4 ? "eager" : "lazy"}
-          class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+          loading={eager && index < 4 ? "eager" : "lazy"}
+          class="w-full h-full object-cover transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.03]"
         />
         {photo.caption && (
           <span class="absolute bottom-2 left-2 px-2 py-0.5 bg-navy/80 text-white text-[0.7rem] font-semibold rounded max-w-[calc(100%-1rem)] truncate">

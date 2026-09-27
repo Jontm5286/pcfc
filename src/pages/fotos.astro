@@ -216,16 +216,16 @@ const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
       width={1600}
       height={1200}
       loading="eager"
+      fetchpriority="high"
     />
     <div class="hero-overlay"></div>
     <div class="container-x relative z-10">
-      <p class="eyebrow eyebrow--on-navy">PARTIDOS RECIENTES</p>
+      <p class="eyebrow eyebrow--on-navy">GALERÍA POR PARTIDO</p>
       <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
         Galería de fotos
       </h1>
       <p class="lede lede--on-navy max-w-[52ch]">
-        Porque cada partido es un recuerdo. Descarga las fotos de tu hijo en acción. Galería
-        completa de todos los partidos de las cuatro categorías formativas.
+        Cada partido es un recuerdo. Descarga las fotos de tu hijo en acción.
       </p>
     </div>
   </section>
@@ -314,7 +314,7 @@ const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
           </div>
 
           {/* Grid de fotos */}
-          <GalleryGrid photos={post.photos} galleryId={post.id} />
+          <GalleryGrid photos={post.photos} galleryId={post.id} eager={post.id === allPosts[0]?.id} />
         </div>
       </section>
     ))
