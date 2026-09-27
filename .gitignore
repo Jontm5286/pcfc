@@ -8,6 +8,10 @@ node_modules/
 uploads/
 *.db-shm
 *.db-wal
+# Fotos de prueba HEIC/JPG (binarios pesados, solo flujo local)
+src/assets/partidos-prueba/*.heic
+src/assets/partidos-prueba/*.HEIC
+src/assets/partidos-prueba/*.jpg
 .env*
 !.env.example
 

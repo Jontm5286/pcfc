@@ -1,0 +1,149 @@
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Exported Seed",
+    "description": "Exported from existing EmDash database"
+  },
+  "collections": [
+    {
+      "slug": "equipos",
+      "label": "Equipos",
+      "labelSingular": "Equipo",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "club",
+          "label": "Club",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "abreviacion",
+          "label": "Abreviación",
+          "type": "string"
+        },
+        {
+          "slug": "escudo",
+          "label": "Escudo",
+          "type": "image"
+        },
+        {
+          "slug": "orden",
+          "label": "Orden",
+          "type": "number"
+        },
+        {
+          "slug": "nombre",
+          "label": "Nombre",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "slug": "partidos",
+      "label": "Partidos",
+      "labelSingular": "Partidos",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Nombre",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "local",
+          "label": "Equipo Local",
+          "type": "string"
+        },
+        {
+          "slug": "visitante",
+          "label": "Equipo Visitante",
+          "type": "string"
+        },
+        {
+          "slug": "goles_local",
+          "label": "Goles Local",
+          "type": "number"
+        },
+        {
+          "slug": "goles_visitante",
+          "label": "Goles Visitante",
+          "type": "number"
+        },
+        {
+          "slug": "tipo",
+          "label": "Tipo",
+          "type": "string"
+        },
+        {
+          "slug": "categoria",
+          "label": "Categoría",
+          "type": "select",
+          "validation": {
+            "options": [
+              "Pre-Formativas",
+              "Formativas Bajas",
+              "Formativas Altas",
+              "Elite / Reserva"
+            ]
+          }
+        },
+        {
+          "slug": "fecha",
+          "label": "Fecha y Hora",
+          "type": "datetime"
+        },
+        {
+          "slug": "images",
+          "label": "Fotos (galería)",
+          "type": "json"
+        },
+        {
+          "slug": "thumbnail",
+          "label": "Portada",
+          "type": "image"
+        },
+        {
+          "slug": "academy_id",
+          "label": "Academy ID",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "defaultLocale": "en",
+  "taxonomies": [
+    {
+      "id": "tax:category",
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": [
+        "posts"
+      ]
+    },
+    {
+      "id": "tax:tag",
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": [
+        "posts"
+      ]
+    }
+  ],
+  "menus": [],
+  "widgetAreas": []
+}

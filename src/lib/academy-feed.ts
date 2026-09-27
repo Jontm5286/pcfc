@@ -174,6 +174,25 @@ export interface PublishedGallery {
   photos: GalleryPhoto[];
 }
 
+/** JSON.parse que nunca tira — devuelve fallback ante texto inválido. */
+function safeParseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+/** src de una foto: string directa u objeto imagen EmDash {src}. */
+function photoSrc(p: Record<string, unknown>): string | null {
+  if (typeof p.src === 'string') return p.src;
+  const nested = p.src as Record<string, unknown> | null;
+  if (nested && typeof nested === 'object' && typeof nested.src === 'string') {
+    return nested.src;
+  }
+  return null;
+}
+
 /** Galerías publicadas con fotos desde EmDash. Vacío si falla. */
 export async function fetchPublishedGalleries(): Promise<{
   galleries: PublishedGallery[];
@@ -189,25 +208,36 @@ export async function fetchPublishedGalleries(): Promise<{
     const galleries: PublishedGallery[] = [];
     for (const entry of entries ?? []) {
       const d = entry.data as Record<string, unknown>;
-      const rawPhotos = Array.isArray(d.images) ? d.images : [];
+      const rawPhotos = Array.isArray(d.images)
+        ? d.images
+        : typeof d.images === 'string'
+          ? safeParseJson(d.images)
+          : [];
       const photos: GalleryPhoto[] = rawPhotos
         .filter(
           (p): p is Record<string, unknown> =>
-            !!p && typeof p === 'object' && typeof (p as Record<string, unknown>).src === 'string',
+            !!p && typeof p === 'object' && typeof photoSrc(p) === 'string',
         )
         .map((p) => ({
-          src: String((p as Record<string, unknown>).src),
-          alt: String((p as Record<string, unknown>).alt || 'Foto del partido'),
-          caption:
-            typeof (p as Record<string, unknown>).caption === 'string'
-              ? String((p as Record<string, unknown>).caption)
-              : undefined,
+          src: String(photoSrc(p)),
+          alt: String(p.alt || 'Foto del partido'),
+          caption: typeof p.caption === 'string' ? p.caption : undefined,
         }));
       if (photos.length === 0) continue;
+      // thumbnail: objeto {src,alt}, string directa, o JSON serializado.
+      const thumbRaw =
+        typeof d.thumbnail === 'string' && d.thumbnail.trim().startsWith('{')
+          ? safeParseJson(d.thumbnail)
+          : d.thumbnail;
       const thumb =
-        d.thumbnail && typeof d.thumbnail === 'object'
-          ? (d.thumbnail as Record<string, unknown>)
+        thumbRaw && typeof thumbRaw === 'object'
+          ? (thumbRaw as Record<string, unknown>)
           : null;
+      const thumbSrc =
+        (thumb && typeof thumb.src === 'string' && thumb.src) ||
+        (typeof d.thumbnail === 'string' && !d.thumbnail.trim().startsWith('{')
+          ? d.thumbnail
+          : null);
       const team1 = String(d.local || 'PCFC');
       const team2 = String(d.visitante || 'Rival');
       const label = String(d.categoria || 'Formativas Altas');
@@ -227,7 +257,7 @@ export async function fetchPublishedGalleries(): Promise<{
         team2,
         date: formatDisplayDate(String(d.fecha || '')),
         publishedAtIso,
-        thumbnail: typeof thumb?.src === 'string' ? thumb.src : photos[0].src,
+        thumbnail: thumbSrc || photos[0].src,
         thumbnailAlt:
           typeof thumb?.alt === 'string' ? thumb.alt : `${team1} vs ${team2}`,
         photos,
