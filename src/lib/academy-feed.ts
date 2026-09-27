@@ -89,21 +89,29 @@ export interface AcademyFeed {
   played: AcademyMatch[];
 }
 
-/** Trae el feed; en error devuelve listas vacías (el llamador usa respaldo). */
+/** Trae el feed con caché en memoria 5 min (por isolate del Worker).
+ * El primer hit tras expirar paga el fetch; el resto sirve instantáneo.
+ * En error devuelve listas vacías (el llamador usa respaldo). */
+const FEED_TTL_MS = 5 * 60 * 1000;
+let feedCache: { at: number; feed: AcademyFeed } | null = null;
+
 export async function fetchAcademyFeed(timeoutMs = 8000): Promise<AcademyFeed> {
   const empty: AcademyFeed = { upcoming: [], played: [] };
+  if (feedCache && Date.now() - feedCache.at < FEED_TTL_MS) return feedCache.feed;
   try {
     const apiRes = await fetch(`${ACADEMY_API_URL}/api/public/matches`, {
       signal: AbortSignal.timeout(timeoutMs),
     });
-    if (!apiRes.ok) return empty;
+    if (!apiRes.ok) return feedCache?.feed ?? empty;
     const apiData = await apiRes.json();
-    return {
+    const feed: AcademyFeed = {
       upcoming: Array.isArray(apiData?.upcoming) ? apiData.upcoming : [],
       played: Array.isArray(apiData?.played) ? apiData.played : [],
     };
+    feedCache = { at: Date.now(), feed };
+    return feed;
   } catch {
-    return empty;
+    return feedCache?.feed ?? empty;
   }
 }
 
