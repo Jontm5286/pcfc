@@ -45,10 +45,7 @@ const rowBNames = new Set(rowB.map((s) => s.name));
 const rowC = aliados.filter((s) => s.name !== hero?.name && !rowBNames.has(s.name));
 
 // Tile oscuro para logos claros, blanco para el resto.
-const tileBg = (sponsor: Sponsor) =>
-  sponsor.dark
-    ? 'bg-navy border border-white/15'
-    : 'bg-white';
+const tileBg = (sponsor: Sponsor) => (sponsor.dark ? 'bg-navy border border-white/15' : 'bg-white');
 ---
 
 <section
@@ -56,65 +53,65 @@ const tileBg = (sponsor: Sponsor) =>
   data-component="sponsors"
 >
   <div class="max-w-[1280px] mx-auto px-8">
-    {(eyebrow || title) && (
-      <header class="mb-10 flex flex-col items-center text-center">
-        {eyebrow && (
-          <p class="eyebrow text-sky mb-3">{eyebrow}</p>
-        )}
-        {title && (
-          <h2 class="h-section h-section--on-navy">
-            {title}
-          </h2>
-        )}
-      </header>
-    )}
+    {
+      (eyebrow || title) && (
+        <header class="mb-10 flex flex-col items-center text-center">
+          {eyebrow && <p class="eyebrow text-sky mb-3">{eyebrow}</p>}
+          {title && <h2 class="h-section h-section--on-navy">{title}</h2>}
+        </header>
+      )
+    }
 
-    {sponsors.length > 0 && hero && (
-      <div class="flex flex-col gap-4 md:gap-5" role="list">
-        {/* FILA A — destacado (1) */}
-        <div role="listitem" class={`group flex items-center justify-center rounded-2xl ${tileBg(hero)} px-6 py-8 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}>
-          {hero.href ? (
-            <a
-              href={hero.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visitar ${hero.name}`}
-              class="flex items-center justify-center w-full h-28 md:h-36"
-            >
-              <img
-                src={hero.logo}
-                alt={`Logo de ${hero.name}`}
-                loading="lazy"
-                class="max-h-20 md:max-h-28 w-auto max-w-full object-contain"
-              />
-            </a>
-          ) : (
-            <div class="flex items-center justify-center w-full h-28 md:h-36">
-              <img
-                src={hero.logo}
-                alt={`Logo de ${hero.name}`}
-                loading="lazy"
-                class="max-h-20 md:max-h-28 w-auto max-w-full object-contain"
-              />
-            </div>
-          )}
-        </div>
+    {
+      sponsors.length > 0 && hero && (
+        <div class="flex flex-col gap-4 md:gap-5" role="list">
+          {/* FILA A — destacado (1) */}
+          <div
+            role="listitem"
+            class={`group flex items-center justify-center rounded-2xl ${tileBg(hero)} px-6 py-8 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+          >
+            {hero.href ? (
+              <a
+                href={hero.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visitar ${hero.name}`}
+                class="flex items-center justify-center w-full h-28 md:h-36"
+              >
+                <img
+                  src={hero.logo}
+                  alt={`Logo de ${hero.name}`}
+                  loading="lazy"
+                  class="max-h-20 md:max-h-28 w-auto max-w-full object-contain"
+                />
+              </a>
+            ) : (
+              <div class="flex items-center justify-center w-full h-28 md:h-36">
+                <img
+                  src={hero.logo}
+                  alt={`Logo de ${hero.name}`}
+                  loading="lazy"
+                  class="max-h-20 md:max-h-28 w-auto max-w-full object-contain"
+                />
+              </div>
+            )}
+          </div>
 
-        {/* FILA B — tres */}
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
-          {rowB.map((sponsor) => (
-            <div
-              role="listitem"
-              class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-6 py-6 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
-            >
-              {sponsor.href ? (
-                <a
-                  href={sponsor.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Visitar ${sponsor.name}`}
-                  class="flex items-center justify-center w-full h-24 md:h-28"
-                >
+          {/* FILA B — tres */}
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
+            {rowB.map((sponsor) => (
+              <div
+                role="listitem"
+                class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-6 py-6 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+              >
+                {sponsor.href ? (
+                  <a
+                    href={sponsor.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visitar ${sponsor.name}`}
+                    class="flex items-center justify-center w-full h-24 md:h-28"
+                  >
                   <img
                     src={sponsor.logo}
                     alt={`Logo de ${sponsor.name}`}
@@ -122,73 +119,72 @@ const tileBg = (sponsor: Sponsor) =>
                     class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
                   />
                 </a>
-              ) : (
-                <div class="flex items-center justify-center w-full h-24 md:h-28">
-                  <img
-                    src={sponsor.logo}
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                ) : (
+                  <div class="flex items-center justify-center w-full h-24 md:h-28">
+                    <img
+                      src={sponsor.logo}
+                      alt={`Logo de ${sponsor.name}`}
+                      loading="lazy"
+                      class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
 
-        {/* FILA C — cinco (resto + CTA) */}
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
-          {rowC.map((sponsor) => (
-            <div
-              role="listitem"
-              class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-5 py-5 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
-            >
-              {sponsor.href ? (
-                <a
-                  href={sponsor.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Visitar ${sponsor.name}`}
-                  class="flex items-center justify-center w-full h-20 md:h-24"
-                >
-                  <img
-                    src={sponsor.logo}
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
-                  />
-                </a>
-              ) : (
-                <div class="flex items-center justify-center w-full h-20 md:h-24">
-                  <img
-                    src={sponsor.logo}
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+          {/* FILA C — cinco (resto + CTA) */}
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+            {rowC.map((sponsor) => (
+              <div
+                role="listitem"
+                class={`group flex items-center justify-center rounded-2xl ${tileBg(sponsor)} px-5 py-5 shadow-[0_2px_16px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5`}
+              >
+                {sponsor.href ? (
+                  <a
+                    href={sponsor.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visitar ${sponsor.name}`}
+                    class="flex items-center justify-center w-full h-20 md:h-24"
+                  >
+                    <img
+                      src={sponsor.logo}
+                      alt={`Logo de ${sponsor.name}`}
+                      loading="lazy"
+                      class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
+                    />
+                  </a>
+                ) : (
+                  <div class="flex items-center justify-center w-full h-20 md:h-24">
+                    <img
+                      src={sponsor.logo}
+                      alt={`Logo de ${sponsor.name}`}
+                      loading="lazy"
+                      class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
 
-          {/* CTA: completa la fila de 5 y convierte */}
-          <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 px-5 py-5 text-center">
-            <p class="text-white/70 text-sm leading-snug">
-              ¿Tu marca aquí?
-            </p>
-            <a href="/inscribete" class="btn btn--sky btn--on-navy shrink-0">
-              Ser patrocinador
-            </a>
+            {/* CTA: completa la fila de 5 y convierte */}
+            <div class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 px-5 py-5 text-center">
+              <p class="text-white/70 text-sm leading-snug">¿Tu marca aquí?</p>
+              <a href="/inscribete" class="btn btn--sky btn--on-navy shrink-0">
+                Ser patrocinador
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )
+    }
 
     {/* Placeholder cuando no hay datos */}
-    {sponsors.length === 0 && (
-      <p class="text-center text-white/30 text-sm">
-        Patrocinadores próximamente
-      </p>
-    )}
+    {
+      sponsors.length === 0 && (
+        <p class="text-center text-white/30 text-sm">Patrocinadores próximamente</p>
+      )
+    }
   </div>
 </section>
