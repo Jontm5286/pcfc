@@ -42,6 +42,7 @@ const { images = [] } = Astro.props;
               widths={[800, 1200]}
               sizes="(max-width: 768px) 800px, 1200px"
               formats={['avif', 'webp']}
+                  quality={65}
               loading="lazy"
               class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
             />
@@ -54,6 +55,7 @@ const { images = [] } = Astro.props;
                 widths={[400, 800]}
                 sizes="(max-width: 768px) 400px, 800px"
                 formats={['avif', 'webp']}
+                  quality={65}
                 loading="lazy"
                 class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
               />

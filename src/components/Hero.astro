@@ -99,6 +99,7 @@ const {
         widths={[800, 1600]}
         sizes="100vw"
         formats={['avif', 'webp']}
+                  quality={65}
         loading="eager"
         fetchpriority="high"
         class="w-full h-full object-cover object-[center_30%]"
@@ -203,6 +204,7 @@ const {
                   widths={[400, 800]}
                   sizes="(max-width: 1280px) 400px, 800px"
                   formats={['avif', 'webp']}
+                  quality={65}
                   loading={i === 0 ? "eager" : "lazy"}
                   class="w-full h-full object-cover"
                 />

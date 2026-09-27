@@ -76,6 +76,7 @@ const stockSrc = isExternal ? undefined : resolveStock(name);
     widths={[300, 800, 1600]}
     sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
     formats={['avif', 'webp']}
+                  quality={65}
     fallbackFormat="webp"
     class:list={[className]}
     loading={loading}
