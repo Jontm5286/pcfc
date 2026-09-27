@@ -7,6 +7,10 @@ import SectionHeader from "../../components/SectionHeader.astro";
 import EnrollmentCta from "../../components/EnrollmentCta.astro";
 import GalleryGrid from "../../components/GalleryGrid.astro";
 import type { Photo } from "../../components/GalleryGrid.astro";
+import { Picture } from "astro:assets";
+
+// Posts estáticos → prerender con getStaticPaths (props por ruta).
+export const prerender = true;
 
 // Fotos locales (src/assets/) — los posts reutilizan las imágenes de galería.
 // NOTA: photo-1431324173062 fue eliminada de Unsplash (404); se usa
@@ -30,7 +34,7 @@ interface BlogPost {
   authorTitle: string;
   date: string;
   dateIso: string;
-  image: string;
+  image: ImageMetadata;
   imageAlt: string;
   tags: { slug: string; label: string }[];
   relatedImages: Photo[];
@@ -69,7 +73,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección de Comunicación",
     date: "15 dic 2025",
     dateIso: "2025-12-15",
-    image: galleryEntrenamiento.src,
+    image: galleryEntrenamiento,
     imageAlt: "Equipo PCFC celebrando el título del Torneo Invierno 2025",
     tags: [
       { slug: "torneos", label: "Torneos" },
@@ -120,7 +124,7 @@ export function getStaticPaths() {
     authorTitle: "Departamento Técnico PCFC",
     date: "3 nov 2025",
     dateIso: "2025-11-03",
-    image: cespedNatural.src,
+    image: cespedNatural,
     imageAlt: "Cuerpo técnico de PCFC durante una sesión de entrenamiento",
     tags: [
       { slug: "noticias", label: "Noticias" },
@@ -157,7 +161,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección de Comunicación",
     date: "20 oct 2025",
     dateIso: "2025-10-20",
-    image: galleryCancha.src,
+    image: galleryCancha,
     imageAlt: "Scout observando un entrenamiento de PCFC",
     tags: [
       { slug: "scouting", label: "Scouting" },
@@ -196,7 +200,7 @@ export function getStaticPaths() {
     authorTitle: "Dirección Administrativa",
     date: "1 sep 2025",
     dateIso: "2025-09-01",
-    image: galleryPreformativas.src,
+    image: galleryPreformativas,
     imageAlt: "Niños disfrutando una sesión de entrenamiento en PCFC",
     tags: [
       { slug: "inscripciones", label: "Inscripciones" },
@@ -295,11 +299,14 @@ const minutes = readingTime(post.content);
   <div class="article-image-wrapper">
     <div class="container-x">
       <figure class="article-figure">
-        <img
+        <Picture
           src={post.image}
           alt={post.imageAlt}
-          class="article-hero-img"
+          widths={[800, 1600]}
+          sizes="(max-width: 768px) 800px, 1600px"
+          formats={['avif', 'webp']}
           loading="eager"
+          class="article-hero-img"
         />
         <figcaption class="article-figure__caption">
           {post.imageAlt}

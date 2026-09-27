@@ -2,9 +2,9 @@
  * Home page data definitions and static data structures.
  * Implements single responsibility by isolating page content from view rendering.
  *
- * Las fotos viven en src/assets/ (local, optimizadas por Astro en build).
- * Se expone `.src` para mantener la API como string y no romper a los
- * consumidores (Hero, CommunityMosaic, PathwayCards, Sponsors).
+ * Las fotos viven en src/assets/ y se exponen como ImageMetadata para que
+ * los consumidores rendericen con <Picture> (AVIF/WebP). No usar `.src`
+ * salvo para componentes runtime que solo aceptan string (GalleryGrid, etc.).
  */
 
 import galleryEntrenamiento from '../assets/gallery/entrenamiento-sub15.jpg';
@@ -15,6 +15,9 @@ import galleryEquipo from '../assets/gallery/equipo-formativas-altas.jpg';
 // NOTA: photo-1431324173062 ("Jugadores en cancha") fue eliminada de Unsplash
 // (404). Se reutiliza cesped-natural.jpg como reemplazo temático.
 import cespedNatural from '../assets/facilities/cesped-natural.jpg';
+import playerDiego from '../assets/players/diego-ramirez.jpg';
+import playerLamine from '../assets/players/lamine-tavarez.jpg';
+import playerRodrigo from '../assets/players/rodrigo-pena.jpg';
 // Logos oficiales de patrocinadores (Green Corp pendiente de logo).
 import sponsorCongreMax from '../assets/sponsors/concremax.webp';
 import sponsorDrKatherine from '../assets/sponsors/dr-katherine.svg';
@@ -62,7 +65,7 @@ export interface Stat {
 }
 
 export interface GalleryImage {
-  src: string;
+  src: ImageMetadata;
   alt: string;
 }
 
@@ -82,7 +85,7 @@ export interface PathwayCardItem {
     label: string;
     href: string;
   };
-  image: string;
+  image: ImageMetadata;
   imageAlt: string;
 }
 
@@ -103,7 +106,7 @@ export interface FeaturedPlayer {
   slug: string;
   position: 'Portero' | 'Defensa' | 'Centrocampista' | 'Atacante';
   number: number;
-  photo: string;
+  photo: string | ImageMetadata;
   photoAlt: string;
   category?: string;
   matches: number;
@@ -235,27 +238,27 @@ export function getPillarsData(): Pillar[] {
 export function getGalleryImagesData(): GalleryImage[] {
   return [
     {
-      src: galleryEntrenamiento.src,
+      src: galleryEntrenamiento,
       alt: 'Entrenamiento Sub-15',
     },
     {
-      src: galleryPreformativas.src,
+      src: galleryPreformativas,
       alt: 'Partido Pre-Formativas',
     },
     {
-      src: galleryCancha.src,
+      src: galleryCancha,
       alt: 'Cancha principal PCFC',
     },
     {
-      src: galleryCelebracion.src,
+      src: galleryCelebracion,
       alt: 'Celebración de gol Sub-17',
     },
     {
-      src: galleryEquipo.src,
+      src: galleryEquipo,
       alt: 'Equipo Formativas Altas',
     },
     {
-      src: cespedNatural.src,
+      src: cespedNatural,
       alt: 'Jugadores en cancha',
     },
   ];
@@ -300,7 +303,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       subtitle: 'Seguridad, Metodología, Valores',
       copy: 'Visita nuestras instalaciones. Sesiones supervisadas y aprendizaje profundo asegurando que tu hijo progresa en un entorno seguro.',
       cta: { label: 'SABER MÁS', href: '/padres' },
-      image: galleryPreformativas.src,
+      image: galleryPreformativas,
       imageAlt: 'Niños en la academia jugando con seguridad',
     },
     {
@@ -309,7 +312,7 @@ export function getPathwayCardsData(): PathwayCardItem[] {
       subtitle: 'Competencia, Diversión, Crecimiento',
       copy: 'Partidos intensos, tours de scouting y torneos para medir tu potencial al máximo.',
       cta: { label: 'SABER MÁS', href: '/jugadores' },
-      image: galleryEntrenamiento.src,
+      image: galleryEntrenamiento,
       imageAlt: 'Jugador juvenil corriendo por la banda',
     },
   ];
@@ -339,7 +342,7 @@ export function getSponsorsData(): SponsorItem[] {
       name: 'Stresscrete Group',
       logo: sponsorStresscrete.src,
       href: '',
-      dark: true,
+      // dark: true,
       tier: 'aliado',
       order: 2,
     },
@@ -382,7 +385,7 @@ export function getSponsorsData(): SponsorItem[] {
   // Principales primero, luego aliados; dentro de cada tier por `order`.
   const tierRank = (t?: SponsorItem['tier']) => (t === 'principal' ? 0 : 1);
   return sponsors.sort(
-    (a, b) => tierRank(a.tier) - tierRank(b.tier) || (a.order ?? 99) - (b.order ?? 99),
+    (a, b) => tierRank(a.tier) - tierRank(b.tier) || (a.order ?? 99) - (b.order ?? 99)
   );
 }
 
@@ -400,8 +403,7 @@ export function getFeaturedPlayersData(): FeaturedPlayer[] {
       slug: 'diego-ramirez',
       position: 'Atacante',
       number: 11,
-      photo:
-        'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=1200&fit=crop&crop=top&q=80',
+      photo: playerDiego,
       photoAlt: 'Diego Ramírez, atacante de Punta Cana FC',
       category: 'elite',
       matches: 24,
@@ -414,8 +416,7 @@ export function getFeaturedPlayersData(): FeaturedPlayer[] {
       slug: 'lamine-tavarez',
       position: 'Atacante',
       number: 10,
-      photo:
-        'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&h=1200&fit=crop&crop=top&q=80',
+      photo: playerLamine,
       photoAlt: 'Lamine Tavárez, atacante de Punta Cana FC',
       category: 'form-alta',
       matches: 22,
@@ -428,8 +429,7 @@ export function getFeaturedPlayersData(): FeaturedPlayer[] {
       slug: 'rodrigo-pena',
       position: 'Centrocampista',
       number: 16,
-      photo:
-        'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&h=1200&fit=crop&crop=top&q=80',
+      photo: playerRodrigo,
       photoAlt: 'Rodrigo Peña, centrocampista de Punta Cana FC',
       category: 'elite',
       matches: 24,
@@ -442,8 +442,8 @@ export function getFeaturedPlayersData(): FeaturedPlayer[] {
       slug: 'jean-castillo',
       position: 'Defensa',
       number: 4,
-      photo:
-        'https://images.unsplash.com/photo-151860466860-9ed391f76460?w=800&h=1200&fit=crop&crop=top&q=80',
+      // TODO: foto eliminada de Unsplash (404) — temporal con foto de equipo.
+      photo: galleryEquipo,
       photoAlt: 'Jean Castillo, defensa de Punta Cana FC',
       category: 'form-alta',
       matches: 23,

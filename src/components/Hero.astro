@@ -8,7 +8,7 @@
  *   - eyebrow: string               Texto superpuesto (e.g. "Academia · Punta Cana")
  *   - title: string                 Headline principal (admite HTML, e.g. <br/>)
  *   - description: string           Párrafo descriptivo
- *   - backgroundImage: string       URL de la imagen de fondo
+ *   - backgroundImage: ImageMetadata | string  Imagen de fondo (metadata = <Picture>)
  *   - bullets?: string[]            Lista de beneficios (carrusel horizontal en móvil)
  *   - ctaPrimary?: { label, href }  Botón CTA principal (default: Inscríbete)
  *   - ctaSecondary?: { label, href } Botón CTA secundario (default: Conoce el club)
@@ -16,9 +16,16 @@
  *   - nextMatch?: MatchData         Datos del próximo partido (opcional, se muestra debajo)
  *   - eyebrowOnDark?: boolean       true = texto claro sobre fondo oscuro (default)
  *
- * GalleryImage = { src: string, alt: string }
+ * GalleryImage = { src: ImageMetadata, alt: string }
  * MatchData = { date, time, category, categorySlug?, home, homeLogo, away, awayLogo, venue, calendarHref? }
  */
+
+import { Picture } from 'astro:assets';
+
+export interface GalleryImage {
+  src: ImageMetadata;
+  alt: string;
+}
 
 export interface GalleryImage {
   src: string;
@@ -50,7 +57,7 @@ interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
-  backgroundImage?: string;
+  backgroundImage?: ImageMetadata | string;
   bullets?: string[];
   ctaPrimary?: CtaButton;
   ctaSecondary?: CtaButton;
@@ -63,7 +70,7 @@ const {
   eyebrow,
   title = "Pasión por el Fútbol",
   description,
-  backgroundImage = heroBg.src,
+  backgroundImage = heroBg,
   bullets = [],
   ctaPrimary = { label: "Inscríbete", href: "/inscribete" },
   ctaSecondary = { label: "Conoce el club", href: "/club" },
@@ -78,12 +85,24 @@ const {
 >
   <!-- Background image + overlay -->
   <div class="absolute inset-0 z-0" aria-hidden="true">
-    <img
-      src={backgroundImage}
-      alt=""
-      loading="eager"
-      class="w-full h-full object-cover object-[center_30%]"
-    />
+    {typeof backgroundImage === 'string' ? (
+      <img
+        src={backgroundImage}
+        alt=""
+        loading="eager"
+        class="w-full h-full object-cover object-[center_30%]"
+      />
+    ) : (
+      <Picture
+        src={backgroundImage}
+        alt=""
+        widths={[800, 1600]}
+        sizes="100vw"
+        formats={['avif', 'webp']}
+        loading="eager"
+        class="w-full h-full object-cover object-[center_30%]"
+      />
+    )}
     <div
       class="absolute inset-0 bg-gradient-to-b from-navy/[0.55] to-navy/[0.85]"
     >
@@ -177,12 +196,15 @@ const {
                   class="rotator-figure group relative aspect-square overflow-hidden bg-navy-30 rounded-2xl border border-white/10 transition-[border-color,box-shadow] duration-200"
                   data-index={i}
                 >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    class="w-full h-full object-cover"
-                  />
+                <Picture
+                  src={img.src}
+                  alt={img.alt}
+                  widths={[400, 800]}
+                  sizes="(max-width: 1280px) 400px, 800px"
+                  formats={['avif', 'webp']}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  class="w-full h-full object-cover"
+                />
                   <figcaption class="rotator-caption absolute inset-0 flex flex-col justify-end p-3 bg-gradient-to-t from-[rgba(0,40,92,0.85)] via-[rgba(0,40,92,0.20)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                     <span class="text-sky-30 text-[0.65rem] font-semibold uppercase tracking-[0.14em] leading-tight">
                       Partido destacado
@@ -200,11 +222,13 @@ const {
     </div>
   </div>
 
-  <!-- Next match card -->
+  </section>
+
+  <!-- Banda "Próximo partido" — va ENTRE el hero y la siguiente sección -->
   {
     nextMatch && (
       <aside
-        class="relative z-10 mt-[clamp(2.5rem,6vw,4rem)] bg-navy-dark border-t-4 border-sky"
+        class="relative z-20 bg-navy-dark border-t-4 border-sky text-white"
         aria-label="Próximo partido"
       >
         <div class="container-x py-7 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-8 items-center text-center lg:text-left lg:items-start">
@@ -290,7 +314,6 @@ const {
       </aside>
     )
   }
-</section>
 
 <style>
   /* Scrollbar del carrusel de beneficios (móvil) */

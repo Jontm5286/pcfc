@@ -16,10 +16,12 @@
  *   subtitle: string,
  *   copy: string,
  *   cta: { label: string, href: string },
- *   image: string,    // URL de la imagen
+ *   image: ImageMetadata,  // asset local (src/assets/) → <Picture>
  *   imageAlt: string,
  * }
  */
+
+import { Picture } from 'astro:assets';
 
 export interface PathwayCard {
   eyebrow: string;
@@ -27,7 +29,7 @@ export interface PathwayCard {
   subtitle: string;
   copy: string;
   cta: { label: string; href: string };
-  image: string;
+  image: ImageMetadata;
   imageAlt: string;
 }
 
@@ -77,9 +79,12 @@ const { cards } = Astro.props;
           <!-- Imagen -->
           <div class="w-full md:w-44 shrink-0 h-48 md:h-auto aspect-[176/192]">
             <div class="w-full h-full border border-sky-30/40 rounded-xl overflow-hidden bg-navy-30">
-              <img
+              <Picture
                 src={card.image}
                 alt={card.imageAlt}
+                widths={[400, 800]}
+                sizes="(max-width: 768px) 400px, 800px"
+                formats={['avif', 'webp']}
                 loading="lazy"
                 class="w-full h-full object-cover"
               />
