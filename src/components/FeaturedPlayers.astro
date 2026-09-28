@@ -205,6 +205,10 @@ const {
       transform: translateY(0);
       transition: none;
     }
+    .player-card .player-stats {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .player-card:hover .player-overlay,
@@ -217,7 +221,13 @@ const {
   @media (hover: hover) and (pointer: fine) {
     .player-card .player-name          { transition-delay: 0.00s; }
     .player-card .player-position      { transition-delay: 0.05s; }
-    .player-card .player-stats         { transition-delay: 0.10s; }
+    .player-card .player-stats         { opacity: 0; transform: translateY(0.5rem); transition: opacity 0.32s ease, transform 0.32s ease; transition-delay: 0.10s; }
+
+    .player-card:hover .player-stats,
+    .player-card:focus-within .player-stats {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .player-card .stat-label:nth-child(1) { transition-delay: 0.12s; }
     .player-card .stat-value:nth-child(2) { transition-delay: 0.14s; }
@@ -231,6 +241,7 @@ const {
 
   @media (prefers-reduced-motion: reduce) {
     .player-card .player-overlay { transition: none; }
+    .player-card .player-stats { transition: none; }
     .player-card .stat-label,
     .player-card .stat-value,
     .player-card .stat-season { transition: none; }

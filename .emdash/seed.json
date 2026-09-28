@@ -1,1 +1,518 @@
-{"$schema":"https://emdashcms.com/seed.schema.json","version":"1","meta":{"name":"Punta Cana FC"},"collections":[]}
+{
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "collections": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "fields": [
+        {
+          "slug": "title",
+          "type": "string",
+          "label": "Title"
+        },
+        {
+          "slug": "subtitle",
+          "type": "string",
+          "label": "Subtitle"
+        },
+        {
+          "slug": "image",
+          "type": "image",
+          "label": "Image"
+        },
+        {
+          "slug": "image_alt",
+          "type": "string",
+          "label": "Image Alt"
+        },
+        {
+          "slug": "cta_primary",
+          "type": "string",
+          "label": "CTA Primary"
+        },
+        {
+          "slug": "cta_secondary",
+          "type": "string",
+          "label": "CTA Secondary"
+        },
+        {
+          "slug": "cta_primary_href",
+          "type": "string",
+          "label": "CTA Primary Href"
+        },
+        {
+          "slug": "cta_secondary_href",
+          "type": "string",
+          "label": "CTA Secondary Href"
+        },
+        {
+          "slug": "slides",
+          "type": "json",
+          "label": "Slides"
+        }
+      ]
+    },
+    {
+      "slug": "categories",
+      "label": "Categories",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "item_slug",
+          "type": "string",
+          "label": "Item Slug"
+        },
+        {
+          "slug": "badge",
+          "type": "string",
+          "label": "Badge"
+        },
+        {
+          "slug": "ages",
+          "type": "string",
+          "label": "Ages"
+        },
+        {
+          "slug": "copy",
+          "type": "string",
+          "label": "Copy"
+        },
+        {
+          "slug": "focus",
+          "type": "string",
+          "label": "Focus"
+        },
+        {
+          "slug": "format",
+          "type": "string",
+          "label": "Format"
+        },
+        {
+          "slug": "schedule",
+          "type": "string",
+          "label": "Schedule"
+        },
+        {
+          "slug": "description",
+          "type": "text",
+          "label": "Description"
+        },
+        {
+          "slug": "cta_href",
+          "type": "string",
+          "label": "CTA Href"
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Order"
+        }
+      ]
+    },
+    {
+      "slug": "club_history",
+      "label": "Club History",
+      "fields": [
+        {
+          "slug": "type",
+          "type": "string",
+          "label": "Type"
+        },
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "role",
+          "type": "string",
+          "label": "Role"
+        },
+        {
+          "slug": "role_description",
+          "type": "text",
+          "label": "Role Description"
+        },
+        {
+          "slug": "content",
+          "type": "text",
+          "label": "Content"
+        },
+        {
+          "slug": "image",
+          "type": "image",
+          "label": "Image"
+        },
+        {
+          "slug": "image_alt",
+          "type": "string",
+          "label": "Image Alt"
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Order"
+        }
+      ]
+    },
+    {
+      "slug": "calendar",
+      "label": "Calendar",
+      "fields": [
+        {
+          "slug": "kind",
+          "type": "string",
+          "label": "Kind"
+        },
+        {
+          "slug": "date",
+          "type": "string",
+          "label": "Date"
+        },
+        {
+          "slug": "time",
+          "type": "string",
+          "label": "Time"
+        },
+        {
+          "slug": "category",
+          "type": "string",
+          "label": "Category"
+        },
+        {
+          "slug": "category_slug",
+          "type": "string",
+          "label": "Category Slug"
+        },
+        {
+          "slug": "home",
+          "type": "string",
+          "label": "Home"
+        },
+        {
+          "slug": "home_logo",
+          "type": "image",
+          "label": "Home Logo"
+        },
+        {
+          "slug": "away",
+          "type": "string",
+          "label": "Away"
+        },
+        {
+          "slug": "away_logo",
+          "type": "image",
+          "label": "Away Logo"
+        }
+      ]
+    },
+    {
+      "slug": "next_match",
+      "label": "Next Match",
+      "fields": [
+        {
+          "slug": "kind",
+          "type": "string",
+          "label": "Kind"
+        },
+        {
+          "slug": "date",
+          "type": "string",
+          "label": "Date"
+        },
+        {
+          "slug": "time",
+          "type": "string",
+          "label": "Time"
+        },
+        {
+          "slug": "category",
+          "type": "string",
+          "label": "Category"
+        },
+        {
+          "slug": "category_slug",
+          "type": "string",
+          "label": "Category Slug"
+        },
+        {
+          "slug": "home",
+          "type": "string",
+          "label": "Home"
+        },
+        {
+          "slug": "home_logo",
+          "type": "image",
+          "label": "Home Logo"
+        },
+        {
+          "slug": "away",
+          "type": "string",
+          "label": "Away"
+        },
+        {
+          "slug": "away_logo",
+          "type": "image",
+          "label": "Away Logo"
+        }
+      ]
+    },
+    {
+      "slug": "gallery",
+      "label": "Gallery",
+      "fields": [
+        {
+          "slug": "title",
+          "type": "string",
+          "label": "Title"
+        },
+        {
+          "slug": "image",
+          "type": "image",
+          "label": "Image"
+        },
+        {
+          "slug": "alt",
+          "type": "string",
+          "label": "Alt"
+        },
+        {
+          "slug": "equipo_id",
+          "type": "string",
+          "label": "Equipo ID"
+        }
+      ]
+    },
+    {
+      "slug": "sponsors",
+      "label": "Sponsors",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "logo",
+          "type": "image",
+          "label": "Logo"
+        },
+        {
+          "slug": "alt",
+          "type": "string",
+          "label": "Alt"
+        },
+        {
+          "slug": "url",
+          "type": "string",
+          "label": "URL"
+        },
+        {
+          "slug": "published",
+          "type": "boolean",
+          "label": "Published"
+        }
+      ]
+    },
+    {
+      "slug": "stats_pillars",
+      "label": "Stats Pillars",
+      "fields": [
+        {
+          "slug": "label",
+          "type": "string",
+          "label": "Label"
+        },
+        {
+          "slug": "value",
+          "type": "string",
+          "label": "Value"
+        },
+        {
+          "slug": "icon",
+          "type": "string",
+          "label": "Icon"
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Order"
+        }
+      ]
+    },
+    {
+      "slug": "teams",
+      "label": "Teams",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "short_name",
+          "type": "string",
+          "label": "Short Name"
+        },
+        {
+          "slug": "logo",
+          "type": "image",
+          "label": "Logo"
+        },
+        {
+          "slug": "city",
+          "type": "string",
+          "label": "City"
+        },
+        {
+          "slug": "category",
+          "type": "select",
+          "label": "Category",
+          "options": [
+            {
+              "value": "Pre-Formativas",
+              "label": "Pre-Formativas"
+            },
+            {
+              "value": "Formativas Bajas",
+              "label": "Formativas Bajas"
+            },
+            {
+              "value": "Formativas Altas",
+              "label": "Formativas Altas"
+            },
+            {
+              "value": "Elite y Reserva",
+              "label": "Elite y Reserva"
+            }
+          ]
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Order"
+        }
+      ]
+    },
+    {
+      "slug": "partidos",
+      "label": "Partidos",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "home_id",
+          "type": "string",
+          "label": "Home Team"
+        },
+        {
+          "slug": "away_id",
+          "type": "string",
+          "label": "Away Team"
+        },
+        {
+          "slug": "home_score",
+          "type": "integer",
+          "label": "Home Score"
+        },
+        {
+          "slug": "away_score",
+          "type": "integer",
+          "label": "Away Score"
+        },
+        {
+          "slug": "date",
+          "type": "string",
+          "label": "Date"
+        },
+        {
+          "slug": "time",
+          "type": "string",
+          "label": "Time"
+        },
+        {
+          "slug": "category",
+          "type": "select",
+          "label": "Category",
+          "options": [
+            {
+              "value": "Pre-Formativas",
+              "label": "Pre-Formativas"
+            },
+            {
+              "value": "Formativas Bajas",
+              "label": "Formativas Bajas"
+            },
+            {
+              "value": "Formativas Altas",
+              "label": "Formativas Altas"
+            },
+            {
+              "value": "Elite y Reserva",
+              "label": "Elite y Reserva"
+            }
+          ]
+        },
+        {
+          "slug": "kind",
+          "type": "string",
+          "label": "Kind"
+        }
+      ]
+    },
+    {
+      "slug": "match_photos",
+      "label": "Match Photos",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Name"
+        },
+        {
+          "slug": "home_team",
+          "type": "string",
+          "label": "Home Team"
+        },
+        {
+          "slug": "home_score",
+          "type": "integer",
+          "label": "Home Score"
+        },
+        {
+          "slug": "away_team",
+          "type": "string",
+          "label": "Away Team"
+        },
+        {
+          "slug": "away_score",
+          "type": "integer",
+          "label": "Away Score"
+        },
+        {
+          "slug": "date",
+          "type": "string",
+          "label": "Date"
+        },
+        {
+          "slug": "images",
+          "type": "json",
+          "label": "Images"
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Order"
+        }
+      ]
+    }
+  ]
+}

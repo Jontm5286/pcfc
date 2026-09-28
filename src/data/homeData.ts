@@ -20,12 +20,12 @@ import playerLamine from '../assets/players/lamine-tavarez.jpg';
 import playerRodrigo from '../assets/players/rodrigo-pena.jpg';
 // Logos oficiales de patrocinadores (Green Corp pendiente de logo).
 import sponsorCongreMax from '../assets/sponsors/concremax.webp';
-import sponsorDrKatherine from '../assets/sponsors/dr-katherine.svg';
+import sponsorDrKatherine from '../assets/sponsors/dr-katherine.png';
 import sponsorEsperilla from '../assets/sponsors/esperilla-motors.svg';
 import sponsorFormaLegal from '../assets/sponsors/forma-legal.webp';
 import sponsorGreenStudio from '../assets/sponsors/green-studio.webp';
 import sponsorGrupoDuplax from '../assets/sponsors/grupo-duplax.webp';
-import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.webp';
+import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.png';
 import sponsorStresscrete from '../assets/sponsors/stresscrete-group.png';
 
 export interface NextMatch {
@@ -216,13 +216,13 @@ export function getPillarsData(): Pillar[] {
   return [
     {
       n: '01',
-      title: 'Metodología europea',
+      title: 'Metodología argentina',
       copy: 'Plan formativo estructurado por etapa biológica, no por edad cronológica. Evaluaciones trimestrales con métricas objetivas.',
     },
     {
       n: '02',
       title: 'Cuerpo técnico certificado',
-      copy: 'Entrenadores con licencias UEFA y experiencia en academias de primer nivel. Ratio máximo 1:12 jugador-entrenador. 7 de nuestros exalumnos han firmado con ligas profesionales en los últimos 2 años.',
+      copy: 'Entrenadores con licencias UEFA y experiencia en academias de primer nivel.',
     },
     {
       n: '03',
@@ -343,7 +343,7 @@ export function getSponsorsData(): SponsorItem[] {
       name: 'Stresscrete Group',
       logo: sponsorStresscrete.src,
       href: '',
-      dark: true,
+      // dark: true,
       tier: 'aliado',
       order: 2,
     },
