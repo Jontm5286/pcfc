@@ -21,12 +21,12 @@ import playerLamine from '../assets/players/lamine-tavarez.jpg';
 import playerRodrigo from '../assets/players/rodrigo-pena.jpg';
 // Logos oficiales de patrocinadores (Green Corp pendiente de logo).
 import sponsorCongreMax from '../assets/sponsors/concremax.webp';
-import sponsorDrKatherine from '../assets/sponsors/dr-katherine.png';
+import sponsorDrKatherine from '../assets/sponsors/dr-katherine.svg';
 import sponsorEsperilla from '../assets/sponsors/esperilla-motors.svg';
 import sponsorFormaLegal from '../assets/sponsors/forma-legal.svg';
 import sponsorGreenStudio from '../assets/sponsors/green-studio.webp';
 import sponsorGrupoDuplax from '../assets/sponsors/grupo-duplax.webp';
-import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.png';
+import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.webp';
 import sponsorStresscrete from '../assets/sponsors/stresscrete-group.png';
 
 export interface NextMatch {
@@ -95,6 +95,9 @@ export interface PathwayCardItem {
 export interface SponsorItem {
   name: string;
   logo: string;
+  /** Dimensiones intrínsecas (evitan CLS y dimensionan el download). */
+  width: number;
+  height: number;
   href: string;
   /** Tile oscuro para logos claros (texto blanco). */
   dark?: boolean;
@@ -326,6 +329,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Grupo Duplax',
       logo: sponsorGrupoDuplax.src,
+      width: 800,
+      height: 272,
       href: 'https://grupodupla.com/',
       tier: 'principal',
       order: 1,
@@ -333,6 +338,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Congre Max',
       logo: sponsorCongreMax.src,
+      width: 800,
+      height: 431,
       href: 'https://grupoconcremax.com.do/',
       tier: 'aliado',
       order: 1,
@@ -340,6 +347,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Stresscrete Group',
       logo: sponsorStresscrete.src,
+      width: 356,
+      height: 88,
       href: '',
       // dark: true,
       tier: 'aliado',
@@ -348,6 +357,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Dr. Katherine',
       logo: sponsorDrKatherine.src,
+      width: 717,
+      height: 436,
       href: 'https://www.instagram.com/dr.katherinelu',
       tier: 'aliado',
       order: 4,
@@ -355,6 +366,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Esperilla Motors',
       logo: sponsorEsperilla.src,
+      width: 4441,
+      height: 2221,
       href: 'https://www.esperillamotors.com/',
       tier: 'aliado',
       order: 3,
@@ -362,6 +375,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Forma Legal',
       logo: sponsorFormaLegal.src,
+      width: 2304,
+      height: 672,
       href: '',
       tier: 'aliado',
       order: 5,
@@ -369,6 +384,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Green Studio',
       logo: sponsorGreenStudio.src,
+      width: 800,
+      height: 327,
       href: 'https://greenstudiord.com/',
       tier: 'aliado',
       order: 6,
@@ -376,6 +393,8 @@ export function getSponsorsData(): SponsorItem[] {
     {
       name: 'Punta Cana Party',
       logo: sponsorPuntaCanaParty.src,
+      width: 800,
+      height: 266,
       href: '',
       tier: 'aliado',
       order: 7,

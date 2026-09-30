@@ -1,0 +1,137 @@
+---
+// Temporada en números — VARIANTE A: banda navy compacta con 4 cifras + CTA.
+// Fuente: filas `season-*` de Stats Pillars (admin → Stats Pillars).
+// props: pills [partidos, minutos, torneos, goles] en ese orden; livePlayed = nº en vivo o null.
+import type { SeasonPill } from '../lib/content';
+import fdfLogo from '../assets/leagues/fdf.webp';
+import ldfExpansionLogo from '../assets/leagues/ldf-expansion.webp';
+import lijeLogo from '../assets/leagues/lije.webp';
+import micLogo from '../assets/leagues/mic-punta-cana.webp';
+import juvenilLogo from '../assets/leagues/juvenil.webp';
+import infantilLogo from '../assets/leagues/infantil.webp';
+import prejuvenilLogo from '../assets/leagues/prejuvenil.webp';
+import lijnLogo from '../assets/leagues/lijn.webp';
+
+interface Props { pills: SeasonPill[]; livePlayed: number | null }
+const { pills, livePlayed } = Astro.props;
+
+const defaults: SeasonPill[] = [
+  { value: '48', label: 'Partidos jugados' },
+  { value: "3.240'", label: 'Minutos en cancha' },
+  { value: '3', label: 'Torneos activos' },
+  { value: '112', label: 'Goles a favor' },
+];
+const stats = defaults.map((d, i) => ({ ...d, ...((pills ?? [])[i] ?? {}) }));
+const isLive = livePlayed !== null && /partido/i.test(stats[0].label);
+const played = isLive ? String(livePlayed) : stats[0].value;
+
+// Ligas y torneos donde compite el club (cinta infinita al inicio de la banda).
+const leagues = [
+  { src: fdfLogo.src, alt: 'Federación Dominicana de Fútbol' },
+  { src: ldfExpansionLogo.src, alt: 'LDF Expansión — Alto Rendimiento' },
+  { src: lijeLogo.src, alt: 'Liga Infanto-Juvenil del Este (LIJE)' },
+  { src: micLogo.src, alt: 'MICFootball Punta Cana' },
+  { src: juvenilLogo.src, alt: 'Torneo Nacional Juvenil Masculino FEDOFUTBOL' },
+  { src: infantilLogo.src, alt: 'Torneo Nacional Infantil Masculino FEDOFUTBOL' },
+  { src: prejuvenilLogo.src, alt: 'Torneo Nacional Prejuvenil Masculino FEDOFUTBOL' },
+  { src: lijnLogo.src, alt: 'Liga LIJN' },
+];
+---
+
+<section data-section="season-numbers" class="bg-[#00285C] text-white">
+  <div class="mx-auto max-w-6xl px-5 py-10 md:py-12">
+    <div data-reveal="up" role="region" aria-label="Ligas y torneos donde compite el club">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">Competimos en</p>
+      <div class="mt-4 overflow-hidden">
+        <div class="leagues-track flex w-max items-center py-2">
+          {
+            [0, 1].map((copy) => (
+              <div class="flex items-center" aria-hidden={copy > 0 ? 'true' : undefined}>
+                {leagues.map((league) => (
+                  <span class="league-chip rounded-full bg-white p-2">
+                    <img
+                      src={league.src}
+                      alt={copy === 0 ? league.alt : ''}
+                      aria-hidden={copy > 0 ? 'true' : undefined}
+                      tabindex={copy > 0 ? '-1' : undefined}
+                      loading="lazy"
+                      decoding="async"
+                      width="48"
+                      height="48"
+                      class="h-12 w-12 object-contain"
+                    />
+                  </span>
+                ))}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-end justify-between gap-6" data-reveal="up">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">Temporada 2026/2027</p>
+        <h2 class="mt-2 text-2xl font-extrabold md:text-3xl">La temporada en números</h2>
+        <p class="mt-2 text-sm text-white/70">El rendimiento del club, actualizado cada jornada.</p>
+      </div>
+      <a
+        href="/calendario"
+        class="inline-block rounded-lg border border-[#429AC0] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#429AC0]"
+      >Ver calendario</a>
+    </div>
+
+    <dl class="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
+      <div class="border-l-2 border-[#429AC0] pl-4">
+        <dt class="order-2 mt-1 text-sm text-white/80">{stats[0].label}</dt>
+        <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{played}</dd>
+        <span class="mt-1 block text-[11px] uppercase tracking-wider text-white/70">{isLive ? 'Actualizado en vivo' : 'Carga manual'}</span>
+      </div>
+      {stats.slice(1).map((s) => (
+        <div class="border-l-2 border-[#429AC0] pl-4">
+          <dt class="order-2 mt-1 text-sm text-white/80">{s.label}</dt>
+          <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{s.value}</dd>
+          <span class="mt-1 block text-[11px] uppercase tracking-wider text-white/70">Carga manual</span>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  /* Cinta infinita de ligas — misma mecánica que FixturesBar: dos copias
+     idénticas del mismo ancho y desplazamiento de exactamente una copia
+     (-50%), sin salto al reiniciar. La separación vive en cada chip
+     (`margin-right`, no `gap` en el track) para que exista también tras el
+     último chip y ambas copias midan exactamente lo mismo. */
+  @keyframes leagues-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .leagues-track {
+    animation: leagues-marquee 32s linear infinite;
+    will-change: transform;
+  }
+
+  .league-chip {
+    flex: none;
+    margin-right: 1.5rem;
+  }
+
+  [role='region']:hover .leagues-track,
+  [role='region']:focus-within .leagues-track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .leagues-track {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
