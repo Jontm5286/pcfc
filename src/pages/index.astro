@@ -22,6 +22,7 @@ import {
   getFeaturedPlayersData,
   type NextMatch,
   type FeaturedPlayer,
+  type Category,
 } from '../data/homeData';
 import {
   fetchAcademyFeed,
@@ -29,6 +30,8 @@ import {
   fetchLatestGalleryImages,
   fetchPublishedGalleries,
   fetchPublishedPlayers,
+  fetchPublishedHero,
+  fetchPublishedCategories,
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
@@ -36,6 +39,8 @@ import {
   type AcademyMatch,
   type PublishedGallery,
   type PublishedPlayer,
+  type PublishedHero,
+  type PublishedCategory,
 } from '../lib/academy-feed';
 import { getCollection } from 'astro:content';
 import { getSeasonPills } from '../lib/content';
@@ -44,7 +49,7 @@ import { getSeasonPills } from '../lib/content';
 // Fuentes vivas en PARALELO (una sola consulta D1 de galerías, compartida
 // entre hero y comunidad). Cada fuente con respaldo si falla: la página
 // nunca tumba por una fuente caída.
-const [feed, galleriesRes, livePlayers] = await Promise.all([
+const [feed, galleriesRes, livePlayers, heroLive, liveCategories] = await Promise.all([
   fetchAcademyFeed().catch(
     (): AcademyFeed => ({ upcoming: [], played: [] }),
   ),
@@ -52,6 +57,8 @@ const [feed, galleriesRes, livePlayers] = await Promise.all([
     (): { galleries: PublishedGallery[] } => ({ galleries: [] }),
   ),
   fetchPublishedPlayers().catch((): PublishedPlayer[] => []),
+  fetchPublishedHero().catch((): PublishedHero | null => null),
+  fetchPublishedCategories().catch((): PublishedCategory[] => []),
 ]);
 // Próximo partido: el más cercano del feed Academy; respaldo local si falla.
 const nearestUpcoming: AcademyMatch | undefined = [...feed.upcoming].sort((a, b) =>
@@ -78,7 +85,39 @@ function toNextMatch(m: AcademyMatch): NextMatch {
 }
 
 const nextMatch: NextMatch = nearestUpcoming ? toNextMatch(nearestUpcoming) : getNextMatchData();
-const categories = getCategoriesData();
+// Categorías: admin EmDash en vivo (4+) mapeado a HomeCategories;
+// respaldo estático si el admin viene vacío o incompleto.
+const staticCategories = getCategoriesData();
+const categories: Category[] =
+  liveCategories.length >= 4
+    ? liveCategories.map((c) => {
+        const fb =
+          staticCategories.find((s) => s.slug === c.slug) ?? staticCategories[0];
+        return {
+          slug: c.slug || fb.slug,
+          name: c.name || fb.name,
+          badge: c.badge || fb.badge,
+          ages: c.ages || fb.ages,
+          copy: c.copy || fb.copy,
+          focus: c.focus || fb.focus,
+          format: c.format || fb.format,
+          description: c.description || fb.description,
+          ctaHref: c.ctaHref || fb.ctaHref,
+        };
+      })
+    : staticCategories;
+// Hero: textos del admin EmDash en vivo; respaldo estático si no hay fila.
+// galleryImages (carrusel show_in_hero) y nextMatch quedan intactos.
+const heroTitle = heroLive?.title || 'Pasión por el Fútbol';
+const heroDescription =
+  heroLive?.subtitle ||
+  'Academia premium de alto rendimiento en Punta Cana, Republica Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años.';
+const heroCtaPrimary = heroLive?.ctaPrimary
+  ? { label: heroLive.ctaPrimary, href: heroLive.ctaPrimaryHref || '/inscribete' }
+  : undefined;
+const heroCtaSecondary = heroLive?.ctaSecondary
+  ? { label: heroLive.ctaSecondary, href: heroLive.ctaSecondaryHref || '/club' }
+  : undefined;
 const pillars = getPillarsData();
 const stats = getStatsData();
 const galleryImages = getGalleryImagesData();
@@ -153,8 +192,10 @@ const featuredPlayers: FeaturedPlayer[] =
   <!-- HERO — impacto: próximo partido + identidad -->
   <Hero
     eyebrow="Academia Punta Cana FC"
-    title="Pasión por el Fútbol"
-    description="Academia premium de alto rendimiento en Punta Cana, Republica Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
+    title={heroTitle}
+    description={heroDescription}
+    ctaPrimary={heroCtaPrimary}
+    ctaSecondary={heroCtaSecondary}
     bullets={[
       'Plan formativo por etapa biológica, no por edad cronológica.',
       'Entrenadores con licencias FIFA y experiencia en academias de élite.',

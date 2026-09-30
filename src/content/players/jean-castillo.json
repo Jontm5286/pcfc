@@ -1,0 +1,15 @@
+{
+  "name": "Jean Castillo",
+  "slug": "jean-castillo",
+  "position": "Defensa",
+  "number": 4,
+  "photo": "../../assets/players/jean-castillo.jpg",
+  "photoAlt": "Jean Castillo, defensa de Punta Cana FC",
+  "category": "form-alta",
+  "featured": true,
+  "order": 4,
+  "matches": 23,
+  "goals": 2,
+  "assists": 3,
+  "season": "2026/2027"
+}

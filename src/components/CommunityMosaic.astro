@@ -48,7 +48,7 @@ const { images = [] } = Astro.props;
                   src={img.src}
                   alt={img.alt}
                   loading="lazy"
-                  class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
                 />
               ) : (
                 <Picture
@@ -59,7 +59,7 @@ const { images = [] } = Astro.props;
                   formats={['avif', 'webp']}
                   quality={65}
                   loading="lazy"
-                  class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
                 />
               );
               const cls =
@@ -67,11 +67,11 @@ const { images = [] } = Astro.props;
                   ? 'mosaic__item group relative block overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2'
                   : 'group relative block overflow-hidden bg-navy-30';
               return img.href ? (
-                <a href={img.href} class={cls} aria-label={`Ver galería: ${img.alt}`}>
+                <a href={img.href} class={cls} aria-label={`Ver galería: ${img.alt}`} data-reveal="zoom" data-reveal-delay={i * 90}>
                   {pic}
                 </a>
               ) : (
-                <figure class={cls}>{pic}</figure>
+                <figure class={cls} data-reveal="zoom" data-reveal-delay={i * 90}>{pic}</figure>
               );
             });
           })()}
@@ -82,3 +82,11 @@ const { images = [] } = Astro.props;
     </div>
   </div>
 </section>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-component='community-mosaic'] img {
+      transform: none !important;
+    }
+  }
+</style>

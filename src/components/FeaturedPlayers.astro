@@ -76,6 +76,7 @@ const {
           <article
             role="listitem"
             tabindex="0"
+            data-tilt
             class="player-card group relative w-[78%] shrink-0 snap-start overflow-hidden bg-navy sm:w-[46%] lg:w-[31.8%] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
           >
             <div class="relative aspect-[3/4] w-full overflow-hidden">
@@ -184,6 +185,15 @@ const {
   .players-dot[aria-selected="true"] {
     background: var(--color-amber-400, #fbbf24);
   }
+  .player-card[data-tilt] {
+    transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .player-card[data-tilt] {
+      transition: none;
+    }
+  }
   .players-nav span,
   .players-dots + div span {
     font-size: 1.5rem;
@@ -288,6 +298,25 @@ const {
     );
     track.addEventListener("scroll", () => requestAnimationFrame(paint), { passive: true });
     paint();
+
+    // Tilt 3D sutil en cards (solo puntero fino, sin reduced motion)
+    const canTilt =
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (canTilt) {
+      const MAX = 6;
+      cards.forEach((card) => {
+        card.addEventListener("mousemove", (ev) => {
+          const r = card.getBoundingClientRect();
+          const px = (ev.clientX - r.left) / r.width - 0.5;
+          const py = (ev.clientY - r.top) / r.height - 0.5;
+          card.style.transform = `perspective(800px) rotateX(${(-py * MAX).toFixed(2)}deg) rotateY(${(px * MAX).toFixed(2)}deg)`;
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transform = "";
+        });
+      });
+    }
   }
 
   document

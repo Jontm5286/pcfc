@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "build:cf": "DEPLOY_TARGET=cloudflare astro build",
+    "build": "node scripts/build-pcfc-gallery-admin.mjs && astro build",
+    "build:cf": "node scripts/build-pcfc-gallery-admin.mjs && DEPLOY_TARGET=cloudflare astro build",
     "deploy:cf": "pnpm build:cf && wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
@@ -35,6 +35,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "astro": "^7.2.9",
+    "pcfc-media-gallery": "file:./plugins/pcfc-media-gallery",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -51,6 +52,7 @@
     "@typescript-eslint/parser": "^7.0.0",
     "better-sqlite3": "^13.0.3",
     "emdash": "0.36.0",
+    "esbuild": "0.28.2",
     "eslint": "^8.57.0",
     "eslint-plugin-astro": "^0.34.0",
     "kysely": "0.29.5",

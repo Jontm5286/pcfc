@@ -12,9 +12,14 @@ import { getSponsorsData } from '../data/homeData';
 const sponsors = getSponsorsData();
 ---
 
-<Base title="Patrocinadores y Aliados" description="Conoce los patrocinadores y aliados del Punta Cana FC. Marcas que apoyan el fútbol formativo en el Caribe.">
+<Base
+  title="Patrocinadores y Aliados"
+  description="Conoce los patrocinadores y aliados del Punta Cana FC. Marcas que apoyan el fútbol formativo en el Caribe."
+>
   <!-- Hero -->
-  <section class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative">
+  <section
+    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
+  >
     <StockImage
       name="directivo"
       alt="Aliados y directivos de Punta Cana FC que apoyan el fútbol formativo en el Caribe"
@@ -35,49 +40,364 @@ const sponsors = getSponsorsData();
     </div>
   </section>
 
-  <section class="section bg-navy-dark">
+  <!-- Contacto alianzas — formulario de patrocinio -->
+  <section id="contacto" class="section bg-white scroll-mt-24">
     <div class="container-x">
-      {sponsors.length > 0 ? (
-        <>
-          <div
-            class="flex flex-wrap items-center justify-center gap-x-10 gap-y-8"
-            role="list"
-            aria-label="Lista de patrocinadores"
-          >
-            {sponsors.map((sponsor) => (
-              <div role="listitem" class="group">
-                {sponsor.href ? (
-                  <a
-                    href={sponsor.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Visitar sitio de ${sponsor.name}`}
-                    class="block opacity-70 hover:opacity-100 transition-opacity duration-200"
-                  >
-                    <img
-                      src={sponsor.logo}
-                      alt={`Logo de ${sponsor.name}`}
-                      loading="lazy"
-                      class="h-10 md:h-12 w-auto object-contain"
-                    />
-                  </a>
-                ) : (
-                  <img
-                    src={sponsor.logo}
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="h-10 md:h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-200"
-                  />
-                )}
-              </div>
-            ))}
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-12 lg:gap-16 items-start">
+        <div>
+          <p class="eyebrow">Alianzas</p>
+          <h2 class="h-section mb-5">¿Tu marca aquí?</h2>
+          <p class="lede max-w-[48ch]">
+            Únete a las marcas que impulsan el fútbol formativo en el Caribe. Completa el formulario
+            y el equipo de alianzas te contactará en menos de 48 horas laborables.
+          </p>
+
+          <!-- Logos de patrocinadores -->
+          <div class="mt-10" aria-label="Patrocinadores">
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-navy-60 mb-4">
+              Nos apoyan
+            </p>
+            {
+              sponsors.length > 0 ? (
+                <div
+                  class="grid grid-cols-2 gap-x-6 gap-y-6 items-center"
+                  role="list"
+                  aria-label="Lista de patrocinadores"
+                >
+                  {sponsors.map((sponsor) => {
+                    return (
+                      <div
+                        role="listitem"
+                        class="flex items-center justify-center px-2 py-2"
+                      >
+                        {sponsor.href ? (
+                          <a
+                            href={sponsor.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Visitar sitio de ${sponsor.name}`}
+                            class="flex items-center justify-center w-full min-h-[56px] opacity-80 hover:opacity-100 transition-opacity duration-200"
+                          >
+                            <img
+                              src={sponsor.logo}
+                              alt={`Logo de ${sponsor.name}`}
+                              loading="lazy"
+                              class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
+                            />
+                          </a>
+                        ) : (
+                          <div class="flex items-center justify-center w-full min-h-[56px] opacity-80">
+                            <img
+                              src={sponsor.logo}
+                              alt={`Logo de ${sponsor.name}`}
+                              loading="lazy"
+                              class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p class="text-sm text-navy-60">Patrocinadores próximamente</p>
+              )
+            }
           </div>
-        </>
-      ) : (
-        <div class="text-center py-16">
-          <p class="lede lede--on-navy opacity-50">Patrocinadores próximamente</p>
         </div>
-      )}
+
+        <div class="sponsor-form-card">
+          <form id="sponsor-form" novalidate>
+            <div class="form-group">
+              <label for="sp-marca" class="form-label">Nombre de la marca *</label>
+              <input
+                type="text"
+                id="sp-marca"
+                name="marca"
+                required
+                maxlength="120"
+                autocomplete="organization"
+                class="form-input"
+                placeholder="Ej. Grupo Esperilla"
+              />
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="sp-contacto" class="form-label">Persona de contacto *</label>
+                <input
+                  type="text"
+                  id="sp-contacto"
+                  name="contacto"
+                  required
+                  maxlength="120"
+                  autocomplete="name"
+                  class="form-input"
+                  placeholder="Nombre y apellido"
+                />
+              </div>
+              <div class="form-group">
+                <label for="sp-telefono" class="form-label">Teléfono *</label>
+                <input
+                  type="tel"
+                  id="sp-telefono"
+                  name="telefono"
+                  required
+                  maxlength="40"
+                  autocomplete="tel"
+                  class="form-input"
+                  placeholder="+1 (809) 000-0000"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="sp-email" class="form-label">Correo electrónico *</label>
+              <input
+                type="email"
+                id="sp-email"
+                name="email"
+                required
+                maxlength="254"
+                autocomplete="email"
+                class="form-input"
+                placeholder="correo@empresa.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="sp-mensaje" class="form-label">Mensaje *</label>
+              <textarea
+                id="sp-mensaje"
+                name="mensaje"
+                required
+                rows="4"
+                maxlength="2000"
+                class="form-input"
+                placeholder="Cuéntanos de tu marca y qué tipo de alianza buscas"></textarea>
+            </div>
+
+            <!-- Honeypot anti-spam (oculto para humanos) -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="sp-sitio">Sitio web</label>
+              <input type="text" id="sp-sitio" name="sitio_web" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" name="terminos" required class="form-checkbox" />
+                <span class="form-label"
+                  >Acepto los <a href="#" class="form-link">términos y condiciones</a> y la
+                  <a href="#" class="form-link">política de privacidad</a>.</span
+                >
+              </label>
+            </div>
+
+            <p id="sponsor-status" class="form-status" role="status" aria-live="polite" hidden></p>
+
+            <button type="submit" id="sponsor-submit" class="btn btn--primary btn--lg btn-full">
+              Enviar solicitud
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
+
+  <script>
+    const form = document.getElementById('sponsor-form') as HTMLFormElement | null;
+    const status = document.getElementById('sponsor-status') as HTMLParagraphElement | null;
+    const submit = document.getElementById('sponsor-submit') as HTMLButtonElement | null;
+
+    function showStatus(kind: 'ok' | 'error', message: string) {
+      if (!status) return;
+      status.hidden = false;
+      status.dataset.kind = kind;
+      status.textContent = message;
+    }
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form || !submit) return;
+
+      const data = new FormData(form);
+      const payload = {
+        marca: String(data.get('marca') ?? '').trim(),
+        contacto: String(data.get('contacto') ?? '').trim(),
+        telefono: String(data.get('telefono') ?? '').trim(),
+        email: String(data.get('email') ?? '').trim(),
+        mensaje: String(data.get('mensaje') ?? '').trim(),
+        sitio_web: String(data.get('sitio_web') ?? ''),
+        terminos: data.get('terminos') === 'on',
+      };
+
+      if (
+        !payload.marca ||
+        !payload.contacto ||
+        !payload.telefono ||
+        !payload.email ||
+        !payload.mensaje
+      ) {
+        showStatus('error', 'Completa todos los campos obligatorios.');
+        return;
+      }
+      if (!payload.terminos) {
+        showStatus('error', 'Debes aceptar los términos y condiciones.');
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Enviando…';
+
+      try {
+        const res = await fetch('/api/contacto-patrocinio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const out = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+        if (res.ok && out?.ok) {
+          form.reset();
+          showStatus(
+            'ok',
+            '¡Solicitud recibida! Gracias por tu interés en apoyar a Punta Cana FC. Te contactaremos en menos de 48 horas laborables.'
+          );
+        } else {
+          showStatus('error', out?.error ?? 'No pudimos enviar tu solicitud. Inténtalo de nuevo.');
+        }
+      } catch {
+        showStatus('error', 'Sin conexión. Revisa tu internet e inténtalo de nuevo.');
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Enviar solicitud';
+      }
+    });
+  </script>
+
+  <style>
+    .sponsor-form-card {
+      background: var(--color-pure-white);
+      border: 1px solid var(--color-navy-10);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+      .sponsor-form-card {
+        padding: 2.5rem;
+      }
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .form-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-navy-30);
+      margin-bottom: 0.375rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--color-pure-white);
+      border: 1px solid var(--color-navy-10);
+      border-radius: 0.5rem;
+      color: var(--color-navy);
+      font-family: var(--font-mono);
+      font-size: 0.9375rem;
+      line-height: 1.4;
+      transition:
+        border-color 200ms ease,
+        box-shadow 200ms ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-sky);
+      box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.18);
+    }
+
+    .form-input::placeholder {
+      color: var(--color-navy-10);
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 5rem;
+    }
+
+    .form-checkbox {
+      width: 1.125rem;
+      height: 1.125rem;
+      min-width: 1.125rem;
+      accent-color: var(--color-sky);
+      cursor: pointer;
+      margin-top: 0.1rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      gap: 0.625rem;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .form-link {
+      color: var(--color-sky);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .btn-full:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .form-status {
+      margin: 0 0 1rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-navy);
+      background: var(--color-navy-05);
+      border: 1px solid var(--color-navy-10);
+      border-left: 4px solid var(--color-sky);
+    }
+
+    .form-status[data-kind='error'] {
+      border-left-color: #b3261e;
+    }
+  </style>
 </Base>

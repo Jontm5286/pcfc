@@ -10,6 +10,12 @@
 
   const revealEls: NodeListOf<Element> =
     document.querySelectorAll("[data-reveal]");
+  const VARIANTS: Record<string, string> = {
+    up: "translateY(12px)",
+    left: "translateX(24px)",
+    right: "translateX(-24px)",
+    zoom: "scale(0.96)",
+  };
   if (revealEls.length > 0) {
     const revealObserver = new IntersectionObserver(
       (entries: IntersectionObserverEntry[]) => {
@@ -22,7 +28,13 @@
       },
       { threshold: 0.2 },
     );
-    revealEls.forEach((el: Element) => revealObserver.observe(el));
+    revealEls.forEach((el: Element) => {
+      const v = (el as HTMLElement).dataset.reveal || "up";
+      (el as HTMLElement).style.setProperty("--reveal-from", VARIANTS[v] ?? VARIANTS.up);
+      const d = (el as HTMLElement).dataset.revealDelay;
+      if (d) (el as HTMLElement).style.setProperty("--reveal-delay", `${parseInt(d, 10)}ms`);
+      revealObserver.observe(el);
+    });
   }
 
   const countupEls: NodeListOf<HTMLElement> =

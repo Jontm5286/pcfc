@@ -1,0 +1,15 @@
+{
+  "name": "Rodrigo Peña",
+  "slug": "rodrigo-pena",
+  "position": "Centrocampista",
+  "number": 16,
+  "photo": "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&h=1200&fit=crop&crop=top&q=80",
+  "photoAlt": "Rodrigo Peña, centrocampista de Punta Cana FC",
+  "category": "elite",
+  "featured": true,
+  "order": 3,
+  "matches": 24,
+  "goals": 6,
+  "assists": 14,
+  "season": "2026/2027"
+}

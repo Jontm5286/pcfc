@@ -9,6 +9,9 @@ import node from '@astrojs/node';
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 
+// Galería multi-imagen vendorizada como código propio (plugins/pcfc-media-gallery).
+import { pcfcMediaGalleryPlugin } from 'pcfc-media-gallery';
+
 // ============================================================
 // PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
 // ============================================================
@@ -25,7 +28,11 @@ export default defineConfig({
   trailingSlash: 'ignore',
   output: 'server', // EmDash requiere SSR para endpoints /_emdash/*
   adapter: isCloudflare
-    ? cloudflare()
+    ? cloudflare({
+        // Prod Workers: sharp (Node) no corre aqui; /_image se transforma
+        // en runtime con el binding IMAGES (Cloudflare Image Resizing).
+        imageService: 'cloudflare-binding',
+      })
     : node({
         mode: 'standalone', // Dev/local: Node. Prod: @astrojs/cloudflare
       }),
@@ -48,6 +55,7 @@ export default defineConfig({
         ? {
             database: d1({ binding: 'DB', session: 'auto' }),
             storage: r2({ binding: 'MEDIA' }),
+            plugins: [pcfcMediaGalleryPlugin()],
             contentCollections: {
               enabled: true,
               dir: 'src/content',
@@ -62,6 +70,7 @@ export default defineConfig({
               directory: './data/media',
               baseUrl: '/_emdash/api/media/file',
             }),
+            plugins: [pcfcMediaGalleryPlugin()],
             contentCollections: {
               enabled: true,
               dir: 'src/content',
