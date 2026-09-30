@@ -287,7 +287,7 @@ const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
                 {post.team1} vs {post.team2}
               </h2>
               <time datetime={post.date} class="mt-2 text-[0.9rem] text-navy-60 font-medium">
-                {post.date} · {post.photoCount} fotos
+                {[post.date, `${post.photoCount} fotos`].filter(Boolean).join(' · ')}
               </time>
             </div>
 
