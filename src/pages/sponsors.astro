@@ -80,6 +80,10 @@ const sponsors = getSponsorsData();
                           >
                             <img
                               src={sponsor.logo}
+                              width={sponsor.width}
+                              height={sponsor.height}
+                              srcset={sponsor.logoSrcSet}
+                              sizes="200px"
                               alt={`Logo de ${sponsor.name}`}
                               loading="lazy"
                               class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
@@ -89,6 +93,10 @@ const sponsors = getSponsorsData();
                           <div class="flex items-center justify-center w-full min-h-[56px] opacity-80">
                             <img
                               src={sponsor.logo}
+                              width={sponsor.width}
+                              height={sponsor.height}
+                              srcset={sponsor.logoSrcSet}
+                              sizes="200px"
                               alt={`Logo de ${sponsor.name}`}
                               loading="lazy"
                               class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
