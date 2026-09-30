@@ -354,6 +354,7 @@ export async function fetchLatestGalleryImages(count = 5): Promise<HeroGalleryIm
   return galleries.slice(0, count).map((g) => ({
     src: g.thumbnail,
     alt: g.thumbnailAlt,
+    href: `/fotos#${g.slug}`,
   }));
 }
 

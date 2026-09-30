@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import HomeCategories from '../components/HomeCategories.astro';
 import FeaturedPlayers from '../components/FeaturedPlayers.astro';
 import WhyPcfc from '../components/WhyPcfc.astro';
+import SeasonNumbers from '../components/SeasonNumbers.astro';
 import ValuePillars from '../components/ValuePillars.astro';
 import CommunityMosaic from '../components/CommunityMosaic.astro';
 import PathwayCards from '../components/PathwayCards.astro';
@@ -26,12 +27,14 @@ import {
   fetchAcademyFeed,
   fetchHeroGalleryImages,
   fetchLatestGalleryImages,
+  fetchPublishedPlayers,
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
   type AcademyMatch,
 } from '../lib/academy-feed';
 import { getCollection } from 'astro:content';
+import { getSeasonPills } from '../lib/content';
 
 // Load static datasets for home page sections
 // Próximo partido: el más cercano del feed Academy; respaldo local si falla.
@@ -68,21 +71,52 @@ const galleryImages = getGalleryImagesData();
 // respaldo estático si ningún partido está marcado.
 const heroFromPartidos = await fetchHeroGalleryImages();
 const heroGalleryImages = heroFromPartidos.length > 0 ? heroFromPartidos : galleryImages;
-// Comunidad: portada de los últimos 5 partidos (EmDash);
-// respaldo estático si no hay partidos con fotos.
-const latestFromPartidos = await fetchLatestGalleryImages();
-const communityImages =
-  latestFromPartidos.length >= 5 ? latestFromPartidos : galleryImages;
+// Comunidad: portadas EmDash primero (lo más reciente) + estáticas
+// para completar los 5 tiles hasta que haya 5+ partidos con foto.
+const latestFromPartidos = await fetchLatestGalleryImages(5);
+const communityImages = [...latestFromPartidos, ...galleryImages].slice(0, 5);
 const valuePillars = getValuePillarsData();
 const pathwayCards = getPathwayCardsData();
 const sponsors = getSponsorsData();
 
-// Jugadores destacados: colección EmDash `players` (orden + featured);
-// respaldo estático si la colección está vacía.
+// Temporada en números (variante A: banda navy + 4 cifras).
+// Partidos jugados en vivo desde la API Academy; respaldo manual si el feed falla.
+const seasonPills = await getSeasonPills();
+const livePlayed = feed.played.length > 0 ? feed.played.length : null;
+
+// Jugadores destacados: admin EmDash en vivo (featured + order);
+// respaldo local (src/content/players) y estático si el admin falla.
+const livePlayers = await fetchPublishedPlayers();
 const playerEntries = await getCollection('players');
+// Fotos locales de jugadores (src/assets/players/<slug>.jpg): tienen prioridad
+// sobre el valor del JSON para no depender de hotlinks externos.
+const localPlayerModules = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/players/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+const localPlayerPhotos: Record<string, ImageMetadata> = Object.fromEntries(
+  Object.entries(localPlayerModules).map(([path, mod]) => [
+    path.split('/').pop()!.replace(/\.[^.]+$/, ''),
+    mod.default,
+  ]),
+);
 const featuredPlayers: FeaturedPlayer[] =
-  playerEntries.length > 0
-    ? playerEntries
+  livePlayers.length > 0
+    ? livePlayers.map((p) => ({
+        name: p.name,
+        slug: p.slug,
+        position: p.position as FeaturedPlayer['position'],
+        number: p.number,
+        photo: localPlayerPhotos[p.slug] ?? p.photo ?? '',
+        photoAlt: p.photoAlt || p.name,
+        category: p.category as FeaturedPlayer['category'],
+        matches: p.matches,
+        goals: p.goals,
+        assists: p.assists,
+        season: p.season ?? '2026/2027',
+      }))
+    : playerEntries.length > 0
+      ? playerEntries
         .filter((e) => e.data.featured)
         .sort((a, b) => a.data.order - b.data.order)
         .map((e) => ({
@@ -90,7 +124,7 @@ const featuredPlayers: FeaturedPlayer[] =
           slug: e.data.slug,
           position: e.data.position,
           number: e.data.number,
-          photo: e.data.photo,
+          photo: localPlayerPhotos[e.data.slug] ?? e.data.photo,
           photoAlt: e.data.photoAlt,
           category: e.data.category,
           matches: e.data.matches,
@@ -109,7 +143,7 @@ const featuredPlayers: FeaturedPlayer[] =
     description="Academia premium de alto rendimiento en Punta Cana, Republica Dominicana. Metodología profesional, valores sólidos y un camino claro desde los 4 hasta los 19 años."
     bullets={[
       'Plan formativo por etapa biológica, no por edad cronológica.',
-      'Entrenadores con licencias UEFA y experiencia en academias de élite.',
+      'Entrenadores con licencias FIFA y experiencia en academias de élite.',
       'Instalaciones de primer nivel: 2 canchas, gimnasio y aula académica.',
     ]}
     galleryImages={heroGalleryImages}
@@ -123,9 +157,12 @@ const featuredPlayers: FeaturedPlayer[] =
   <FeaturedPlayers players={featuredPlayers} />
 
   <!-- VALUE PILLARS — beneficios de unirse al club -->
-  <ValuePillars eyebrow="Beneficios" title="¿POR QUÉ UNIRSE A PCFC?" pillars={valuePillars} />
+  <!-- <ValuePillars eyebrow="Beneficios" title="¿POR QUÉ UNIRSE A PCFC?" pillars={valuePillars} /> -->
   <!-- POR QUÉ PCFC — confianza: números + pilares -->
   <WhyPcfc stats={stats} pillars={pillars} />
+
+  <!-- TEMPORADA EN NÚMEROS (variante A: banda navy + 4 cifras) -->
+  <SeasonNumbers pills={seasonPills} livePlayed={livePlayed} />
 
   <!-- ÚLTIMAS FOTOS — comunidad: somos muchos -->
   <CommunityMosaic images={communityImages} />

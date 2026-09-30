@@ -16,13 +16,14 @@ import galleryEquipo from '../assets/gallery/equipo-formativas-altas.jpg';
 // (404). Se reutiliza cesped-natural.jpg como reemplazo temático.
 import cespedNatural from '../assets/facilities/cesped-natural.jpg';
 import playerDiego from '../assets/players/diego-ramirez.jpg';
+import playerJean from '../assets/players/jean-castillo.jpg';
 import playerLamine from '../assets/players/lamine-tavarez.jpg';
 import playerRodrigo from '../assets/players/rodrigo-pena.jpg';
 // Logos oficiales de patrocinadores (Green Corp pendiente de logo).
 import sponsorCongreMax from '../assets/sponsors/concremax.webp';
 import sponsorDrKatherine from '../assets/sponsors/dr-katherine.png';
 import sponsorEsperilla from '../assets/sponsors/esperilla-motors.svg';
-import sponsorFormaLegal from '../assets/sponsors/forma-legal.webp';
+import sponsorFormaLegal from '../assets/sponsors/forma-legal.svg';
 import sponsorGreenStudio from '../assets/sponsors/green-studio.webp';
 import sponsorGrupoDuplax from '../assets/sponsors/grupo-duplax.webp';
 import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.png';
@@ -48,7 +49,6 @@ export interface Category {
   copy: string;
   focus: string;
   format: string;
-  schedule: string;
   description: string;
   ctaHref: string;
 }
@@ -68,6 +68,8 @@ export interface GalleryImage {
   /** Import local (Picture optimizado) o URL EmDash (img directo). */
   src: ImageMetadata | string;
   alt: string;
+  /** Enlace a la galería (p. ej. /fotos#slug). Sin href = tile no clickeable. */
+  href?: string;
 }
 
 export interface ValuePillarItem {
@@ -148,7 +150,6 @@ export function getCategoriesData(): Category[] {
       copy: 'Primer contacto con el balón. Coordinación, motricidad y amor por el juego.',
       focus: 'Movilidad, coordinación, primer contacto con el balón',
       format: 'Partidos formativos 90 min',
-      schedule: 'Martes y jueves · 4:00–5:30 pm',
       description:
         'El primer paso dentro del club. Jugamos a aprender: exploración del balón, coordinación motriz y reglas básicas en un entorno lúdico, seguro y siempre acompañado por nuestros entrenadores.',
       ctaHref: '/inscribete',
@@ -161,7 +162,6 @@ export function getCategoriesData(): Category[] {
       copy: 'Técnica individual, fundamentos tácticos y primeras competencias oficiales.',
       focus: 'Técnica individual, reglas del juego, compañerismo',
       format: 'Partidos 7 vs 7',
-      schedule: 'Lunes, miércoles y viernes · 4:00–6:00 pm',
       description:
         'Consolidamos la técnica individual — control, pase, conducción — e introducimos la táctica colectiva en formato 7v7. Los jugadores entienden el juego, sus posiciones y el valor del equipo.',
       ctaHref: '/inscribete',
@@ -174,7 +174,6 @@ export function getCategoriesData(): Category[] {
       copy: 'Táctica avanzada, físico específico y preparación para competencia regional.',
       focus: 'Táctica, preparación física, competición federada',
       format: 'Partidos 9 vs 9',
-      schedule: 'Martes y jueves · 5:00–7:00 pm + bloque de acondicionamiento',
       description:
         'Etapa de competición real. Profundizamos en sistemas tácticos, añadimos trabajo físico estructurado y participamos en torneos federados para medirnos contra otros clubes de la región.',
       ctaHref: '/inscribete',
@@ -187,7 +186,6 @@ export function getCategoriesData(): Category[] {
       copy: 'Alto rendimiento, scouting profesional y proyección hacia ligas nacionales.',
       focus: 'Alto rendimiento, scouting, preparación física avanzada',
       format: 'Partidos 11 vs 11',
-      schedule: 'Lunes, miércoles y viernes · 6:00–8:00 pm + gimnasio',
       description:
         'El último tramo del proceso formativo. Entrenamientos de alta intensidad, gimnasio, análisis de vídeo y seguimiento individual. Varios de nuestros jugadores de esta categoría han sido captados por clubes profesionales.',
       ctaHref: '/inscribete',
@@ -201,9 +199,9 @@ export function getCategoriesData(): Category[] {
  */
 export function getStatsData(): Stat[] {
   return [
-    { value: '700+', label: 'Futbolistas' },
-    { value: '20+', label: 'Entrenadores' },
-    { value: '15', label: 'Categorías' },
+    { value: '500+', label: 'Futbolistas' },
+    { value: '10+', label: 'Entrenadores' },
+    { value: '7', label: 'Categorías' },
     { value: '10+', label: 'Años' },
   ];
 }
@@ -222,7 +220,7 @@ export function getPillarsData(): Pillar[] {
     {
       n: '02',
       title: 'Cuerpo técnico certificado',
-      copy: 'Entrenadores con licencias UEFA y experiencia en academias de primer nivel.',
+      copy: 'Entrenadores con licencias FIFA y experiencia en academias de primer nivel.',
     },
     {
       n: '03',
@@ -443,8 +441,8 @@ export function getFeaturedPlayersData(): FeaturedPlayer[] {
       slug: 'jean-castillo',
       position: 'Defensa',
       number: 4,
-      // TODO: foto eliminada de Unsplash (404) — temporal con foto de equipo.
-      photo: galleryEquipo,
+      // Foto stock local (src/assets/players/jean-castillo.jpg); el titular la actualiza luego.
+      photo: playerJean,
       photoAlt: 'Jean Castillo, defensa de Punta Cana FC',
       category: 'form-alta',
       matches: 23,
