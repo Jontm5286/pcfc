@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import FixturesBar from "../components/FixturesBar.astro";
 import Footer from "../components/Footer.astro";
+import Reveal from "../components/Reveal.astro";
 
 interface Props {
   title: string;
@@ -99,9 +100,22 @@ const {
   <body>
     <a href="#main" class="skip-link">Saltar al contenido</a>
 
-    <header class="bg-[rgba(5,19,41,0.95)] border-b border-[rgba(12,30,61,0.64)]">
+    <header id="fixtures-bar" class="bg-[rgba(5,19,41,0.95)] border-b border-[rgba(12,30,61,0.64)]">
       {showFixtures && <FixturesBar />}
     </header>
+    <script is:inline>
+      // Oculta la cinta FixturesBar al hacer scroll (el usuario la quiere
+      // visible solo arriba del todo). Sin dependencias, pasivo.
+      (function () {
+        var bar = document.getElementById('fixtures-bar');
+        if (!bar || bar.children.length === 0) return;
+        var onScroll = function () {
+          bar.style.display = window.scrollY > 60 ? 'none' : '';
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      })();
+    </script>
     <Navbar />
 
     <main id="main">
@@ -109,5 +123,6 @@ const {
     </main>
 
     <Footer />
+    <Reveal />
   </body>
 </html>

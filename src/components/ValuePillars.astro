@@ -42,7 +42,7 @@ const { eyebrow, title, pillars } = Astro.props;
 >
   <div class="max-w-lx7 mx-auto px-8">
     {(eyebrow || title) && (
-      <header class="mb-12 flex flex-col items-center text-center">
+      <header data-reveal class="mb-12 flex flex-col items-center text-center">
         {eyebrow && (
           <p class="eyebrow text-sky mb-3">{eyebrow}</p>
         )}

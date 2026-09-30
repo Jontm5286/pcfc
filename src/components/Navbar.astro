@@ -100,7 +100,7 @@ const isCurrent = (href: string) =>
     <!-- Actions -->
     <div class="flex items-center shrink-0">
       <!-- Cart -->
-      <a
+      <!-- <a
         href="/tienda"
         class="relative w-11 h-11 flex items-center justify-center text-white/70 transition-colors duration-200 hover:text-sky"
         aria-label="Carrito de compras"
@@ -115,10 +115,10 @@ const isCurrent = (href: string) =>
           class="absolute top-0.5 right-1 w-4 h-4 bg-sky text-navy-dark font-body text-[10px] font-bold rounded-full flex items-center justify-center leading-none"
           aria-label="0 artículos">0</span
         >
-      </a>
+      </a> -->
 
       <!-- Profile -->
-      <a
+      <!-- <a
         href="/perfil"
         class="w-11 h-11 flex items-center justify-center text-white/70 transition-colors duration-200 hover:text-sky"
         aria-label="Mi perfil"
@@ -129,7 +129,7 @@ const isCurrent = (href: string) =>
             fill="currentColor"
             fill-rule="nonzero"></path>
         </svg>
-      </a>
+      </a> -->
     </div>
 
     <!-- Mobile toggle -->
@@ -156,8 +156,8 @@ const isCurrent = (href: string) =>
     </button>
   </div>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="bg-navy-dark border-t border-white/5" hidden>
+  <!-- Mobile Menu (apertura animada por clase .open, simétrica) -->
+  <div id="mobile-menu" class="mobile-menu bg-navy-dark border-t border-white/5">
     <nav class="container-x flex flex-col gap-1 py-6" aria-label="Móvil">
       {
         navItems.map((item) => (
@@ -205,6 +205,44 @@ const isCurrent = (href: string) =>
     transform: rotate(180deg);
   }
 
+  /* Mobile Menu — entrada/salida simétrica (no `hidden`, que no anima) */
+  .mobile-menu {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      grid-template-rows 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .mobile-menu.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mobile-menu > nav {
+    overflow: hidden;
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    transition: padding 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .mobile-menu.open > nav {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .mobile-menu {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu {
+      transition: none;
+    }
+  }
+
   /* Mobile toggle — oculto en desktop, visible en mobile */
   .menu-toggle {
     display: none;
@@ -231,10 +269,7 @@ const isCurrent = (href: string) =>
       const open = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', String(!open));
       toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
-      if (menu) {
-        if (open) menu.setAttribute('hidden', '');
-        else menu.removeAttribute('hidden');
-      }
+      menu?.classList.toggle('open', !open);
     });
   });
 </script>

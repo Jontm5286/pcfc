@@ -374,6 +374,16 @@ const {
   .rotator-figure:not(.is-featured) img {
     filter: brightness(0.6) saturate(0.7);
   }
+
+  .rotator-figure img {
+    transition: filter 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rotator-figure img {
+      transition: none;
+    }
+  }
 </style>
 
 <script>
@@ -411,9 +421,12 @@ const {
         timer = undefined;
       }
 
-      // Auto-rotación desde el inicio
+      // Auto-rotación desde el inicio (apagada con movimiento reducido)
       highlight(0);
-      startAuto();
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!reduceMotion) startAuto();
 
       // Pausa cuando el usuario hace hover en una foto específica
       figures.forEach((fig, i) => {

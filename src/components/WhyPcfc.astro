@@ -16,6 +16,7 @@ const { stats, pillars } = Astro.props;
 <section class="section bg-pure-white" data-component="why-pcfc">
   <div class="container-x">
     <header
+      data-reveal
       class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-8 mb-[clamp(2.5rem,5vw,4rem)]"
     >
       <div>
@@ -28,7 +29,7 @@ const { stats, pillars } = Astro.props;
         {
           stats.map((s) => (
             <div class="lg:text-right">
-              <dt class="font-display text-[2.25rem] text-navy leading-none tracking-[0.02em]">
+              <dt data-countup class="font-display text-[2.25rem] text-navy leading-none tracking-[0.02em]">
                 {s.value}
               </dt>
               <dd class="text-[0.7rem] text-navy-60 uppercase tracking-[0.12em] mt-2 font-semibold">

@@ -14,7 +14,7 @@ const { categories } = Astro.props;
 
 <section class="section" data-component="home-categories">
   <div class="container-x">
-    <header class="max-w-180 mb-[clamp(2.5rem,5vw,4rem)]">
+    <header data-reveal class="max-w-180 mb-[clamp(2.5rem,5vw,4rem)]">
       <p class="eyebrow">Categorías</p>
       <h2 class="h-section">UN CAMINO CLARO,<br />DE 4 A 19 AÑOS</h2>
       <p class="lede mt-4">
@@ -45,13 +45,13 @@ const { categories } = Astro.props;
                 {cat.copy}
               </p>
               <span class="hidden lg:inline-flex items-center gap-1.5 text-sky font-semibold text-[0.85rem] uppercase tracking-[0.08em] whitespace-nowrap">
-                Ver requisitos y horarios
+                Ver requisitos y detalles
                 <span class="arrow" aria-hidden="true">
                   →
                 </span>
               </span>
               <span class="lg:hidden text-sky font-semibold text-[0.85rem] uppercase tracking-[0.08em] inline-flex items-center gap-1.5">
-                Ver requisitos y horarios
+                Ver requisitos y detalles
                 <span class="arrow" aria-hidden="true">
                   →
                 </span>
