@@ -130,16 +130,40 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 // Ciclo JUGADO → PRÓXIMO → SPONSOR (1 sponsor cada 2 tarjetas de partido).
+// Si no hay jugados (el feed solo trae upcoming), la cinta se arma con los
+// próximos + sponsors para no renderizar vacía.
+// Tras el ciclo, se agregan los sponsors que falten hasta rotarlos TODOS
+// aunque haya pocos (o cero) partidos: cada copia del loop los incluye.
 const slots: Slot[] = [];
-playedCards.forEach((p, i) => {
-  slots.push({ kind: 'played', card: p });
-  if (upcomingCards.length > 0) {
-    slots.push({ kind: 'upcoming', card: upcomingCards[i % upcomingCards.length] });
+if (playedCards.length > 0) {
+  playedCards.forEach((p, i) => {
+    slots.push({ kind: 'played', card: p });
+    if (upcomingCards.length > 0) {
+      slots.push({ kind: 'upcoming', card: upcomingCards[i % upcomingCards.length] });
+    }
+    if (sponsors.length > 0) {
+      slots.push({ kind: 'sponsor', card: sponsors[i % sponsors.length] });
+    }
+  });
+} else {
+  upcomingCards.forEach((u, i) => {
+    slots.push({ kind: 'upcoming', card: u });
+    if (sponsors.length > 0) {
+      slots.push({ kind: 'sponsor', card: sponsors[i % sponsors.length] });
+    }
+  });
+}
+{
+  const shown = new Set(
+    slots.filter((s) => s.kind === 'sponsor').map((s) => (s.card as SponsorItem).name),
+  );
+  for (const sponsor of sponsors) {
+    if (!shown.has(sponsor.name)) {
+      slots.push({ kind: 'sponsor', card: sponsor });
+      shown.add(sponsor.name);
+    }
   }
-  if (sponsors.length > 0) {
-    slots.push({ kind: 'sponsor', card: sponsors[i % sponsors.length] });
-  }
-});
+}
 
 /* ── Ciclo del marquee (SSR, cero JS) ───────────────────────────────────────
    El loop solo es perfecto si la cinta son N copias IDÉNTICAS del mismo ancho:
