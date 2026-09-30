@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
+import { Image } from 'astro:assets';
+import luisFlores from '../assets/luis-flores.jpg';
+import anaFlores from '../assets/ana-flores.jpg';
 ---
 
 <Base
@@ -152,13 +155,15 @@ import StockImage from '../components/StockImage.astro';
       <div class="team-grid">
         <div class="team-card">
           <div class="team-avatar">
-            <StockImage
-              name="directivo"
-              alt="Miembro del equipo directivo de Punta Cana FC"
-              className="team-avatar-img"
+            <Image
+              src={luisFlores}
+              alt="Luis Flores, Director General de Punta Cana FC"
+              class="team-avatar-img"
               loading="eager"
               width={200}
               height={200}
+              widths={[160, 320]}
+              sizes="80px"
             />
           </div>
           <h3 class="h-card">Luis Flores</h3>
@@ -166,31 +171,19 @@ import StockImage from '../components/StockImage.astro';
         </div>
         <div class="team-card">
           <div class="team-avatar">
-            <StockImage
-              name="directivo"
-              alt="Miembro del equipo directivo de Punta Cana FC"
-              className="team-avatar-img"
+            <Image
+              src={anaFlores}
+              alt="Ana Flores, Directora Deportiva de Punta Cana FC"
+              class="team-avatar-img"
               loading="eager"
               width={200}
               height={200}
+              widths={[160, 320]}
+              sizes="80px"
             />
           </div>
           <h3 class="h-card">Ana Flores</h3>
           <p class="team-role">Directora Deportiva</p>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar">
-            <StockImage
-              name="directivo"
-              alt="Miembro del equipo directivo de Punta Cana FC"
-              className="team-avatar-img"
-              loading="eager"
-              width={200}
-              height={200}
-            />
-          </div>
-          <h3 class="h-card">Pablo Ortiz</h3>
-          <p class="team-role">Coordinador Académico</p>
         </div>
       </div>
     </div>
@@ -321,9 +314,12 @@ import StockImage from '../components/StockImage.astro';
 
   .team-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     margin-top: 3rem;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .team-card {

@@ -218,7 +218,7 @@ const playersCollection = defineCollection({
     slug: z.string(),
     position: z.enum(["Portero", "Defensa", "Centrocampista", "Atacante"]),
     number: z.number().int().min(1).max(99),
-    photo: ImageSchema,
+    photo: ImageSchema.or(z.string().regex(/^\.\.\/assets\/.+\.(jpg|jpeg|png|webp|avif)$/)),
     photoAlt: z.string().min(3, "Alt accesible requerido para WCAG"),
     category: z.enum(["pre", "form-baja", "form-alta", "elite"]).optional(),
     featured: z.boolean().default(true),

@@ -95,7 +95,7 @@ export interface AcademyFeed {
 const FEED_TTL_MS = 5 * 60 * 1000;
 let feedCache: { at: number; feed: AcademyFeed } | null = null;
 
-export async function fetchAcademyFeed(timeoutMs = 8000): Promise<AcademyFeed> {
+export async function fetchAcademyFeed(timeoutMs = 3000): Promise<AcademyFeed> {
   const empty: AcademyFeed = { upcoming: [], played: [] };
   if (feedCache && Date.now() - feedCache.at < FEED_TTL_MS) return feedCache.feed;
   try {
@@ -239,6 +239,14 @@ function mediaValueSrc(v: unknown): string | null {
   return null;
 }
 
+/** Caché en memoria 5 min (por isolate) para galerías y players.
+ * Mismo patrón que el feed: el primer hit tras expirar paga D1. */
+const EMDASH_TTL_MS = 5 * 60 * 1000;
+let galleriesCache: { at: number; galleries: PublishedGallery[]; cacheHint?: unknown } | null = null;
+let playersCache: { at: number; players: PublishedPlayer[] } | null = null;
+let heroCache: { at: number; hero: PublishedHero | null } | null = null;
+let categoriesCache: { at: number; categories: PublishedCategory[] } | null = null;
+
 /** Galerías publicadas con fotos desde EmDash. Vacío si falla. */
 export async function fetchPublishedGalleries(): Promise<{
   galleries: PublishedGallery[];
@@ -313,9 +321,10 @@ export async function fetchPublishedGalleries(): Promise<{
         showInHero: parseShowInHero(d.show_in_hero),
       });
     }
+    galleriesCache = { at: Date.now(), galleries, cacheHint };
     return { galleries, cacheHint };
   } catch {
-    return { galleries: [] };
+    return galleriesCache ? { galleries: galleriesCache.galleries } : { galleries: [] };
   }
 }
 
@@ -330,9 +339,13 @@ export interface HeroGalleryImage {
 /**
  * Fotos para el rotador del hero: partidos published con flag `show_in_hero`,
  * ordenados por publicación (recientes primero), máx `limit` fotos.
+ * Acepta galerías pre-cargadas para evitar una segunda consulta D1.
  */
-export async function fetchHeroGalleryImages(limit = 6): Promise<HeroGalleryImage[]> {
-  const { galleries } = await fetchPublishedGalleries();
+export async function fetchHeroGalleryImages(
+  fromGalleries?: PublishedGallery[],
+  limit = 6,
+): Promise<HeroGalleryImage[]> {
+  const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries
     .filter((g) => g.showInHero)
     .flatMap((g) =>
@@ -348,12 +361,17 @@ export async function fetchHeroGalleryImages(limit = 6): Promise<HeroGalleryImag
 /**
  * Portadas para Comunidad: thumbnail de los últimos `count` partidos
  * published (sin flag — siempre lo más reciente).
+ * Acepta galerías pre-cargadas para evitar una segunda consulta D1.
  */
-export async function fetchLatestGalleryImages(count = 5): Promise<HeroGalleryImage[]> {
-  const { galleries } = await fetchPublishedGalleries();
+export async function fetchLatestGalleryImages(
+  fromGalleries?: PublishedGallery[],
+  count = 5,
+): Promise<HeroGalleryImage[]> {
+  const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries.slice(0, count).map((g) => ({
     src: g.thumbnail,
     alt: g.thumbnailAlt,
+    href: `/fotos#${g.slug}`,
   }));
 }
 
@@ -392,12 +410,15 @@ function boolField(v: unknown): boolean {
  */
 export async function fetchPublishedPlayers(): Promise<PublishedPlayer[]> {
   try {
+    if (playersCache && Date.now() - playersCache.at < EMDASH_TTL_MS) {
+      return playersCache.players;
+    }
     const { getEmDashCollection } = await import('emdash');
     const { entries } = await getEmDashCollection('players', {
       status: 'published',
       limit: 100,
     });
-    return (entries ?? [])
+    const players = (entries ?? [])
       .map((entry) => {
         const d = entry.data as Record<string, unknown>;
         const slug =
@@ -420,7 +441,152 @@ export async function fetchPublishedPlayers(): Promise<PublishedPlayer[]> {
       })
       .filter((p) => p.name !== '' && p.featured)
       .sort((a, b) => a.order - b.order);
+    playersCache = { at: Date.now(), players };
+    return players;
   } catch {
-    return [];
+    return playersCache?.players ?? [];
+  }
+}
+
+/* ── Hero + Categorías (EmDash `hero` / `categories`, en vivo) ── */
+
+/** Lee un campo aceptando clave snake_case (DB) o camelCase (slug del schema). */
+function strField(d: Record<string, unknown>, snake: string, camel: string): string {
+  const v = d[snake] ?? d[camel];
+  return typeof v === 'string' ? v : '';
+}
+
+/** Hero publicado desde el admin (una sola fila; la primera manda). */
+export interface PublishedHero {
+  title: string;
+  subtitle: string;
+  image: string | null;
+  imageAlt: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryHref: string;
+  slides: { src: string; alt: string }[];
+}
+
+/** Normaliza `slides` (json): array de {src, alt} o string JSON. Vacío si inválido. */
+function parseHeroSlides(v: unknown): { src: string; alt: string }[] {
+  const raw = typeof v === 'string' ? safeParseJson(v) : v;
+  if (!Array.isArray(raw)) return [];
+  const out: { src: string; alt: string }[] = [];
+  for (const item of raw) {
+    if (typeof item === 'string') {
+      if (item) out.push({ src: item, alt: '' });
+    } else if (item && typeof item === 'object') {
+      const o = item as Record<string, unknown>;
+      const src = mediaValueSrc(o) ?? (typeof o.src === 'string' ? o.src : null);
+      if (src) out.push({ src, alt: typeof o.alt === 'string' ? o.alt : '' });
+    }
+  }
+  return out;
+}
+
+/**
+ * Hero published del admin. `null` si la tabla está vacía o falla
+ * (el home cae al respaldo estático de homeData).
+ * Mismo patrón vivo que players (getEmDashCollection).
+ */
+export async function fetchPublishedHero(): Promise<PublishedHero | null> {
+  try {
+    if (heroCache && Date.now() - heroCache.at < EMDASH_TTL_MS) {
+      return heroCache.hero;
+    }
+    const { getEmDashCollection } = await import('emdash');
+    const { entries } = await getEmDashCollection('hero', {
+      status: 'published',
+      limit: 5,
+    });
+    const first = (entries ?? [])[0];
+    if (!first) {
+      heroCache = { at: Date.now(), hero: null };
+      return null;
+    }
+    const d = first.data as Record<string, unknown>;
+    const hero: PublishedHero = {
+      title: String(d.title ?? ''),
+      subtitle: strField(d, 'subtitle', 'subtitle'),
+      image: mediaValueSrc(d.image),
+      imageAlt: strField(d, 'image_alt', 'imageAlt'),
+      ctaPrimary: strField(d, 'cta_primary', 'ctaPrimary'),
+      ctaSecondary: strField(d, 'cta_secondary', 'ctaSecondary'),
+      ctaPrimaryHref: strField(d, 'cta_primary_href', 'ctaPrimaryHref'),
+      ctaSecondaryHref: strField(d, 'cta_secondary_href', 'ctaSecondaryHref'),
+      slides: parseHeroSlides(d.slides),
+    };
+    if (!hero.title) {
+      heroCache = { at: Date.now(), hero: null };
+      return null;
+    }
+    heroCache = { at: Date.now(), hero };
+    return hero;
+  } catch {
+    return heroCache?.hero ?? null;
+  }
+}
+
+/** Categoría publicada desde el admin (campos espejo de `Category` + schedule/order). */
+export interface PublishedCategory {
+  slug: string;
+  name: string;
+  badge: string;
+  ages: string;
+  copy: string;
+  focus: string;
+  format: string;
+  schedule: string;
+  description: string;
+  ctaHref: string;
+  order: number;
+}
+
+/**
+ * Categorías published del admin, ordenadas por `order`.
+ * Vacío si la tabla está vacía o falla (el home cae al estático).
+ * Mismo patrón vivo que players (getEmDashCollection).
+ */
+export async function fetchPublishedCategories(): Promise<PublishedCategory[]> {
+  try {
+    if (categoriesCache && Date.now() - categoriesCache.at < EMDASH_TTL_MS) {
+      return categoriesCache.categories;
+    }
+    const { getEmDashCollection } = await import('emdash');
+    const { entries } = await getEmDashCollection('categories', {
+      status: 'published',
+      limit: 50,
+    });
+    const categories = (entries ?? [])
+      .map((entry) => {
+        const d = entry.data as Record<string, unknown>;
+        const slug =
+          typeof d.item_slug === 'string' && d.item_slug
+            ? d.item_slug
+            : typeof d.slug === 'string' && d.slug
+              ? d.slug
+              : String(entry.id);
+        return {
+          slug,
+          name: String(d.name ?? ''),
+          badge: String(d.badge ?? ''),
+          ages: String(d.ages ?? ''),
+          copy: String(d.copy ?? ''),
+          focus: String(d.focus ?? ''),
+          format: String(d.format ?? ''),
+          schedule: String(d.schedule ?? ''),
+          description: String(d.description ?? ''),
+          ctaHref: strField(d, 'cta_href', 'ctaHref'),
+          order: numField(d.order, 99),
+        } satisfies PublishedCategory;
+      })
+      .filter((c) => c.name !== '')
+      .sort((a, b) => a.order - b.order);
+    categoriesCache = { at: Date.now(), categories };
+    return categories;
+  } catch {
+    return categoriesCache?.categories ?? [];
   }
 }

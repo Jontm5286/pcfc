@@ -2,6 +2,26 @@
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
 import FaqSection from '../components/FaqSection.astro';
+import { getSedes } from '../data/sedes';
+
+// Sede preseleccionada vía ?sede=<slug> (desde las tarjetas de sede en
+// /area-deportiva o en esta misma página → "Elegir esta sede").
+// Solo se aceptan slugs de getSedes(); cualquier otro valor se ignora.
+const sedeParam = (Astro.url.searchParams.get('sede') ?? '').trim().toLowerCase();
+const sedeSlugs = new Set(getSedes().map((s) => s.slug));
+const sedePreseleccionada = sedeSlugs.has(sedeParam) ? sedeParam : '';
+const sedes = getSedes();
+
+// NOTA: ya no se pide categoría en el formulario (decisión del club).
+// El wizard deriva una categoría PROVISIONAL desde la fecha de nacimiento
+// solo para cumplir el contrato del endpoint de plataforma (CategoryType),
+// que exige `category`. El coordinador la confirma al activar.
+// TABLA EDAD→CATEGORÍA PROVISIONAL (a validar por el club):
+//   4–5 años → Sub-6 (Iniciación) | 6–7 → Sub-8 (Pre-Benjamín)
+//   8–9 → Sub-10 (Benjamín) | 10–11 → Sub-12 (Alevín)
+//   12–13 → Sub-14 (Infantil Mayor) | 14 → Sub-15 (Infantil)
+//   15–17 → Sub-18 (Juvenil)
+//   <4 → Sub-6 · >17 → Sub-18 · Femenino Juvenil nunca se auto-deriva.
 ---
 
 <Base
@@ -28,13 +48,9 @@ import FaqSection from '../components/FaqSection.astro';
         <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5">
           Únete a la academia<br/>del Caribe
         </h1>
-        <p class="lede lede--on-navy max-w-[56ch] mb-8">
+        <p class="lede lede--on-navy max-w-[56ch]">
           Da el primer paso. Completa el formulario y un entrenador de PCFC se pondrá en contacto en menos de 24 horas.
         </p>
-        <a href="#formulario" class="btn btn--sky btn--on-navy btn--lg">
-          Inscríbete ahora
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
     </div>
   </section>
@@ -84,142 +100,242 @@ import FaqSection from '../components/FaqSection.astro';
             </ol>
           </div>
 
-          <!-- Requisitos -->
-          <div class="req-box">
-            <h3 class="req-box__title">Requisitos para unirse</h3>
-            <ul class="req-list space-y-3">
-              <li class="req-list__item">
-                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Cédula de identidad o pasaporte del jugador
-              </li>
-              <li class="req-list__item">
-                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Cédula del representante legal
-              </li>
-              <li class="req-list__item">
-                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Certificado médico reciente (dentro de los últimos 6 meses)
-              </li>
-              <li class="req-list__item">
-                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                2 fotos tipo carnet (fondo blanco)
-              </li>
-              <li class="req-list__item">
-                <svg class="req-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                Historial futbolístico previo (si aplica)
-              </li>
-            </ul>
-          </div>
-
         </div>
 
-        <!-- ── Columna derecha: formulario ── -->
-        <div id="formulario" class="bg-white rounded-2xl border border-navy-10 p-8 lg:p-10 shadow-[0_4px_24px_rgba(0,40,92,0.08)]">
-          <h2 class="h-card mb-8 text-center">Formulario de inscripción</h2>
+        <!-- ── Columna derecha: wizard de inscripción ── -->
+        <div id="formulario" class="bg-white rounded-2xl border border-navy-10 p-8 lg:p-10 shadow-[0_4px_24px_rgba(0,40,92,0.08)]" data-sede-preselect={sedePreseleccionada}>
+          <p class="wiz-eyebrow">Inscripción · 4 pasos cortos</p>
+          <h2 class="h-card mb-2">Inscribe a tu hijo</h2>
+          <p class="wiz-sub">Tu progreso se guarda solo en este dispositivo.</p>
 
-          <form id="inscription-form" novalidate>
+          <!-- Barra de progreso -->
+          <div class="wiz-progress" aria-hidden="true">
+            <div class="wiz-bar"><div id="wiz-barfill"></div></div>
+            <span class="wiz-stepcount" id="wiz-stepcount">Paso 1 de 4</span>
+          </div>
+          <ol class="wiz-dots" id="wiz-dots">
+            <li class="on" data-dot="1">1 · Sede</li>
+            <li data-dot="2">2 · Jugador</li>
+            <li data-dot="3">3 · Tutor</li>
+            <li data-dot="4">4 · Enviar</li>
+          </ol>
 
-            <!-- Datos del jugador -->
-            <fieldset class="form-fieldset">
-              <legend class="form-fieldset__legend">Datos del jugador</legend>
+          <!-- PASO 1: sede -->
+          <section class="wiz-step on" data-step="1" aria-label="Paso 1: sede">
+            <h3 class="wiz-title">¿Dónde va a entrenar?</h3>
+            <p class="wiz-hint">Elige la sede donde entrenará.</p>
+            <div class="wiz-pick" id="wiz-sedes" role="radiogroup" aria-label="Sede">
+              {sedes.map((s) => (
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={sedePreseleccionada === s.slug ? 'true' : 'false'}
+                  data-slug={s.slug}
+                  data-nombre={s.nombre}
+                  class:list={['wiz-pick__btn', { sel: sedePreseleccionada === s.slug }]}
+                >
+                  <span class="wiz-pick__radio" aria-hidden="true"></span>
+                  <span class="wiz-pick__text">
+                    <b class="wiz-pick__name">{s.nombre}</b>
+                    <small class="wiz-pick__addr">{s.direccion.includes('PLACEHOLDER') ? 'Dirección por confirmar — escríbenos por WhatsApp.' : s.direccion}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p class="wiz-note">La <b>categoría la asigna el club</b> según la fecha de nacimiento — no tienes que elegirla.</p>
+            <p class="wiz-err" id="wiz-e1" role="alert" hidden>Elige la sede para continuar.</p>
+            <div class="wiz-nav"><button type="button" class="btn btn--primary btn--lg wiz-nav__next" data-go="2">Continuar</button></div>
+          </section>
 
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="nombre-jugador" class="form-label">Nombre *</label>
-                  <input type="text" id="nombre-jugador" name="nombre-jugador" required class="form-input" placeholder="Nombre del jugador">
-                </div>
-                <div class="form-group">
-                  <label for="apellido-jugador" class="form-label">Apellido *</label>
-                  <input type="text" id="apellido-jugador" name="apellido-jugador" required class="form-input" placeholder="Apellido del jugador">
-                </div>
-              </div>
-
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="fecha-nacimiento" class="form-label">Fecha de nacimiento *</label>
-                  <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required class="form-input">
-                </div>
-                <div class="form-group">
-                  <label for="categoria" class="form-label">Categoría *</label>
-                  <select id="categoria" name="categoria" required class="form-input">
-                    <option value="">Seleccionar…</option>
-                    <option value="pre-formativas">Pre-Formativas (4–8 años)</option>
-                    <option value="formativas-bajas">Formativas Bajas (9–12 años)</option>
-                    <option value="formativas-altas">Formativas Altas (13–15 años)</option>
-                    <option value="elite">Elite / Reserva (16–19 años)</option>
-                  </select>
-                </div>
-              </div>
-
+          <!-- PASO 2: jugador -->
+          <section class="wiz-step" data-step="2" aria-label="Paso 2: jugador" hidden>
+            <h3 class="wiz-title">Datos del jugador</h3>
+            <p class="wiz-hint">Tal como aparecen en su acta de nacimiento.</p>
+            <div class="form-row-2">
               <div class="form-group">
-                <label for="experiencia" class="form-label">Experiencia previa</label>
-                <textarea id="experiencia" name="experiencia" rows="3" class="form-input" placeholder="Describe la experiencia futbolística del jugador, clubes anteriores, logros…"></textarea>
+                <label for="wiz-nombre" class="form-label">Nombre *</label>
+                <input type="text" id="wiz-nombre" class="form-input" placeholder="Ej. Liam" autocomplete="given-name">
               </div>
-            </fieldset>
-
-            <!-- Datos del representante -->
-            <fieldset class="form-fieldset">
-              <legend class="form-fieldset__legend">Datos del representante</legend>
-
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="nombre-rep" class="form-label">Nombre completo *</label>
-                  <input type="text" id="nombre-rep" name="nombre-rep" required class="form-input" placeholder="Nombre del padre/madre/tutor">
-                </div>
-                <div class="form-group">
-                  <label for="parentesco" class="form-label">Parentesco *</label>
-                  <select id="parentesco" name="parentesco" required class="form-input">
-                    <option value="">Seleccionar…</option>
-                    <option value="padre">Padre</option>
-                    <option value="madre">Madre</option>
-                    <option value="tutor">Tutor Legal</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-row-2">
-                <div class="form-group">
-                  <label for="telefono" class="form-label">Teléfono *</label>
-                  <input type="tel" id="telefono" name="telefono" required class="form-input" placeholder="+1 (809) 000-0000">
-                </div>
-                <div class="form-group">
-                  <label for="email" class="form-label">Correo electrónico *</label>
-                  <input type="email" id="email" name="email" required class="form-input" placeholder="correo@ejemplo.com">
-                </div>
-              </div>
-
               <div class="form-group">
-                <label for="direccion" class="form-label">Dirección</label>
-                <input type="text" id="direccion" name="direccion" class="form-input" placeholder="Barrio, ciudad">
+                <label for="wiz-apellidos" class="form-label">Apellidos *</label>
+                <input type="text" id="wiz-apellidos" class="form-input" placeholder="Ej. Tavárez Pérez" autocomplete="family-name">
               </div>
-            </fieldset>
+            </div>
+            <div class="form-group">
+              <label for="wiz-nacimiento" class="form-label">Fecha de nacimiento *</label>
+              <input type="date" id="wiz-nacimiento" class="form-input">
+            </div>
+            <div class="form-group">
+              <label for="wiz-colegio" class="form-label">Colegio al que asiste <span class="wiz-opt">(opcional)</span></label>
+              <input type="text" id="wiz-colegio" class="form-input" placeholder="Ej. Colegio Punta Cana" autocomplete="off" maxlength="120">
+            </div>
+            <p class="wiz-cat" id="wiz-cat" hidden>Categoría provisional: <b id="wiz-cat-val"></b> <span>(la confirma el club)</span></p>
+            <p class="wiz-err" id="wiz-e2" role="alert" hidden>Completa nombre, apellidos y una fecha de nacimiento válida.</p>
+            <div class="wiz-nav">
+              <button type="button" class="btn btn--secondary wiz-nav__back" data-go="1">Atrás</button>
+              <button type="button" class="btn btn--primary btn--lg wiz-nav__next" data-go="3">Continuar</button>
+            </div>
+          </section>
 
-            <!-- Términos -->
+          <!-- PASO 3: tutor -->
+          <section class="wiz-step" data-step="3" aria-label="Paso 3: tutor" hidden>
+            <h3 class="wiz-title">Datos del tutor</h3>
+            <p class="wiz-hint">A este contacto enviaremos convocatorias y recibos.</p>
+            <div class="form-group">
+              <label for="wiz-tutor" class="form-label">Nombre del tutor *</label>
+              <input type="text" id="wiz-tutor" class="form-input" placeholder="Nombre completo">
+            </div>
+            <div class="form-group">
+              <span class="form-label" id="wiz-parentesco-label">Parentesco *</span>
+              <div class="wiz-chips" id="wiz-parentesco" role="radiogroup" aria-labelledby="wiz-parentesco-label">
+                <button type="button" data-v="Padre">Padre</button>
+                <button type="button" data-v="Madre">Madre</button>
+                <button type="button" data-v="Tutor Legal">Tutor Legal</button>
+                <button type="button" data-v="Abuelo/a">Abuelo/a</button>
+                <button type="button" data-v="Otro">Otro</button>
+              </div>
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="wiz-tel" class="form-label">Teléfono / WhatsApp *</label>
+                <input type="tel" id="wiz-tel" class="form-input" inputmode="tel" placeholder="809-000-0000" autocomplete="tel">
+              </div>
+              <div class="form-group">
+                <label for="wiz-email" class="form-label">Correo *</label>
+                <input type="email" id="wiz-email" class="form-input" inputmode="email" placeholder="correo@ejemplo.com" autocomplete="email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="wiz-ocupacion" class="form-label">Ocupación del tutor <span class="wiz-opt">(opcional)</span></label>
+              <input type="text" id="wiz-ocupacion" class="form-input" placeholder="Ej. Médica, docente, comerciante…" autocomplete="off" maxlength="120">
+            </div>
+            <button type="button" id="wiz-add2" class="wiz-toggle" aria-expanded="false" aria-controls="wiz-tutor2">+ Agregar segundo tutor (opcional)</button>
+            <div id="wiz-tutor2" hidden>
+              <div class="form-group">
+                <label for="wiz-tutor2-nombre" class="form-label">Nombre del segundo tutor</label>
+                <input type="text" id="wiz-tutor2-nombre" class="form-input" placeholder="Nombre completo">
+              </div>
+              <div class="form-group">
+                <span class="form-label" id="wiz-parentesco2-label">Parentesco</span>
+                <div class="wiz-chips" id="wiz-parentesco2" role="radiogroup" aria-labelledby="wiz-parentesco2-label">
+                  <button type="button" data-v="Padre">Padre</button>
+                  <button type="button" data-v="Madre">Madre</button>
+                  <button type="button" data-v="Tutor Legal">Tutor Legal</button>
+                  <button type="button" data-v="Abuelo/a">Abuelo/a</button>
+                  <button type="button" data-v="Otro">Otro</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="wiz-tutor2-tel" class="form-label">Teléfono / WhatsApp</label>
+                <input type="tel" id="wiz-tutor2-tel" class="form-input" inputmode="tel" placeholder="809-000-0000">
+              </div>
+            </div>
+            <p class="wiz-err" id="wiz-e3" role="alert" hidden>Completa nombre, parentesco, teléfono y un correo válido del tutor.</p>
+            <div class="wiz-nav">
+              <button type="button" class="btn btn--secondary wiz-nav__back" data-go="2">Atrás</button>
+              <button type="button" class="btn btn--primary btn--lg wiz-nav__next" data-go="4">Revisar</button>
+            </div>
+          </section>
+
+          <!-- PASO 4: opcionales + resumen + envío -->
+          <section class="wiz-step" data-step="4" aria-label="Paso 4: revisar y enviar" hidden>
+            <h3 class="wiz-title">Revisa y envía</h3>
+            <p class="wiz-hint">Lo opcional puede quedar para después, en la sede.</p>
+            <div class="form-group">
+              <label for="wiz-dir" class="form-label">Dirección <span class="wiz-opt">(opcional)</span></label>
+              <input type="text" id="wiz-dir" class="form-input" placeholder="Sector, calle…" autocomplete="street-address">
+            </div>
+            <div class="form-group">
+              <label for="wiz-med" class="form-label">Condición médica o alergia <span class="wiz-opt">(opcional)</span></label>
+              <textarea id="wiz-med" rows="2" class="form-input" placeholder="Ej. Asma leve, usa inhalador"></textarea>
+            </div>
+            <div class="wiz-resume" id="wiz-resumen" aria-live="polite"></div>
             <div class="form-group">
               <label class="checkbox-label">
-                <input type="checkbox" name="terminos" required class="form-checkbox">
-                <span class="form-label">Acepto los <a href="#" class="form-link">términos y condiciones</a> y la <a href="#" class="form-link">política de privacidad</a>.</span>
+                <input type="checkbox" id="wiz-terminos" class="form-checkbox">
+                <span class="form-label">Acepto los <a href="#" class="form-link">términos y condiciones</a> y la <a href="#" class="form-link">política de privacidad</a>. *</span>
               </label>
             </div>
+            <!-- Honeypot anti-spam (oculto para humanos) -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="wiz-sitio">Sitio web</label>
+              <input type="text" id="wiz-sitio" tabindex="-1" autocomplete="off">
+            </div>
+            <p class="wiz-err" id="wiz-e4" role="alert" hidden></p>
+            <div class="wiz-nav">
+              <button type="button" class="btn btn--secondary wiz-nav__back" data-go="3">Atrás</button>
+              <button type="button" id="wiz-send" class="btn btn--primary btn--lg wiz-nav__next">Enviar inscripción</button>
+            </div>
+          </section>
 
-            <button type="submit" class="btn btn--primary btn--lg btn-full">
-              Enviar inscripción
-            </button>
+          <!-- ÉXITO -->
+          <section class="wiz-step" data-step="5" aria-label="Inscripción recibida" hidden>
+            <div class="wiz-ok">
+              <div class="wiz-ok__big" aria-hidden="true">✓</div>
+              <h3 class="wiz-title">¡Inscripción recibida!</h3>
+              <p class="wiz-hint" id="wiz-okmsg">Te contactaremos por WhatsApp en menos de 48 horas para la prueba de nivel.</p>
+            </div>
+            <div class="wiz-nav"><button type="button" class="btn btn--primary btn--lg wiz-nav__next" data-go="1" id="wiz-again">Nueva inscripción</button></div>
+          </section>
 
-          </form>
+          <p class="wiz-draft" id="wiz-draft" hidden>Borrador guardado en este dispositivo.</p>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SEDES — dónde entrenará el jugador
+       ============================================================ -->
+  <section class="section bg-navy-05" id="sedes">
+    <div class="container-x">
+      <p class="eyebrow">Dónde entrenamos</p>
+      <h2 class="h-section mb-2">Nuestras sedes</h2>
+      <p class="lede mb-10 max-w-[60ch]">
+        Elige tu sede más cercana en el formulario. Los horarios se confirman
+        por sede al inscribirte.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {
+          sedes.map((s) => (
+            <article class="relative overflow-hidden bg-white border border-navy/10 rounded-lg p-6 md:p-8 transition-[border-color,box-shadow] duration-200 hover:border-navy/25 hover:shadow-[0_4px_20px_rgba(0,40,92,0.08)] flex flex-col gap-4">
+              <div>
+                <h3 class="h-card mb-2">{s.nombre}</h3>
+                <p class="font-body text-[0.95rem] leading-[1.55] text-navy-60">
+                  {s.direccion.includes('PLACEHOLDER')
+                    ? 'Dirección por confirmar — escríbenos por WhatsApp y te guiamos.'
+                    : s.direccion}
+                </p>
+              </div>
+              <p class="font-body text-[0.95rem] leading-[1.55]">
+                <a href={`tel:${s.telefono.replace(/\s/g, '')}`} class="text-navy underline underline-offset-4">
+                  {s.telefono}
+                </a>
+              </p>
+              <footer class="pt-2 mt-auto flex flex-wrap gap-3">
+                <a
+                  href={`/inscribete?sede=${s.slug}#formulario`}
+                  class="btn btn--primary"
+                  aria-label={`Elegir la sede ${s.nombre} en el formulario`}
+                >
+                  Elegir esta sede
+                  <span class="arrow" aria-hidden="true">→</span>
+                </a>
+                <a
+                  href={s.mapsUrl}
+                  class="btn btn--secondary"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`Cómo llegar a ${s.nombre}`}
+                >
+                  Cómo llegar
+                </a>
+              </footer>
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -276,6 +392,334 @@ import FaqSection from '../components/FaqSection.astro';
     contactPhone="+1 809-652-9450"
   />
 
+<script>
+  // ============================================================
+  // Wizard de inscripción — 4 pasos + éxito.
+  // Sin campo de categoría (decisión del club): se deriva una
+  // categoría PROVISIONAL desde la fecha de nacimiento solo para
+  // cumplir el contrato de /api/inscripcion-plataforma (CategoryType).
+  // El coordinador la confirma al activar.
+  //
+  // TABLA EDAD→CATEGORÍA PROVISIONAL (a validar por el club):
+  //   4–5 años → Sub-6 (Iniciación) | 6–7 → Sub-8 (Pre-Benjamín)
+  //   8–9 → Sub-10 (Benjamín) | 10–11 → Sub-12 (Alevín)
+  //   12–13 → Sub-14 (Infantil Mayor) | 14 → Sub-15 (Infantil)
+  //   15–17 → Sub-18 (Juvenil)
+  //   <4 → Sub-6 (Iniciación) · >17 → Sub-18 (Juvenil)
+  //   Femenino Juvenil nunca se auto-deriva (lo asigna el club).
+  // ============================================================
+  const DRAFT_KEY = 'pcfc-inscripcion-draft-v1';
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function categoriaProvisional(fechaISO: string): string {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(fechaISO);
+    if (!m) return '';
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - Number(m[1]);
+    const mesDia = (hoy.getMonth() + 1) * 100 + hoy.getDate();
+    if (mesDia < Number(m[2]) * 100 + Number(m[3])) edad -= 1;
+    if (edad <= 5) return 'Sub-6 (Iniciación)';
+    if (edad <= 7) return 'Sub-8 (Pre-Benjamín)';
+    if (edad <= 9) return 'Sub-10 (Benjamín)';
+    if (edad <= 11) return 'Sub-12 (Alevín)';
+    if (edad <= 13) return 'Sub-14 (Infantil Mayor)';
+    if (edad === 14) return 'Sub-15 (Infantil)';
+    return 'Sub-18 (Juvenil)';
+  }
+
+  function fechaValida(fecha: string): boolean {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha);
+    if (!m) return false;
+    const y = Number(m[1]); const mo = Number(m[2]); const d = Number(m[3]);
+    if (y < 2000 || y > new Date().getFullYear()) return false;
+    const dt = new Date(Date.UTC(y, mo - 1, d));
+    return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d;
+  }
+
+  const root = document.getElementById('formulario');
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement | null;
+  const val = (id: string) => ($(id)?.value ?? '').trim();
+
+  let sede = root?.dataset.sedePreselect ?? '';
+  let sedeNombre = '';
+  let parentesco = '';
+  let parentesco2 = '';
+  let tutor2on = false;
+
+  const sedeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('#wiz-sedes button'));
+  function syncSedes() {
+    sedeBtns.forEach((b) => {
+      const on = b.dataset.slug === sede;
+      b.classList.toggle('sel', on);
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      if (on) sedeNombre = b.dataset.nombre ?? '';
+    });
+  }
+  sedeBtns.forEach((b) => {
+    b.addEventListener('click', () => { sede = b.dataset.slug ?? ''; syncSedes(); hideErr(1); saveDraft(); });
+  });
+  syncSedes();
+
+  function chipGroup(id: string, set: (v: string) => void) {
+    const btns = Array.from(document.querySelectorAll<HTMLButtonElement>(`#${id} button`));
+    btns.forEach((b) => {
+      if (b.dataset.v === (id === 'wiz-parentesco' ? parentesco : parentesco2)) b.classList.add('sel');
+      b.addEventListener('click', () => {
+        btns.forEach((x) => x.classList.remove('sel'));
+        b.classList.add('sel');
+        set(b.dataset.v ?? '');
+        hideErr(3);
+        saveDraft();
+      });
+    });
+    return btns;
+  }
+  const chips1 = chipGroup('wiz-parentesco', (v) => { parentesco = v; });
+  const chips2 = chipGroup('wiz-parentesco2', (v) => { parentesco2 = v; });
+
+  const add2 = $('wiz-add2');
+  const tutor2 = document.getElementById('wiz-tutor2');
+  function setTutor2(on: boolean) {
+    tutor2on = on;
+    if (tutor2) tutor2.hidden = !on;
+    if (add2) {
+      add2.textContent = on ? '− Quitar segundo tutor' : '+ Agregar segundo tutor (opcional)';
+      add2.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+  }
+  add2?.addEventListener('click', () => setTutor2(!tutor2on));
+
+  function showErr(step: number, msg?: string) {
+    const e = document.getElementById(`wiz-e${step}`);
+    if (!e) return;
+    if (msg) e.textContent = msg;
+    e.hidden = false;
+  }
+  function hideErr(step: number) {
+    document.getElementById(`wiz-e${step}`)?.setAttribute('hidden', '');
+  }
+
+  function validStep(n: number): boolean {
+    if (n === 1) return sede !== '';
+    if (n === 2) return val('wiz-nombre') !== '' && val('wiz-apellidos') !== '' && fechaValida(val('wiz-nacimiento'));
+    if (n === 3) {
+      return (
+        val('wiz-tutor') !== '' &&
+        parentesco !== '' &&
+        val('wiz-tel').replace(/\D/g, '').length >= 7 &&
+        EMAIL_RE.test(val('wiz-email'))
+      );
+    }
+    return true;
+  }
+
+  const ERR_MSG: Record<number, string> = {
+    1: 'Elige la sede para continuar.',
+    2: 'Completa nombre, apellidos y una fecha de nacimiento válida.',
+    3: 'Completa nombre, parentesco, teléfono y un correo válido del tutor.',
+  };
+
+  function escHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderResumen() {
+    const el = document.getElementById('wiz-resumen');
+    if (!el) return;
+    const cat = categoriaProvisional(val('wiz-nacimiento'));
+    const seg = tutor2on && val('wiz-tutor2-nombre')
+      ? `<div><b>Segundo tutor:</b> ${escHtml(val('wiz-tutor2-nombre'))}${parentesco2 ? ` (${escHtml(parentesco2)})` : ''}${val('wiz-tutor2-tel') ? ` — ${escHtml(val('wiz-tutor2-tel'))}` : ''}</div>`
+      : '';
+    el.innerHTML =
+      `<div><b>Sede:</b> ${escHtml(sedeNombre || sede)}</div>` +
+      `<div><b>Jugador:</b> ${escHtml(val('wiz-nombre'))} ${escHtml(val('wiz-apellidos'))} (${escHtml(val('wiz-nacimiento'))})</div>` +
+      `<div><b>Categoría provisional:</b> ${escHtml(cat)} <span class="wiz-resume__note">(la confirma el club)</span></div>` +
+      (val('wiz-colegio') ? `<div><b>Colegio:</b> ${escHtml(val('wiz-colegio'))}</div>` : '') +
+      `<div><b>Tutor:</b> ${escHtml(val('wiz-tutor'))} (${escHtml(parentesco)}) — ${escHtml(val('wiz-tel'))} · ${escHtml(val('wiz-email'))}</div>` +
+      (val('wiz-ocupacion') ? `<div><b>Ocupación del tutor:</b> ${escHtml(val('wiz-ocupacion'))}</div>` : '') +
+      seg;
+  }
+
+  function go(n: number) {
+    document.querySelectorAll('.wiz-err').forEach((e) => e.setAttribute('hidden', ''));
+    document.querySelectorAll('.wiz-step').forEach((s) => {
+      const on = Number((s as HTMLElement).dataset.step) === n;
+      (s as HTMLElement).hidden = !on;
+      s.classList.toggle('on', on);
+    });
+    if (n <= 4) {
+      const fill = document.getElementById('wiz-barfill');
+      if (fill) fill.style.width = `${n * 25}%`;
+      const count = document.getElementById('wiz-stepcount');
+      if (count) count.textContent = `Paso ${n} de 4`;
+      document.querySelectorAll('#wiz-dots li').forEach((d) => {
+        d.classList.toggle('on', Number((d as HTMLElement).dataset.dot) === n);
+      });
+      if (n === 4) renderResumen();
+    } else {
+      const fill = document.getElementById('wiz-barfill');
+      if (fill) fill.style.width = '100%';
+      const count = document.getElementById('wiz-stepcount');
+      if (count) count.textContent = 'Completado';
+    }
+    document.getElementById('formulario')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.querySelectorAll('[data-go]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const n = Number((b as HTMLElement).dataset.go);
+      const cur = currentStep();
+      if (n > cur) {
+        for (let s = cur; s < n; s += 1) {
+          if (!validStep(s)) { go(s); showErr(s, ERR_MSG[s]); return; }
+        }
+      }
+      if (n === 1 && (b as HTMLElement).id === 'wiz-again') resetWizard();
+      else go(n);
+    });
+  });
+
+  function currentStep(): number {
+    const on = document.querySelector('.wiz-step.on');
+    return on ? Number((on as HTMLElement).dataset.step) : 1;
+  }
+
+  // Borrador auto-guardado en localStorage
+  function saveDraft() {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({
+        sede, parentesco, parentesco2, tutor2on,
+        nombre: val('wiz-nombre'), apellidos: val('wiz-apellidos'),
+        nacimiento: val('wiz-nacimiento'), colegio: val('wiz-colegio'), tutor: val('wiz-tutor'),
+        ocupacion: val('wiz-ocupacion'), tel: val('wiz-tel'), email: val('wiz-email'),
+        tutor2: val('wiz-tutor2-nombre'), tutor2tel: val('wiz-tutor2-tel'),
+        dir: val('wiz-dir'), med: val('wiz-med'),
+      }));
+      document.getElementById('wiz-draft')?.removeAttribute('hidden');
+    } catch { /* almacenamiento no disponible */ }
+  }
+  function loadDraft() {
+    let d: Record<string, string | boolean> = {};
+    try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? '{}'); } catch { return; }
+    const set = (id: string, v: unknown) => { const el = $(id); if (el && typeof v === 'string') el.value = v; };
+    if (typeof d.sede === 'string' && sedeBtns.some((b) => b.dataset.slug === d.sede)) sede = d.sede as string;
+    if (typeof d.parentesco === 'string') {
+      parentesco = d.parentesco as string;
+      chips1.forEach((b) => b.classList.toggle('sel', b.dataset.v === parentesco));
+    }
+    if (typeof d.parentesco2 === 'string') {
+      parentesco2 = d.parentesco2 as string;
+      chips2.forEach((b) => b.classList.toggle('sel', b.dataset.v === parentesco2));
+    }
+    set('wiz-nombre', d.nombre); set('wiz-apellidos', d.apellidos);
+    set('wiz-nacimiento', d.nacimiento); set('wiz-colegio', d.colegio); set('wiz-tutor', d.tutor);
+    set('wiz-ocupacion', d.ocupacion); set('wiz-tel', d.tel); set('wiz-email', d.email);
+    set('wiz-tutor2-nombre', d.tutor2); set('wiz-tutor2-tel', d.tutor2tel);
+    set('wiz-dir', d.dir); set('wiz-med', d.med);
+    if (d.tutor2on === true) setTutor2(true);
+    syncSedes();
+    updateCat();
+    if (Object.keys(d).length) document.getElementById('wiz-draft')?.removeAttribute('hidden');
+  }
+  ['wiz-nombre', 'wiz-apellidos', 'wiz-nacimiento', 'wiz-colegio', 'wiz-tutor', 'wiz-ocupacion', 'wiz-tel', 'wiz-email',
+   'wiz-tutor2-nombre', 'wiz-tutor2-tel', 'wiz-dir', 'wiz-med'].forEach((id) => {
+    $(id)?.addEventListener('input', () => {
+      if (id === 'wiz-nacimiento') updateCat();
+      hideErr(currentStep());
+      saveDraft();
+    });
+  });
+
+  function updateCat() {
+    const cat = categoriaProvisional(val('wiz-nacimiento'));
+    const box = document.getElementById('wiz-cat');
+    const lbl = document.getElementById('wiz-cat-val');
+    if (box && lbl) {
+      if (cat) { lbl.textContent = cat; box.hidden = false; }
+      else box.hidden = true;
+    }
+  }
+
+  function resetWizard() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
+    ['wiz-nombre', 'wiz-apellidos', 'wiz-nacimiento', 'wiz-colegio', 'wiz-tutor', 'wiz-ocupacion', 'wiz-tel', 'wiz-email',
+     'wiz-tutor2-nombre', 'wiz-tutor2-tel', 'wiz-dir', 'wiz-med', 'wiz-sitio'].forEach((id) => {
+      const el = $(id); if (el) el.value = '';
+    });
+    const term = $('wiz-terminos') as HTMLInputElement | null;
+    if (term) term.checked = false;
+    sede = root?.dataset.sedePreselect ?? '';
+    parentesco = ''; parentesco2 = '';
+    chips1.forEach((b) => b.classList.remove('sel'));
+    chips2.forEach((b) => b.classList.remove('sel'));
+    setTutor2(false);
+    syncSedes();
+    updateCat();
+    document.getElementById('wiz-draft')?.setAttribute('hidden', '');
+    go(1);
+  }
+
+  const sendBtn = document.getElementById('wiz-send') as HTMLButtonElement | null;
+  sendBtn?.addEventListener('click', async () => {
+    for (let s = 1; s <= 3; s += 1) {
+      if (!validStep(s)) { go(s); showErr(s, ERR_MSG[s]); return; }
+    }
+    const term = $('wiz-terminos') as HTMLInputElement | null;
+    if (!term?.checked) { showErr(4, 'Debes aceptar los términos para enviar.'); return; }
+    const category = categoriaProvisional(val('wiz-nacimiento'));
+    if (!category) { go(2); showErr(2); return; }
+    if (!sendBtn) return;
+
+    const payload = {
+      firstName: val('wiz-nombre'),
+      lastName: val('wiz-apellidos'),
+      birthDate: val('wiz-nacimiento'),
+      category,
+      sede,
+      parentName: val('wiz-tutor'),
+      parentRelationship: parentesco,
+      parentPhone: val('wiz-tel'),
+      parentEmail: val('wiz-email'),
+      school: val('wiz-colegio').slice(0, 120),
+      parentOccupation: val('wiz-ocupacion').slice(0, 120),
+      address: val('wiz-dir'),
+      medicalNotes: val('wiz-med'),
+      secondGuardian: tutor2on && val('wiz-tutor2-nombre')
+        ? { name: val('wiz-tutor2-nombre'), relationship: parentesco2, phone: val('wiz-tutor2-tel') }
+        : null,
+      sitio_web: val('wiz-sitio'),
+      terminos: true,
+    };
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Enviando…';
+    try {
+      const res = await fetch('/api/inscripcion-plataforma', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const out = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (res.ok && out?.ok) {
+        try { localStorage.removeItem(DRAFT_KEY); } catch { /* noop */ }
+        document.getElementById('wiz-draft')?.setAttribute('hidden', '');
+        const okmsg = document.getElementById('wiz-okmsg');
+        if (okmsg) okmsg.textContent = `${payload.firstName} quedó preinscrito en ${sedeNombre || sede} (${category}, provisional). Te contactaremos por WhatsApp en menos de 48 horas.`;
+        go(5);
+      } else {
+        showErr(4, out?.error ?? 'No pudimos enviar tu inscripción. Inténtalo de nuevo.');
+      }
+    } catch {
+      showErr(4, 'Sin conexión. Revisa tu internet e inténtalo de nuevo.');
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Enviar inscripción';
+    }
+  });
+
+  loadDraft();
+</script>
+
 </Base>
 
 <style>
@@ -323,47 +767,6 @@ import FaqSection from '../components/FaqSection.astro';
     font-size: 0.875rem;
     line-height: 1.6;
     color: var(--color-navy-30);
-  }
-
-  /* ============================================================
-     Requisitos box
-     ============================================================ */
-  .req-box {
-    background: var(--color-sky-10);
-    border: 1px solid var(--color-sky-30);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-  }
-
-  .req-box__title {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--color-navy);
-    margin-bottom: 1rem;
-  }
-
-  .req-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .req-list__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.625rem;
-    font-size: 0.9rem;
-    color: var(--color-navy);
-    line-height: 1.5;
-  }
-
-  .req-list__icon {
-    width: 1rem;
-    height: 1rem;
-    min-width: 1rem;
-    color: var(--color-cat-pre);
-    margin-top: 0.15rem;
   }
 
   /* ============================================================
@@ -481,6 +884,36 @@ import FaqSection from '../components/FaqSection.astro';
     margin-top: 0.5rem;
   }
 
+  .btn-full:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
+
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .form-status {
+    margin: 0 0 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-navy);
+    background: var(--color-navy-05);
+    border: 1px solid var(--color-navy-10);
+    border-left: 4px solid var(--color-sky);
+  }
+
+  .form-status[data-kind='error'] {
+    border-left-color: #b3261e;
+  }
+
   /* ============================================================
      Trust signals
      ============================================================ */
@@ -534,15 +967,323 @@ import FaqSection from '../components/FaqSection.astro';
   }
 
   /* ============================================================
+     Wizard de inscripción (pasos 1–4 + éxito)
+     ============================================================ */
+  .wiz-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-sky);
+    margin: 0 0 0.5rem;
+  }
+
+  .wiz-sub {
+    font-size: 0.875rem;
+    color: var(--color-navy-30);
+    margin: 0 0 1.25rem;
+  }
+
+  .wiz-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .wiz-bar {
+    flex: 1;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: var(--color-navy-10);
+    overflow: hidden;
+  }
+
+  .wiz-bar > div {
+    height: 100%;
+    width: 25%;
+    border-radius: inherit;
+    background: var(--color-sky);
+    transition: width 300ms ease;
+  }
+
+  .wiz-stepcount {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-navy-30);
+    white-space: nowrap;
+  }
+
+  .wiz-dots {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0 0 1.5rem;
+  }
+
+  .wiz-dots li {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-navy-30);
+    background: var(--color-navy-05);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 9999px;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .wiz-dots li.on {
+    color: var(--color-navy);
+    background: var(--color-sky-10);
+    border-color: var(--color-sky-30);
+  }
+
+  .wiz-step[hidden] {
+    display: none;
+  }
+
+  .wiz-title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-navy);
+    margin: 0 0 0.25rem;
+  }
+
+  .wiz-hint {
+    font-size: 0.9375rem;
+    color: var(--color-navy-30);
+    margin: 0 0 1rem;
+  }
+
+  /* Paso 1: sedes como radio cards seleccionables */
+  .wiz-pick {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+  }
+
+  .wiz-pick__btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.125rem;
+    background: var(--color-pure-white);
+    border: 2px solid var(--color-navy-10);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  }
+
+  .wiz-pick__btn:hover {
+    border-color: var(--color-sky);
+  }
+
+  .wiz-pick__btn:focus-visible {
+    outline: none;
+    border-color: var(--color-sky);
+    box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.35);
+  }
+
+  .wiz-pick__btn.sel {
+    border-color: var(--color-sky);
+    background: var(--color-sky-10);
+    box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.18);
+  }
+
+  .wiz-pick__radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    min-width: 1.25rem;
+    border-radius: 50%;
+    border: 2px solid var(--color-navy-10);
+    background: var(--color-pure-white);
+    margin-top: 0.15rem;
+    position: relative;
+    transition: border-color 200ms ease, background 200ms ease;
+  }
+
+  .wiz-pick__btn:hover .wiz-pick__radio {
+    border-color: var(--color-sky);
+  }
+
+  .wiz-pick__btn.sel .wiz-pick__radio {
+    border-color: var(--color-sky);
+  }
+
+  .wiz-pick__btn.sel .wiz-pick__radio::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--color-sky);
+  }
+
+  .wiz-pick__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .wiz-pick__name {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-navy);
+  }
+
+  .wiz-pick__addr {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--color-navy-30);
+  }
+
+  .wiz-note {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-navy-30);
+    margin: 0 0 0.5rem;
+  }
+
+  .wiz-err {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b3261e;
+    margin: 0.5rem 0 0;
+  }
+
+  .wiz-err[hidden] {
+    display: none;
+  }
+
+  .wiz-nav {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .wiz-nav__next {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .wiz-cat {
+    font-size: 0.875rem;
+    color: var(--color-navy);
+    background: var(--color-sky-10);
+    border: 1px solid var(--color-sky-30);
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    margin: 0 0 1rem;
+  }
+
+  .wiz-cat[hidden] {
+    display: none;
+  }
+
+  .wiz-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .wiz-chips button {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    background: var(--color-pure-white);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 9999px;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease;
+  }
+
+  .wiz-chips button:hover {
+    border-color: var(--color-sky);
+  }
+
+  .wiz-chips button.sel {
+    border-color: var(--color-sky);
+    background: var(--color-sky-10);
+  }
+
+  .wiz-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0.25rem 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-sky);
+    cursor: pointer;
+  }
+
+  .wiz-opt {
+    font-weight: 400;
+    color: var(--color-navy-30);
+  }
+
+  .wiz-resume {
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--color-navy);
+    background: var(--color-navy-05);
+    border: 1px solid var(--color-navy-10);
+    border-radius: 0.75rem;
+    padding: 1rem 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .wiz-resume__note {
+    color: var(--color-navy-30);
+    font-size: 0.8125rem;
+  }
+
+  .wiz-ok {
+    text-align: center;
+    padding: 1rem 0 0.5rem;
+  }
+
+  .wiz-ok__big {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: var(--color-cat-pre);
+    color: var(--color-white);
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wiz-draft {
+    font-size: 0.75rem;
+    color: var(--color-navy-30);
+    margin: 1rem 0 0;
+  }
+
+  .wiz-draft[hidden] {
+    display: none;
+  }
+
+  /* ============================================================
      Responsive
      ============================================================ */
   @media (max-width: 640px) {
     .form-row-2 {
       grid-template-columns: 1fr;
-    }
-
-    .req-box {
-      padding: 1.25rem;
     }
 
     .trust-card {

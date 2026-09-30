@@ -18,6 +18,27 @@
       "bucket_name": "pcfc-media"
     }
   ],
+  // Image Resizing via binding: el endpoint /_image (imageService
+  // 'cloudflare-binding' en astro.config.mjs) transforma con env.IMAGES.
+  "images": { "binding": "IMAGES" },
+  // Email Service: envío de los formularios /sponsors#contacto e /inscribete#formulario.
+  // Requiere puntacanafc.com onboarded en Email Service (remitente del dominio).
+  "send_email": [{ "name": "SEB" }],
+  "vars": {
+    // Destino de solicitudes de patrocinio (default en código si falta).
+    "SPONSOR_EMAIL": "rrhhpuntacanafc@gmail.com",
+    // Remitente visible (debe ser del dominio onboarded en Email Service).
+    "SPONSOR_FROM": "alianzas@puntacanafc.com",
+    // Destino de solicitudes de inscripción (default en código si falta).
+    "ADMISSION_EMAIL": "rrhhpuntacanafc@gmail.com",
+    // Remitente visible (debe ser del dominio onboarded en Email Service).
+    "ADMISSION_FROM": "inscripciones@puntacanafc.com",
+    // Puente web → plataforma (POST /api/inscripcion-plataforma).
+    // PLATFORM_URL: base de la plataforma (prod: URL real; dev: http://127.0.0.1:3000).
+    "PLATFORM_URL": "https://app.puntacanafc.com",
+    // PLATFORM_API_KEY: secreto compartido `WEB_API_KEY` (header x-web-key).
+    // Se configura como secret (`wrangler secret put PLATFORM_API_KEY`) y NUNCA en plaintext aquí.
+  },
   "routes": [
     { "pattern": "puntacanafc.com/*", "zone_id": "1932f24b89698444d10590e3aec6ca8a" },
     { "pattern": "www.puntacanafc.com/*", "zone_id": "1932f24b89698444d10590e3aec6ca8a" }

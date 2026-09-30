@@ -26,7 +26,7 @@ const { categories } = Astro.props;
     <ol class="list-none grid grid-cols-1 border-t border-navy/10" role="list">
       {
         categories.map((cat, i) => (
-          <li class="border-b border-navy/10">
+          <li class="border-b border-navy/10" data-reveal="up" data-reveal-delay={Math.min(i * 70, 280)}>
             <a
               href={`/area-deportiva#${cat.slug}`}
               class="cat-row grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_auto] gap-8 items-center py-7 transition-[background,padding] duration-200 hover:bg-sky-10 lg:hover:px-4"

@@ -36,50 +36,45 @@ const { images = [] } = Astro.props;
     >
       {images.length >= 5 ? (
         <>
-          <figure class="mosaic__item relative overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2">
-            {typeof images[0].src === 'string' ? (
-              <img
-                src={images[0].src}
-                alt={images[0].alt}
-                loading="lazy"
-                class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
-              />
-            ) : (
-              <Picture
-                src={images[0].src}
-                alt={images[0].alt}
-                widths={[800, 1200]}
-                sizes="(max-width: 768px) 800px, 1200px"
-                formats={['avif', 'webp']}
-                  quality={65}
-                loading="lazy"
-                class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
-              />
-            )}
-          </figure>
-          {images.slice(1, 5).map((img) => (
-            <figure class="relative overflow-hidden bg-navy-30">
-              {typeof img.src === 'string' ? (
+          {(() => {
+            const tiles = [images[0], ...images.slice(1, 5)];
+            const sizes = [
+              { widths: [800, 1200] as const, sizes: '(max-width: 768px) 800px, 1200px' },
+              ...tiles.slice(1).map(() => ({ widths: [400, 800] as const, sizes: '(max-width: 768px) 400px, 800px' })),
+            ];
+            return tiles.map((img, i) => {
+              const pic = typeof img.src === 'string' ? (
                 <img
                   src={img.src}
                   alt={img.alt}
                   loading="lazy"
-                  class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
                 />
               ) : (
                 <Picture
                   src={img.src}
                   alt={img.alt}
-                  widths={[400, 800]}
-                  sizes="(max-width: 768px) 400px, 800px"
+                  widths={[...sizes[i].widths]}
+                  sizes={sizes[i].sizes}
                   formats={['avif', 'webp']}
                   quality={65}
                   loading="lazy"
-                  class="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
                 />
-              )}
-            </figure>
-          ))}
+              );
+              const cls =
+                i === 0
+                  ? 'mosaic__item group relative block overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2'
+                  : 'group relative block overflow-hidden bg-navy-30';
+              return img.href ? (
+                <a href={img.href} class={cls} aria-label={`Ver galería: ${img.alt}`} data-reveal="zoom" data-reveal-delay={i * 90}>
+                  {pic}
+                </a>
+              ) : (
+                <figure class={cls} data-reveal="zoom" data-reveal-delay={i * 90}>{pic}</figure>
+              );
+            });
+          })()}
         </>
       ) : (
         <p class="text-white/60">No hay suficientes imágenes para mostrar la galería.</p>
@@ -87,3 +82,11 @@ const { images = [] } = Astro.props;
     </div>
   </div>
 </section>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-component='community-mosaic'] img {
+      transform: none !important;
+    }
+  }
+</style>

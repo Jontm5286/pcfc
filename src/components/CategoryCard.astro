@@ -10,7 +10,7 @@
  *   - ageRange: string           Rango etario, ej. "4–8 años"
  *   - focus: string              Foco metodológico (línea corta)
  *   - format: string             Formato de partido, ej. "Partidos 7v7"
- *   - schedule: string           Horario semanal
+ *   - schedule?: string          Horario semanal (oculto temporalmente; no renderizar)
  *   - description: string        Párrafo descriptivo
  *   - ageMin: number             Edad mínima (atributo de orden)
  *   - ageMax: number             Edad máxima
@@ -27,7 +27,7 @@ interface Props {
   ageRange: string;
   focus: string;
   format: string;
-  schedule: string;
+  schedule?: string;
   description: string;
   ageMin: number;
   ageMax: number;
@@ -40,7 +40,6 @@ const {
   ageRange,
   focus,
   format,
-  schedule,
   description,
   ageMin,
   ageMax,
@@ -91,12 +90,6 @@ const badgeClass = `badge badge--${slug}`;
           Formato
         </dt>
         <dd class="font-body text-[0.9rem] text-navy leading-snug">{format}</dd>
-      </div>
-      <div>
-        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
-          Horario
-        </dt>
-        <dd class="font-body text-[0.9rem] text-navy leading-snug">{schedule}</dd>
       </div>
     </dl>
 

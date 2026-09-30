@@ -1,0 +1,15 @@
+{
+  "name": "Lamine Tavárez",
+  "slug": "lamine-tavarez",
+  "position": "Atacante",
+  "number": 10,
+  "photo": "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&h=1200&fit=crop&crop=top&q=80",
+  "photoAlt": "Lamine Tavárez, atacante de Punta Cana FC",
+  "category": "form-alta",
+  "featured": true,
+  "order": 2,
+  "matches": 22,
+  "goals": 15,
+  "assists": 11,
+  "season": "2026/2027"
+}

@@ -18,6 +18,18 @@ import StockImage from '../components/StockImage.astro';
 import { fetchPublishedGalleries } from '../lib/academy-feed';
 
 // ──────────────────────────────────────────────────────────────
+// Respaldo local — pool de assets propios (cero red externa).
+// WebP 1000px generados de src/assets (ver public/images/fotos-fallback).
+// Los posts hardcodeados rotan este pool; las alts/captions siguen
+// describiendo cada partido.
+// ──────────────────────────────────────────────────────────────
+const FALLBACK_POOL: string[] = Array.from(
+  { length: 12 },
+  (_, i) => `/images/fotos-fallback/fb-${String(i + 1).padStart(2, '0')}.webp`,
+);
+
+
+// ──────────────────────────────────────────────────────────────
 // Datos hardcodeados — 8 posts mínimos tal como exige la tarea
 // ──────────────────────────────────────────────────────────────
 
@@ -43,10 +55,10 @@ const posts: MatchPost[] = [
     team2: 'Atlántico FC',
     date: '6 sep 2026',
     photoCount: 24,
-    thumbnail: 'https://images.unsplash.com/photo-1431324173062-725bfd060215?w=800&q=80',
+    thumbnail: FALLBACK_POOL[0],
     thumbnailAlt: 'PCFC vs Atlántico FC — Partido Elite en Cancha Principal',
     photos: Array.from({ length: 24 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-elite-6sep-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC vs Atlántico FC — Foto ${i + 1}`,
       caption: i === 0 ? 'El once inicial' : i === 11 ? 'Gol de cabeza' : undefined,
       downloadName: `pcfc-atlantico-6sep-${String(i + 1).padStart(2, '0')}.jpg`,
@@ -60,10 +72,10 @@ const posts: MatchPost[] = [
     team2: 'Santiago FC',
     date: '30 ago 2026',
     photoCount: 18,
-    thumbnail: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80',
+    thumbnail: FALLBACK_POOL[3],
     thumbnailAlt: 'PCFC Sub-15 vs Santiago FC — Partido Formativas Altas',
     photos: Array.from({ length: 18 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub15-santiago-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-15 vs Santiago FC — Foto ${i + 1}`,
       caption: i === 0 ? 'Alineación del equipo' : undefined,
       downloadName: `pcfc-sub15-santiago-30ago-${String(i + 1).padStart(2, '0')}.jpg`,
@@ -77,10 +89,10 @@ const posts: MatchPost[] = [
     team2: 'Canay FC',
     date: '24 ago 2026',
     photoCount: 15,
-    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80',
+    thumbnail: FALLBACK_POOL[6],
     thumbnailAlt: 'PCFC Sub-10 vs Canay FC — Partido Formativas Bajas',
     photos: Array.from({ length: 15 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub10-canay-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-10 vs Canay FC — Foto ${i + 1}`,
       downloadName: `pcfc-sub10-canay-24ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
@@ -93,10 +105,10 @@ const posts: MatchPost[] = [
     team2: 'Escuela Bávaro',
     date: '21 ago 2026',
     photoCount: 12,
-    thumbnail: 'https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?w=800&q=80',
+    thumbnail: FALLBACK_POOL[9],
     thumbnailAlt: 'PCFC Sub-8 vs Escuela Bávaro — Partido Pre-Formativas',
     photos: Array.from({ length: 12 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub8-bavaro-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-8 vs Escuela Bávaro — Foto ${i + 1}`,
       caption: i === 0 ? '¡El equipo al completo!' : undefined,
       downloadName: `pcfc-sub8-bavaro-21ago-${String(i + 1).padStart(2, '0')}.jpg`,
@@ -110,10 +122,10 @@ const posts: MatchPost[] = [
     team2: 'Higüey United',
     date: '28 sep 2026',
     photoCount: 22,
-    thumbnail: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80',
+    thumbnail: FALLBACK_POOL[0],
     thumbnailAlt: 'PCFC Reserva vs Higüey United — Partido Elite',
     photos: Array.from({ length: 22 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-reserva-higuey-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Reserva vs Higüey United — Foto ${i + 1}`,
       downloadName: `pcfc-reserva-higuey-28sep-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
@@ -126,10 +138,10 @@ const posts: MatchPost[] = [
     team2: 'Selección Federativa',
     date: '16 ago 2026',
     photoCount: 16,
-    thumbnail: 'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80',
+    thumbnail: FALLBACK_POOL[3],
     thumbnailAlt: 'PCFC Sub-14 vs Selección Federativa — Partido Formativas Altas',
     photos: Array.from({ length: 16 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub14-fed-16ago-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-14 vs Selección Federativa — Foto ${i + 1}`,
       downloadName: `pcfc-sub14-fed-16ago-${String(i + 1).padStart(2, '0')}.jpg`,
     })),
@@ -142,10 +154,10 @@ const posts: MatchPost[] = [
     team2: 'Casa España',
     date: '9 ago 2026',
     photoCount: 10,
-    thumbnail: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800&q=80',
+    thumbnail: FALLBACK_POOL[6],
     thumbnailAlt: 'PCFC Sub-6 vs Casa España — Partido Pre-Formativas',
     photos: Array.from({ length: 10 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub6-casa-espana-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-6 vs Casa España — Foto ${i + 1}`,
       caption: i === 0 ? 'Nuestros pequeños cracks' : undefined,
       downloadName: `pcfc-sub6-casa-espana-9ago-${String(i + 1).padStart(2, '0')}.jpg`,
@@ -159,10 +171,10 @@ const posts: MatchPost[] = [
     team2: 'Casa España',
     date: '2 sep 2026',
     photoCount: 14,
-    thumbnail: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=80',
+    thumbnail: FALLBACK_POOL[9],
     thumbnailAlt: 'PCFC Sub-13 vs Casa España — Partido Formativas Altas',
     photos: Array.from({ length: 14 }, (_, i) => ({
-      src: `https://picsum.photos/seed/pcfc-sub13-casa-espana-${i + 1}/1200/800`,
+      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
       alt: `PCFC Sub-13 vs Casa España — Foto ${i + 1}`,
       downloadName: `pcfc-sub13-casa-espana-2sep-${String(i + 1).padStart(2, '0')}.jpg`,
     })),

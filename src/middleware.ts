@@ -17,7 +17,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://static.cloudflareinsights.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https://images.unsplash.com https://picsum.photos https://images.emdash.com",
       "font-src 'self' https://fonts.gstatic.com",

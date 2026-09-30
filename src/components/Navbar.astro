@@ -44,7 +44,7 @@ const isCurrent = (href: string) =>
   <div class="container-x flex items-center gap-14 h-20">
     <!-- Brand -->
     <a href="/" class="flex items-center shrink-0 no-underline" aria-label="Punta Cana FC — Inicio">
-      <img src="/Logo-PCFC.svg" alt="Punta Cana FC" class="h-[52px] w-auto object-contain" />
+      <img src="/Logo-PCFC.svg" alt="Punta Cana FC" width="412" height="485" class="h-[52px] w-auto object-contain" />
     </a>
 
     <!-- Nav -->
@@ -243,6 +243,13 @@ const isCurrent = (href: string) =>
     }
   }
 
+[data-component='navbar'] {
+    transition: box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  [data-component='navbar'].is-scrolled {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
   /* Mobile toggle — oculto en desktop, visible en mobile */
   .menu-toggle {
     display: none;
@@ -271,5 +278,11 @@ const isCurrent = (href: string) =>
       toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
       menu?.classList.toggle('open', !open);
     });
+
+    const onScroll = () => {
+      navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
   });
 </script>

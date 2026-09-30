@@ -149,201 +149,6 @@
       ]
     },
     {
-      "slug": "club_history",
-      "label": "Club History",
-      "labelSingular": "Club History",
-      "titleField": "name",
-      "supports": [
-        "drafts"
-      ],
-      "routable": false,
-      "fields": [
-        {
-          "slug": "type",
-          "label": "Type",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "name",
-          "label": "Name",
-          "type": "string",
-          "required": true,
-          "searchable": true
-        },
-        {
-          "slug": "role",
-          "label": "Role",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "role_description",
-          "label": "Role Description",
-          "type": "text",
-          "required": false
-        },
-        {
-          "slug": "content",
-          "label": "Content",
-          "type": "text",
-          "required": false
-        },
-        {
-          "slug": "image",
-          "label": "Image",
-          "type": "image",
-          "required": false
-        },
-        {
-          "slug": "image_alt",
-          "label": "Image Alt",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "order",
-          "label": "Order",
-          "type": "number",
-          "required": false
-        }
-      ]
-    },
-    {
-      "slug": "calendar",
-      "label": "Calendar",
-      "labelSingular": "Calendar",
-      "titleField": "date",
-      "supports": [
-        "drafts"
-      ],
-      "routable": false,
-      "fields": [
-        {
-          "slug": "kind",
-          "label": "Kind",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "date",
-          "label": "Date",
-          "type": "string",
-          "required": true,
-          "searchable": true
-        },
-        {
-          "slug": "time",
-          "label": "Time",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category",
-          "label": "Category",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category_slug",
-          "label": "Category Slug",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "home",
-          "label": "Home",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "home_logo",
-          "label": "Home Logo",
-          "type": "image",
-          "required": false
-        },
-        {
-          "slug": "away",
-          "label": "Away",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "away_logo",
-          "label": "Away Logo",
-          "type": "image",
-          "required": false
-        }
-      ]
-    },
-    {
-      "slug": "next_match",
-      "label": "Next Match",
-      "labelSingular": "Next Match",
-      "titleField": "date",
-      "supports": [
-        "drafts"
-      ],
-      "routable": false,
-      "fields": [
-        {
-          "slug": "kind",
-          "label": "Kind",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "date",
-          "label": "Date",
-          "type": "string",
-          "required": true,
-          "searchable": true
-        },
-        {
-          "slug": "time",
-          "label": "Time",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category",
-          "label": "Category",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category_slug",
-          "label": "Category Slug",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "home",
-          "label": "Home",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "home_logo",
-          "label": "Home Logo",
-          "type": "image",
-          "required": false
-        },
-        {
-          "slug": "away",
-          "label": "Away",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "away_logo",
-          "label": "Away Logo",
-          "type": "image",
-          "required": false
-        }
-      ]
-    },
-    {
       "slug": "gallery",
       "label": "Gallery",
       "labelSingular": "Gallery",
@@ -461,134 +266,6 @@
       ]
     },
     {
-      "slug": "teams",
-      "label": "Teams",
-      "labelSingular": "Team",
-      "titleField": "name",
-      "supports": [
-        "drafts"
-      ],
-      "routable": false,
-      "fields": [
-        {
-          "slug": "name",
-          "label": "Name",
-          "type": "string",
-          "required": true,
-          "searchable": true
-        },
-        {
-          "slug": "short_name",
-          "label": "Short Name",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "logo",
-          "label": "Logo",
-          "type": "image",
-          "required": false
-        },
-        {
-          "slug": "city",
-          "label": "City",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category",
-          "label": "Category",
-          "type": "select",
-          "options": [
-            "Pre-Formativas",
-            "Formativas Bajas",
-            "Formativas Altas",
-            "Elite y Reserva"
-          ],
-          "required": false
-        },
-        {
-          "slug": "order",
-          "label": "Order",
-          "type": "number",
-          "required": false
-        }
-      ]
-    },
-    {
-      "slug": "partidos",
-      "label": "Partidos",
-      "labelSingular": "Partido",
-      "titleField": "name",
-      "supports": [
-        "drafts"
-      ],
-      "routable": false,
-      "fields": [
-        {
-          "slug": "name",
-          "label": "Name",
-          "type": "string",
-          "required": true,
-          "searchable": true
-        },
-        {
-          "slug": "homeId",
-          "label": "Home Team",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "awayId",
-          "label": "Away Team",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "homeScore",
-          "label": "Home Score",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "slug": "awayScore",
-          "label": "Away Score",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "slug": "date",
-          "label": "Date",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "time",
-          "label": "Time",
-          "type": "string",
-          "required": false
-        },
-        {
-          "slug": "category",
-          "label": "Category",
-          "type": "select",
-          "options": [
-            "Pre-Formativas",
-            "Formativas Bajas",
-            "Formativas Altas",
-            "Elite y Reserva"
-          ],
-          "required": false
-        },
-        {
-          "slug": "kind",
-          "label": "Kind",
-          "type": "string",
-          "required": false
-        }
-      ]
-    },
-    {
       "slug": "match_photos",
       "label": "Match Photos",
       "labelSingular": "Match Photo",
@@ -639,12 +316,142 @@
           "slug": "images",
           "label": "Images",
           "type": "json",
+          "required": false,
+          "widget": "pcfc-media-gallery:gallery",
+          "options": {
+            "maxItems": 50,
+            "perItemFields": [
+              "alt",
+              "caption"
+            ]
+          }
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
+        },
+        {
+          "slug": "partido",
+          "label": "Partido",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "portada",
+          "label": "Portada",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "show_in_hero",
+          "label": "Mostrar en hero",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": 0
+        }
+      ]
+    },
+    {
+      "slug": "players",
+      "label": "Jugadores",
+      "labelSingular": "Jugador",
+      "titleField": "name",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "slug",
+          "label": "Slug",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "position",
+          "label": "Position",
+          "type": "select",
+          "options": [
+            "Portero",
+            "Defensa",
+            "Centrocampista",
+            "Atacante"
+          ],
+          "required": false
+        },
+        {
+          "slug": "number",
+          "label": "Number",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "photo",
+          "label": "Photo",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "photoAlt",
+          "label": "Photo Alt",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "category",
+          "label": "Category",
+          "type": "select",
+          "options": [
+            "pre",
+            "form-baja",
+            "form-alta",
+            "elite"
+          ],
+          "required": false
+        },
+        {
+          "slug": "featured",
+          "label": "Featured",
+          "type": "boolean",
           "required": false
         },
         {
           "slug": "order",
           "label": "Order",
           "type": "number",
+          "required": false
+        },
+        {
+          "slug": "matches",
+          "label": "Matches",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "goals",
+          "label": "Goals",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "assists",
+          "label": "Assists",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "season",
+          "label": "Season",
+          "type": "string",
           "required": false
         }
       ]

@@ -1,0 +1,15 @@
+{
+  "name": "Diego Ramírez",
+  "slug": "diego-ramirez",
+  "position": "Atacante",
+  "number": 11,
+  "photo": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=1200&fit=crop&crop=top&q=80",
+  "photoAlt": "Diego Ramírez, atacante de Punta Cana FC",
+  "category": "elite",
+  "featured": true,
+  "order": 1,
+  "matches": 24,
+  "goals": 18,
+  "assists": 7,
+  "season": "2026/2027"
+}

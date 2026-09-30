@@ -5,26 +5,6 @@
 
 import type { ContentBylineCredit, TaxonomyTerm } from "emdash";
 
-export interface Calendar {
-  id: string;
-  slug: string | null;
-  status: string;
-  kind?: string;
-  date: string;
-  time?: string;
-  category?: string;
-  category_slug?: string;
-  home?: string;
-  home_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  away?: string;
-  away_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
 export interface Category {
   id: string;
   slug: string | null;
@@ -39,25 +19,6 @@ export interface Category {
   schedule?: string;
   description?: string;
   cta_href?: string;
-  order?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface ClubHistory {
-  id: string;
-  slug: string | null;
-  status: string;
-  type?: string;
-  name: string;
-  role?: string;
-  role_description?: string;
-  content?: string;
-  image?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  image_alt?: string;
   order?: number;
   createdAt: Date;
   updatedAt: Date;
@@ -113,46 +74,9 @@ export interface MatchPhoto {
   date?: string;
   images?: unknown;
   order?: number;
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface NextMatch {
-  id: string;
-  slug: string | null;
-  status: string;
-  kind?: string;
-  date: string;
-  time?: string;
-  category?: string;
-  category_slug?: string;
-  home?: string;
-  home_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  away?: string;
-  away_logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  createdAt: Date;
-  updatedAt: Date;
-  publishedAt: Date | null;
-  bylines?: ContentBylineCredit[];
-  terms?: Record<string, TaxonomyTerm[]>;
-}
-
-export interface Partido {
-  id: string;
-  slug: string | null;
-  status: string;
-  name: string;
-  home_id?: string;
-  away_id?: string;
-  home_score?: number;
-  away_score?: number;
-  date?: string;
-  time?: string;
-  category?: string;
-  kind?: string;
+  partido?: string;
+  portada?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  show_in_hero?: boolean;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -191,16 +115,22 @@ export interface StatsPillar {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
-export interface Team {
+export interface Player {
   id: string;
   slug: string | null;
   status: string;
   name: string;
-  short_name?: string;
-  logo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  city?: string;
+  position?: string;
+  number?: number;
+  photo?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  photo_alt?: string;
   category?: string;
+  featured?: boolean;
   order?: number;
+  matches?: number;
+  goals?: number;
+  assists?: number;
+  season?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -210,16 +140,12 @@ export interface Team {
 
 declare module "emdash" {
   interface EmDashCollections {
-    calendar: Calendar;
     categories: Category;
-    club_history: ClubHistory;
     gallery: Gallery;
     hero: Hero;
     match_photos: MatchPhoto;
-    next_match: NextMatch;
-    partidos: Partido;
     sponsors: Sponsor;
     stats_pillars: StatsPillar;
-    teams: Team;
+    players: Player;
   }
 }

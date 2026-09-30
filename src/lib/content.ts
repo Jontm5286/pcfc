@@ -29,13 +29,26 @@ export async function getCategories() {
     .map((i) => i.data) as unknown as Category[];
 }
 
-// ── stats (700+, 20+, etc.) ──
+// ── stats (700+, 20+, etc.) — excluye group 'temporada' (pills aparte) ──
 export async function getStats() {
   const items = await getCollection('stats-pillars');
   return items
-    .filter((i) => i.data.kind === 'stat')
+    .filter((i) => i.data.kind === 'stat' && i.data.group !== 'temporada')
     .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
     .map((i) => ({ value: i.data.value!, label: i.data.label! })) as unknown as Stat[];
+}
+
+// ── temporada en números (variante A: banda navy + 4 cifras) ──
+// Fuente: filas `season-*` en stats-pillars (editables en admin → Stats Pillars).
+// Partidos: valor en vivo (feed.played.length) con fallback a la fila manual.
+export interface SeasonPill { value: string; label: string }
+const SEASON_SLUGS = ['season-partidos', 'season-minutos', 'season-torneos', 'season-goles'];
+export async function getSeasonPills(): Promise<SeasonPill[]> {
+  const items = await getCollection('stats-pillars');
+  return items
+    .filter((i) => SEASON_SLUGS.includes(i.slug))
+    .sort((a, b) => SEASON_SLUGS.indexOf(a.slug) - SEASON_SLUGS.indexOf(b.slug))
+    .map((i) => ({ value: String(i.data.value ?? ''), label: String(i.data.label ?? '') }));
 }
 
 // ── pillars (Metodología europea, etc.) ──

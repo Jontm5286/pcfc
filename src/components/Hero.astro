@@ -116,7 +116,7 @@ const {
       <div class="min-w-0">
         {
           eyebrow && (
-            <p class={`eyebrow ${eyebrowOnDark ? "eyebrow--on-navy" : ""}`}>
+            <p class={`eyebrow ${eyebrowOnDark ? "eyebrow--on-navy" : ""}`} data-reveal="up">
               {eyebrow}
             </p>
           )
@@ -124,6 +124,7 @@ const {
 
         <h1
           class={`h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5 lg:mb-6 max-w-[14ch] ${!eyebrow ? "mt-0" : ""}`}
+          data-reveal="up" data-reveal-delay="80"
         >
           {title}
         </h1>
@@ -132,6 +133,7 @@ const {
           description && (
             <p
               class={`lede lede--on-navy mb-5 lg:mb-6 max-w-[52ch] ${!eyebrow ? "mt-4" : ""}`}
+              data-reveal="up" data-reveal-delay="160"
             >
               {description}
             </p>
@@ -140,7 +142,7 @@ const {
 
         {
           bullets.length > 0 && (
-            <ul class="benefits-carousel min-w-0 mb-6 lg:mb-7 flex gap-3 list-none overflow-x-auto snap-x snap-mandatory scroll-px-1 pb-2 -mx-1 px-1 lg:overflow-visible lg:snap-none lg:flex-col lg:flex lg:gap-3 lg:pb-0 lg:mx-0 lg:px-0">
+            <ul data-reveal="up" data-reveal-delay="240" class="benefits-carousel min-w-0 mb-6 lg:mb-7 flex gap-3 list-none overflow-x-auto snap-x snap-mandatory scroll-px-1 pb-2 -mx-1 px-1 lg:overflow-visible lg:snap-none lg:flex-col lg:flex lg:gap-3 lg:pb-0 lg:mx-0 lg:px-0">
               {bullets.map((b) => (
                 <li class="bullet-card hidden lg:flex items-start gap-2.5 shrink-0 snap-start">
                   <span class="shrink-0 w-5 h-5 rounded-full bg-sky flex items-center justify-center text-navy-dark mt-0.5 lg:mt-0.5">
@@ -189,6 +191,7 @@ const {
             class="hidden lg:block min-w-0"
             data-component="featured-rotator"
             data-rotation-ms="5000"
+            data-reveal="zoom"
           >
             <div class="grid grid-cols-3 gap-3" data-rotator-grid>
               {galleryImages.map((img, i) => {
@@ -208,8 +211,8 @@ const {
                       <Picture
                         src={img.src}
                         alt={img.alt}
-                        widths={[400, 800]}
-                        sizes="(max-width: 1280px) 400px, 800px"
+                        widths={[200, 400]}
+                        sizes="180px"
                         formats={['avif', 'webp']}
                         quality={65}
                         loading={i === 0 ? 'eager' : 'lazy'}
@@ -257,6 +260,7 @@ const {
       <aside
         class="relative z-20 bg-navy-dark border-t-4 border-sky text-white"
         aria-label="Próximo partido"
+        data-reveal="right" data-reveal-delay="200"
       >
         <div class="container-x py-7 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-8 items-center text-center lg:text-left lg:items-start">
           <div class="flex flex-col gap-2 items-center lg:items-start">
