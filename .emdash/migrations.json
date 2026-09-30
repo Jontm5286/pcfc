@@ -81,9 +81,9 @@
 	"i18n": null,
 	"database": {
 		"type": "sqlite",
-		"executorEntrypoint": "emdash/db/sqlite-migrations",
+		"executorEntrypoint": "@emdash-cms/cloudflare/db/d1-migrations",
 		"executorConfig": {
-			"url": "file:./data/emdash.db"
+			"binding": "DB"
 		}
 	}
 }

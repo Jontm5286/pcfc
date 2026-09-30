@@ -6,6 +6,28 @@ import { defineMiddleware } from 'astro:middleware';
  * Ref: https://owasp.org/www-project-secure-headers/
  */
 export const onRequest = defineMiddleware(async (context, next) => {
+  // FIX-B: el binding Cloudflare IMAGES responde 500 cuando /_image trae
+  // `h` sin `fit`. Astro genera srcsets con w+h, así que se elimina `h`
+  // antes del transform. Si el transform sigue fallando, se redirige al
+  // asset original (siempre 200) para que ninguna imagen quede rota.
+  if (context.url.pathname === '/_image') {
+    const imageUrl = new URL(context.url);
+    const href = imageUrl.searchParams.get('href');
+    if (href) {
+      let imageResponse: Response;
+      if (imageUrl.searchParams.has('h')) {
+        imageUrl.searchParams.delete('h');
+        imageResponse = await context.rewrite(imageUrl.pathname + imageUrl.search);
+      } else {
+        imageResponse = await next();
+      }
+      if (imageResponse.status === 500 && href.startsWith('/')) {
+        return Response.redirect(new URL(href, imageUrl.origin).toString(), 302);
+      }
+      return imageResponse;
+    }
+  }
+
   const response = await next();
 
   // APIs y descargas: sin headers de página (algunas respuestas como
