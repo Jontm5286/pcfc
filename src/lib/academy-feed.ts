@@ -95,7 +95,7 @@ export interface AcademyFeed {
 const FEED_TTL_MS = 5 * 60 * 1000;
 let feedCache: { at: number; feed: AcademyFeed } | null = null;
 
-export async function fetchAcademyFeed(timeoutMs = 8000): Promise<AcademyFeed> {
+export async function fetchAcademyFeed(timeoutMs = 3000): Promise<AcademyFeed> {
   const empty: AcademyFeed = { upcoming: [], played: [] };
   if (feedCache && Date.now() - feedCache.at < FEED_TTL_MS) return feedCache.feed;
   try {
