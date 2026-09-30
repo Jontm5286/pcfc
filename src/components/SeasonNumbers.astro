@@ -25,7 +25,7 @@ const stats = defaults.map((d, i) => ({ ...d, ...((pills ?? [])[i] ?? {}) }));
 const isLive = livePlayed !== null && /partido/i.test(stats[0].label);
 const played = isLive ? String(livePlayed) : stats[0].value;
 
-// Ligas y torneos donde compite el club (cinta infinita al inicio de la banda).
+// Ligas y torneos donde compite el club (cinta infinita debajo de los números).
 const leagues = [
   { src: fdfLogo.src, alt: 'Federación Dominicana de Fútbol' },
   { src: ldfExpansionLogo.src, alt: 'LDF Expansión — Alto Rendimiento' },
@@ -40,36 +40,7 @@ const leagues = [
 
 <section data-section="season-numbers" class="bg-[#00285C] text-white">
   <div class="mx-auto max-w-6xl px-5 py-10 md:py-12">
-    <div data-reveal="up" role="region" aria-label="Ligas y torneos donde compite el club">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">Competimos en</p>
-      <div class="mt-4 overflow-hidden">
-        <div class="leagues-track flex w-max items-center py-2">
-          {
-            [0, 1].map((copy) => (
-              <div class="flex items-center" aria-hidden={copy > 0 ? 'true' : undefined}>
-                {leagues.map((league) => (
-                  <span class="league-chip rounded-full bg-white p-2">
-                    <img
-                      src={league.src}
-                      alt={copy === 0 ? league.alt : ''}
-                      aria-hidden={copy > 0 ? 'true' : undefined}
-                      tabindex={copy > 0 ? '-1' : undefined}
-                      loading="lazy"
-                      decoding="async"
-                      width="48"
-                      height="48"
-                      class="h-12 w-12 object-contain"
-                    />
-                  </span>
-                ))}
-              </div>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-10 flex flex-wrap items-end justify-between gap-6" data-reveal="up">
+    <div class="flex flex-wrap items-end justify-between gap-6" data-reveal="up">
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">Temporada 2026/2027</p>
         <h2 class="mt-2 text-2xl font-extrabold md:text-3xl">La temporada en números</h2>
@@ -85,25 +56,54 @@ const leagues = [
       <div class="border-l-2 border-[#429AC0] pl-4">
         <dt class="order-2 mt-1 text-sm text-white/80">{stats[0].label}</dt>
         <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{played}</dd>
-        <span class="mt-1 block text-[11px] uppercase tracking-wider text-white/70">{isLive ? 'Actualizado en vivo' : 'Carga manual'}</span>
       </div>
       {stats.slice(1).map((s) => (
         <div class="border-l-2 border-[#429AC0] pl-4">
           <dt class="order-2 mt-1 text-sm text-white/80">{s.label}</dt>
           <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{s.value}</dd>
-          <span class="mt-1 block text-[11px] uppercase tracking-wider text-white/70">Carga manual</span>
         </div>
       ))}
     </dl>
   </div>
 </section>
 
+<section aria-label="Ligas y torneos donde compite el club" class="w-full bg-[#F5F5F4]">
+  <div class="mx-auto max-w-6xl px-5 py-5 md:py-6">
+    <div data-reveal="up" role="region" aria-label="Ligas y torneos donde compite el club">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#00285C]">Competimos en</p>
+      <div class="mt-3 overflow-hidden">
+        <div class="leagues-track flex w-max items-center">
+          {
+            [0, 1].map((copy) => (
+              <div class="flex items-center" aria-hidden={copy > 0 ? 'true' : undefined}>
+                {leagues.map((league) => (
+                  <img
+                    src={league.src}
+                    alt={copy === 0 ? league.alt : ''}
+                    aria-hidden={copy > 0 ? 'true' : undefined}
+                    tabindex={copy > 0 ? '-1' : undefined}
+                    loading="lazy"
+                    decoding="async"
+                    width="284"
+                    height="160"
+                    class="league-logo h-14 w-auto flex-none object-contain md:h-16"
+                  />
+                ))}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <style>
   /* Cinta infinita de ligas — misma mecánica que FixturesBar: dos copias
      idénticas del mismo ancho y desplazamiento de exactamente una copia
-     (-50%), sin salto al reiniciar. La separación vive en cada chip
+     (-50%), sin salto al reiniciar. La separación vive en cada logo
      (`margin-right`, no `gap` en el track) para que exista también tras el
-     último chip y ambas copias midan exactamente lo mismo. */
+     último logo y ambas copias midan exactamente lo mismo. */
   @keyframes leagues-marquee {
     from {
       transform: translateX(0);
@@ -118,9 +118,9 @@ const leagues = [
     will-change: transform;
   }
 
-  .league-chip {
+  .league-logo {
     flex: none;
-    margin-right: 1.5rem;
+    margin-right: 2.5rem;
   }
 
   [role='region']:hover .leagues-track,

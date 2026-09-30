@@ -26,6 +26,10 @@ import sponsorEsperilla from '../assets/sponsors/esperilla-motors.svg';
 import sponsorFormaLegal from '../assets/sponsors/forma-legal.svg';
 import sponsorGreenStudio from '../assets/sponsors/green-studio.webp';
 import sponsorGrupoDuplax from '../assets/sponsors/grupo-duplax.webp';
+import sponsorGrupoDuplax400 from '../assets/sponsors/grupo-duplax-400.webp';
+import sponsorCongreMax400 from '../assets/sponsors/concremax-400.webp';
+import sponsorGreenStudio400 from '../assets/sponsors/green-studio-400.webp';
+import sponsorPuntaCanaParty400 from '../assets/sponsors/punta-cana-party-400.webp';
 import sponsorPuntaCanaParty from '../assets/sponsors/punta-cana-party.webp';
 import sponsorStresscrete from '../assets/sponsors/stresscrete-group.png';
 
@@ -98,6 +102,8 @@ export interface SponsorItem {
   /** Dimensiones intrínsecas (evitan CLS y dimensionan el download). */
   width: number;
   height: number;
+  /** srcset responsivo (variante 400w + 800w). Ausente en SVG y logos chicos. */
+  logoSrcSet?: string;
   href: string;
   /** Tile oscuro para logos claros (texto blanco). */
   dark?: boolean;
@@ -331,6 +337,7 @@ export function getSponsorsData(): SponsorItem[] {
       logo: sponsorGrupoDuplax.src,
       width: 800,
       height: 272,
+      logoSrcSet: `${sponsorGrupoDuplax400.src} 400w, ${sponsorGrupoDuplax.src} 800w`,
       href: 'https://grupodupla.com/',
       tier: 'principal',
       order: 1,
@@ -340,6 +347,7 @@ export function getSponsorsData(): SponsorItem[] {
       logo: sponsorCongreMax.src,
       width: 800,
       height: 431,
+      logoSrcSet: `${sponsorCongreMax400.src} 400w, ${sponsorCongreMax.src} 800w`,
       href: 'https://grupoconcremax.com.do/',
       tier: 'aliado',
       order: 1,
@@ -386,6 +394,7 @@ export function getSponsorsData(): SponsorItem[] {
       logo: sponsorGreenStudio.src,
       width: 800,
       height: 327,
+      logoSrcSet: `${sponsorGreenStudio400.src} 400w, ${sponsorGreenStudio.src} 800w`,
       href: 'https://greenstudiord.com/',
       tier: 'aliado',
       order: 6,
@@ -395,6 +404,7 @@ export function getSponsorsData(): SponsorItem[] {
       logo: sponsorPuntaCanaParty.src,
       width: 800,
       height: 266,
+      logoSrcSet: `${sponsorPuntaCanaParty400.src} 400w, ${sponsorPuntaCanaParty.src} 800w`,
       href: '',
       tier: 'aliado',
       order: 7,

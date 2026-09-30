@@ -255,6 +255,8 @@ const durSmS = `${(copyWSm / SPEED_SM).toFixed(1)}s`;
                   src={sponsor.logo}
                   width={sponsor.width}
                   height={sponsor.height}
+                  srcset={sponsor.logoSrcSet}
+                  sizes="160px"
                   alt={`Logo de ${sponsor.name}`}
                   loading="lazy"
                 />
