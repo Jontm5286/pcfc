@@ -27,18 +27,33 @@ import {
   fetchAcademyFeed,
   fetchHeroGalleryImages,
   fetchLatestGalleryImages,
+  fetchPublishedGalleries,
   fetchPublishedPlayers,
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
+  type AcademyFeed,
   type AcademyMatch,
+  type PublishedGallery,
+  type PublishedPlayer,
 } from '../lib/academy-feed';
 import { getCollection } from 'astro:content';
 import { getSeasonPills } from '../lib/content';
 
 // Load static datasets for home page sections
+// Fuentes vivas en PARALELO (una sola consulta D1 de galerías, compartida
+// entre hero y comunidad). Cada fuente con respaldo si falla: la página
+// nunca tumba por una fuente caída.
+const [feed, galleriesRes, livePlayers] = await Promise.all([
+  fetchAcademyFeed().catch(
+    (): AcademyFeed => ({ upcoming: [], played: [] }),
+  ),
+  fetchPublishedGalleries().catch(
+    (): { galleries: PublishedGallery[] } => ({ galleries: [] }),
+  ),
+  fetchPublishedPlayers().catch((): PublishedPlayer[] => []),
+]);
 // Próximo partido: el más cercano del feed Academy; respaldo local si falla.
-const feed = await fetchAcademyFeed();
 const nearestUpcoming: AcademyMatch | undefined = [...feed.upcoming].sort((a, b) =>
   a.matchDate.localeCompare(b.matchDate)
 )[0];
@@ -69,11 +84,11 @@ const stats = getStatsData();
 const galleryImages = getGalleryImagesData();
 // Rotador del hero: fotos de partidos con flag `show_in_hero` (EmDash);
 // respaldo estático si ningún partido está marcado.
-const heroFromPartidos = await fetchHeroGalleryImages();
+const heroFromPartidos = await fetchHeroGalleryImages(galleriesRes.galleries);
 const heroGalleryImages = heroFromPartidos.length > 0 ? heroFromPartidos : galleryImages;
 // Comunidad: portadas EmDash primero (lo más reciente) + estáticas
 // para completar los 5 tiles hasta que haya 5+ partidos con foto.
-const latestFromPartidos = await fetchLatestGalleryImages(5);
+const latestFromPartidos = await fetchLatestGalleryImages(galleriesRes.galleries, 5);
 const communityImages = [...latestFromPartidos, ...galleryImages].slice(0, 5);
 const valuePillars = getValuePillarsData();
 const pathwayCards = getPathwayCardsData();
@@ -86,10 +101,9 @@ const livePlayed = feed.played.length > 0 ? feed.played.length : null;
 
 // Jugadores destacados: admin EmDash en vivo (featured + order);
 // respaldo local (src/content/players) y estático si el admin falla.
-const livePlayers = await fetchPublishedPlayers();
 const playerEntries = await getCollection('players');
-// Fotos locales de jugadores (src/assets/players/<slug>.jpg): tienen prioridad
-// sobre el valor del JSON para no depender de hotlinks externos.
+// Fotos de jugadores: la foto del admin EmDash tiene prioridad;
+// el asset local (src/assets/players/<slug>.jpg) queda como respaldo.
 const localPlayerModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/players/*.{jpg,jpeg,png,webp,avif}',
   { eager: true },
@@ -107,7 +121,7 @@ const featuredPlayers: FeaturedPlayer[] =
         slug: p.slug,
         position: p.position as FeaturedPlayer['position'],
         number: p.number,
-        photo: localPlayerPhotos[p.slug] ?? p.photo ?? '',
+        photo: p.photo ?? localPlayerPhotos[p.slug] ?? '',
         photoAlt: p.photoAlt || p.name,
         category: p.category as FeaturedPlayer['category'],
         matches: p.matches,
@@ -124,7 +138,7 @@ const featuredPlayers: FeaturedPlayer[] =
           slug: e.data.slug,
           position: e.data.position,
           number: e.data.number,
-          photo: localPlayerPhotos[e.data.slug] ?? e.data.photo,
+          photo: e.data.photo ?? localPlayerPhotos[e.data.slug],
           photoAlt: e.data.photoAlt,
           category: e.data.category,
           matches: e.data.matches,

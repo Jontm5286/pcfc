@@ -239,6 +239,12 @@ function mediaValueSrc(v: unknown): string | null {
   return null;
 }
 
+/** Caché en memoria 5 min (por isolate) para galerías y players.
+ * Mismo patrón que el feed: el primer hit tras expirar paga D1. */
+const EMDASH_TTL_MS = 5 * 60 * 1000;
+let galleriesCache: { at: number; galleries: PublishedGallery[]; cacheHint?: unknown } | null = null;
+let playersCache: { at: number; players: PublishedPlayer[] } | null = null;
+
 /** Galerías publicadas con fotos desde EmDash. Vacío si falla. */
 export async function fetchPublishedGalleries(): Promise<{
   galleries: PublishedGallery[];
@@ -313,9 +319,10 @@ export async function fetchPublishedGalleries(): Promise<{
         showInHero: parseShowInHero(d.show_in_hero),
       });
     }
+    galleriesCache = { at: Date.now(), galleries, cacheHint };
     return { galleries, cacheHint };
   } catch {
-    return { galleries: [] };
+    return galleriesCache ? { galleries: galleriesCache.galleries } : { galleries: [] };
   }
 }
 
@@ -330,9 +337,13 @@ export interface HeroGalleryImage {
 /**
  * Fotos para el rotador del hero: partidos published con flag `show_in_hero`,
  * ordenados por publicación (recientes primero), máx `limit` fotos.
+ * Acepta galerías pre-cargadas para evitar una segunda consulta D1.
  */
-export async function fetchHeroGalleryImages(limit = 6): Promise<HeroGalleryImage[]> {
-  const { galleries } = await fetchPublishedGalleries();
+export async function fetchHeroGalleryImages(
+  fromGalleries?: PublishedGallery[],
+  limit = 6,
+): Promise<HeroGalleryImage[]> {
+  const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries
     .filter((g) => g.showInHero)
     .flatMap((g) =>
@@ -348,9 +359,13 @@ export async function fetchHeroGalleryImages(limit = 6): Promise<HeroGalleryImag
 /**
  * Portadas para Comunidad: thumbnail de los últimos `count` partidos
  * published (sin flag — siempre lo más reciente).
+ * Acepta galerías pre-cargadas para evitar una segunda consulta D1.
  */
-export async function fetchLatestGalleryImages(count = 5): Promise<HeroGalleryImage[]> {
-  const { galleries } = await fetchPublishedGalleries();
+export async function fetchLatestGalleryImages(
+  fromGalleries?: PublishedGallery[],
+  count = 5,
+): Promise<HeroGalleryImage[]> {
+  const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries.slice(0, count).map((g) => ({
     src: g.thumbnail,
     alt: g.thumbnailAlt,
@@ -393,12 +408,15 @@ function boolField(v: unknown): boolean {
  */
 export async function fetchPublishedPlayers(): Promise<PublishedPlayer[]> {
   try {
+    if (playersCache && Date.now() - playersCache.at < EMDASH_TTL_MS) {
+      return playersCache.players;
+    }
     const { getEmDashCollection } = await import('emdash');
     const { entries } = await getEmDashCollection('players', {
       status: 'published',
       limit: 100,
     });
-    return (entries ?? [])
+    const players = (entries ?? [])
       .map((entry) => {
         const d = entry.data as Record<string, unknown>;
         const slug =
@@ -421,7 +439,9 @@ export async function fetchPublishedPlayers(): Promise<PublishedPlayer[]> {
       })
       .filter((p) => p.name !== '' && p.featured)
       .sort((a, b) => a.order - b.order);
+    playersCache = { at: Date.now(), players };
+    return players;
   } catch {
-    return [];
+    return playersCache?.players ?? [];
   }
 }
