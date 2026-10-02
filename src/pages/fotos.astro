@@ -22,7 +22,7 @@ const featuredKeys = featured.map((d) => photoKey(d.galleryId, d.index));
 // Conteos de likes resueltos server-side en el render (1 store, por lotes
 // de 200): el orden top-4 por partido NO depende de N requests del cliente.
 // El <script> de LikeButton hace 1 solo GET en lote por página para pintar.
-const store = await getLikesStore(resolveD1Binding(Astro.locals)).catch(() => null);
+const store = await getLikesStore(await resolveD1Binding(Astro.locals)).catch(() => null);
 const allKeys = posts.flatMap((p) => p.photos.map((_, i) => photoKey(p.id, i)));
 const counts: Record<string, number> = {};
 if (store) {
