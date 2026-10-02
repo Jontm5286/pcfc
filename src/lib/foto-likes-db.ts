@@ -208,3 +208,16 @@ export async function getLikesStore(d1binding: unknown): Promise<LikesStore> {
   if (!localCache) localCache = await localStore();
   return localCache;
 }
+
+/**
+ * Resuelve el binding D1 en cualquier runtime:
+ * middleware (`locals.DB`) o adapter Cloudflare (`locals.runtime.env.DB`).
+ * Null en dev sin D1 → getLikesStore usa sqlite local.
+ */
+export function resolveD1Binding(locals: unknown): unknown {
+  const l = (locals ?? {}) as Record<string, unknown>;
+  if (l.DB) return l.DB;
+  const runtime = l.runtime as Record<string, unknown> | undefined;
+  const env = runtime?.env as Record<string, unknown> | undefined;
+  return env?.DB ?? null;
+}

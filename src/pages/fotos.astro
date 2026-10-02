@@ -9,7 +9,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import GalleryGrid from '../components/GalleryGrid.astro';
 import { getAllPosts } from '../lib/fotos-posts';
-import { getLikesStore } from '../lib/foto-likes-db';
+import { getLikesStore, resolveD1Binding } from '../lib/foto-likes-db';
 import { pickDestacadas, photoKey } from '../lib/foto-likes-key';
 
 export const prerender = false;
@@ -22,11 +22,17 @@ const featuredKeys = featured.map((d) => photoKey(d.galleryId, d.index));
 // Conteos de likes resueltos server-side en el render (1 store, por lotes
 // de 200): el orden top-4 por partido NO depende de N requests del cliente.
 // El <script> de LikeButton hace 1 solo GET en lote por página para pintar.
-const store = await getLikesStore((Astro.locals as unknown as Record<string, unknown>).DB ?? null);
+const store = await getLikesStore(resolveD1Binding(Astro.locals)).catch(() => null);
 const allKeys = posts.flatMap((p) => p.photos.map((_, i) => photoKey(p.id, i)));
 const counts: Record<string, number> = {};
-for (let i = 0; i < allKeys.length; i += 200) {
-  Object.assign(counts, await store.getCounts(allKeys.slice(i, i + 200)));
+if (store) {
+  for (let i = 0; i < allKeys.length; i += 200) {
+    try {
+      Object.assign(counts, await store.getCounts(allKeys.slice(i, i + 200)));
+    } catch {
+      break;
+    }
+  }
 }
 
 // Top-4 con más likes por partido (empates: índice original primero).

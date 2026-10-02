@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getLikesStore, RateLimitedError } from '../../lib/foto-likes-db';
+import { getLikesStore, resolveD1Binding, RateLimitedError } from '../../lib/foto-likes-db';
 import { buildValidKeys, getAllPosts } from '../../lib/fotos-posts';
 
 export const prerender = false;
@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         .filter(Boolean)
     ),
   ].slice(0, 200);
-  const store = await getLikesStore((locals as unknown as Record<string, unknown>).DB ?? null);
+  const store = await getLikesStore(resolveD1Binding(locals));
   return json({ counts: await store.getCounts(keys) });
 };
 
@@ -62,7 +62,7 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
   const ua = request.headers.get('user-agent') || '';
   const hash = await voterHash(ip, ua);
 
-  const store = await getLikesStore((locals as unknown as Record<string, unknown>).DB ?? null);
+  const store = await getLikesStore(resolveD1Binding(locals));
   try {
     const { likes, liked } = await store.toggle(key, hash);
     return json({ key, likes, liked });
