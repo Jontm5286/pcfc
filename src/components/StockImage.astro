@@ -44,7 +44,7 @@ const isExternal = name.startsWith('http://') || name.startsWith('https://');
 // Fuentes locales en src/assets/stock (cualquier extensión soportada)
 const stockModules = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/stock/*.{webp,png,jpg,jpeg,avif}',
-  { eager: true },
+  { eager: true }
 );
 
 function resolveStock(key: string): ImageMetadata | undefined {
@@ -58,36 +58,38 @@ function resolveStock(key: string): ImageMetadata | undefined {
 const stockSrc = isExternal ? undefined : resolveStock(name);
 ---
 
-{isExternal || !stockSrc ? (
-  <img
-    src={isExternal ? name : '/images/stock/historia-800.webp'}
-    alt={alt}
-    width={width}
-    height={height}
-    class:list={[className]}
-    loading={loading}
-    fetchpriority={fetchpriority}
-    decoding="async"
-    style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
-  />
-) : (
-  <Picture
-    src={stockSrc}
-    alt={alt}
-    width={width}
-    height={height}
-    widths={[300, 800, 1600]}
-    sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
-    formats={['avif', 'webp']}
-                  quality={65}
-    fallbackFormat="webp"
-    class:list={[className]}
-    loading={loading}
-    fetchpriority={fetchpriority}
-    decoding="async"
-    style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
-  />
-)}
+{
+  isExternal || !stockSrc ? (
+    <img
+      src={isExternal ? name : '/images/stock/historia-800.webp'}
+      alt={alt}
+      width={width}
+      height={height}
+      class:list={[className]}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+    />
+  ) : (
+    <Picture
+      src={stockSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      widths={[300, 800, 1600]}
+      sizes="(max-width: 768px) 300px, (max-width: 1280px) 800px, 1600px"
+      formats={['avif', 'webp']}
+      quality={65}
+      fallbackFormat="webp"
+      class:list={[className]}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      style="content-visibility:auto;contain-intrinsic-size:1280px 720px"
+    />
+  )
+}
 
 <style>
   /* Hero overlay pattern reutilizable */
@@ -95,10 +97,10 @@ const stockSrc = isExternal ? undefined : resolveStock(name);
     position: relative;
   }
   .hero-stock-overlay::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(7,29,59,0.75) 0%, rgba(7,29,59,0.85) 100%);
+    background: linear-gradient(135deg, rgba(7, 29, 59, 0.75) 0%, rgba(7, 29, 59, 0.85) 100%);
     pointer-events: none;
   }
   .hero-stock-img {

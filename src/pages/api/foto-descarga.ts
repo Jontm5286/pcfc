@@ -23,8 +23,7 @@ export const GET: APIRoute = async ({ url }) => {
 
   const { galleries } = await fetchPublishedGalleries();
   const gallery = galleries.find((g) => g.slug === slug);
-  const photo =
-    gallery && Number.isInteger(idx) && idx >= 0 ? gallery.photos[idx] : undefined;
+  const photo = gallery && Number.isInteger(idx) && idx >= 0 ? gallery.photos[idx] : undefined;
   if (!gallery || !photo) {
     return new Response('Foto no encontrada', { status: 404 });
   }
@@ -42,8 +41,7 @@ export const GET: APIRoute = async ({ url }) => {
   // Gate 4K (primer mes) vs 2000px.
   let target = photo.src;
   const pub = gallery.publishedAtIso ? Date.parse(gallery.publishedAtIso) : NaN;
-  const fresh =
-    !Number.isNaN(pub) && Date.now() - pub <= WINDOW_DAYS * 86_400_000;
+  const fresh = !Number.isNaN(pub) && Date.now() - pub <= WINDOW_DAYS * 86_400_000;
   if (!fresh) {
     target = `/_image?href=${encodeURIComponent(photo.src)}&w=2000&f=webp`;
   }

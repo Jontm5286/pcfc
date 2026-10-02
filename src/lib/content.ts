@@ -11,8 +11,15 @@
  * Backward-compat: homeData.ts re-exports estas funciones.
  * Ref: astro-cloudflare-deployment skill + WCAG/§6/§7 tokens.
  */
-import { getCollection, type CollectionEntry } from 'astro:content';
-import type { NextMatch, Category, Stat, GalleryImage, SponsorItem, Pillar } from '../data/homeData';
+import { getCollection } from 'astro:content';
+import type {
+  NextMatch,
+  Category,
+  Stat,
+  GalleryImage,
+  SponsorItem,
+  Pillar,
+} from '../data/homeData';
 
 // ── next-match (singleton) ──
 export async function getNextMatch() {
@@ -25,7 +32,11 @@ export async function getNextMatch() {
 export async function getCategories() {
   const items = await getCollection('categories');
   return items
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+    .sort(
+      (a, b) =>
+        (((a.data as unknown as Record<string, unknown>).order as number) ?? 99) -
+        (((b.data as unknown as Record<string, unknown>).order as number) ?? 99)
+    )
     .map((i) => i.data) as unknown as Category[];
 }
 
@@ -33,21 +44,36 @@ export async function getCategories() {
 export async function getStats() {
   const items = await getCollection('stats-pillars');
   return items
-    .filter((i) => i.data.kind === 'stat' && i.data.group !== 'temporada')
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+    .filter(
+      (i) =>
+        i.data.kind === 'stat' &&
+        (i.data as unknown as Record<string, unknown>).group !== 'temporada'
+    )
+    .sort(
+      (a, b) =>
+        (((a.data as unknown as Record<string, unknown>).order as number) ?? 99) -
+        (((b.data as unknown as Record<string, unknown>).order as number) ?? 99)
+    )
     .map((i) => ({ value: i.data.value!, label: i.data.label! })) as unknown as Stat[];
 }
 
 // ── temporada en números (variante A: banda navy + 4 cifras) ──
 // Fuente: filas `season-*` en stats-pillars (editables en admin → Stats Pillars).
 // Partidos: valor en vivo (feed.played.length) con fallback a la fila manual.
-export interface SeasonPill { value: string; label: string }
+export interface SeasonPill {
+  value: string;
+  label: string;
+}
 const SEASON_SLUGS = ['season-partidos', 'season-minutos', 'season-torneos', 'season-goles'];
 export async function getSeasonPills(): Promise<SeasonPill[]> {
   const items = await getCollection('stats-pillars');
   return items
-    .filter((i) => SEASON_SLUGS.includes(i.slug))
-    .sort((a, b) => SEASON_SLUGS.indexOf(a.slug) - SEASON_SLUGS.indexOf(b.slug))
+    .filter((i) => SEASON_SLUGS.includes((i as unknown as { slug: string }).slug))
+    .sort(
+      (a, b) =>
+        SEASON_SLUGS.indexOf((a as unknown as { slug: string }).slug) -
+        SEASON_SLUGS.indexOf((b as unknown as { slug: string }).slug)
+    )
     .map((i) => ({ value: String(i.data.value ?? ''), label: String(i.data.label ?? '') }));
 }
 
@@ -55,29 +81,30 @@ export async function getSeasonPills(): Promise<SeasonPill[]> {
 export async function getPillars() {
   const items = await getCollection('stats-pillars');
   return items
-    .filter((i) => i.data.kind === 'pillar')
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
-    .map((i) => ({ n: i.data.n!, title: i.data.title!, copy: i.data.copy! })) as unknown as Pillar[];
+    .filter((i) => (i.data as unknown as { kind: string }).kind === 'pillar')
+    .sort(
+      (a, b) =>
+        (((a.data as unknown as Record<string, unknown>).order as number) ?? 99) -
+        (((b.data as unknown as Record<string, unknown>).order as number) ?? 99)
+    )
+    .map((i) => ({
+      n: i.data.n!,
+      title: i.data.title!,
+      copy: i.data.copy!,
+    })) as unknown as Pillar[];
 }
 
 // ── gallery images ──
 export async function getGalleryImages() {
   const items = await getCollection('gallery');
   return items
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+    .sort(
+      (a, b) =>
+        (((a.data as unknown as Record<string, unknown>).order as number) ?? 99) -
+        (((b.data as unknown as Record<string, unknown>).order as number) ?? 99)
+    )
     .map((i) => ({ src: i.data.src, alt: i.data.alt! })) as unknown as GalleryImage[];
 }
-
-// ── sponsors ──
-export async function getSponsors() {
-  const items = await getCollection('sponsors');
-  return items
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
-    .map((i) => i.data) as unknown as SponsorItem[];
-}
-
-/** Alias legacy: páginas/debug usan este nombre. */
-export const getSponsorsFromEmDash = getSponsors;
 
 /** Normaliza logo (string | ImageMetadata) a URL string para <img>. */
 export function resolveLogoUrl(logo: unknown): string {
@@ -93,7 +120,11 @@ export async function getCalendar(kind: 'upcoming' | 'past') {
   const all = await getCollection('calendar');
   return all
     .filter((i) => i.data.kind === kind)
-    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+    .sort(
+      (a, b) =>
+        (((a.data as unknown as Record<string, unknown>).order as number) ?? 99) -
+        (((b.data as unknown as Record<string, unknown>).order as number) ?? 99)
+    );
 }
 
 /**

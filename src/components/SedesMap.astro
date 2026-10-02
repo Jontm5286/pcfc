@@ -1,0 +1,285 @@
+---
+// Mapa interactivo de sedes (Leaflet + OpenStreetMap, sin API key).
+// Vista general con todos los pines; al elegir una sede vuela (flyTo)
+// a zoom 16 donde se ven calles y locales. Toggle Mapa/Satélite (Esri).
+import { getSedes } from '../data/sedes';
+
+const sedes = getSedes().map((s) => ({
+  slug: s.slug,
+  nombre: s.nombre,
+  direccion: s.direccion,
+  telefono: s.telefono,
+  email: s.email,
+  mapsUrl: s.mapsUrl,
+  lat: s.lat,
+  lng: s.lng,
+}));
+---
+
+<div class="mt-12" id="mapa-sedes">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-wrap gap-2" role="tablist" aria-label="Elegir sede en el mapa">
+      <button
+        type="button"
+        data-sede-pill="__all"
+        class="sede-pill is-active"
+        role="tab"
+        aria-selected="true"
+      >
+        Todas
+      </button>
+      {
+        sedes.map((s) => (
+          <button
+            type="button"
+            data-sede-pill={s.slug}
+            class="sede-pill"
+            role="tab"
+            aria-selected="false"
+          >
+            {s.nombre}
+          </button>
+        ))
+      }
+    </div>
+    <div class="flex gap-2" aria-label="Tipo de mapa">
+      <button type="button" data-basemap="streets" class="sede-pill is-active">Mapa</button>
+      <button type="button" data-basemap="satellite" class="sede-pill">Satélite</button>
+    </div>
+  </div>
+
+  <div
+    id="sedes-map"
+    class="z-0 h-[340px] overflow-hidden rounded-xl border border-navy/15 md:h-[460px]"
+    role="application"
+    aria-label="Mapa con las ubicaciones de las sedes"
+  >
+  </div>
+  <p class="mt-2 text-right font-body text-xs text-navy-60">
+    Mapa © <a
+      href="https://www.openstreetmap.org/copyright"
+      target="_blank"
+      rel="noopener"
+      class="underline">OpenStreetMap</a
+    >
+    {' · '}Satélite © <a
+      href="https://www.esri.com"
+      target="_blank"
+      rel="noopener"
+      class="underline">Esri</a
+    >
+  </p>
+</div>
+
+<script define:vars={{ sedes }}>
+  // Leaflet vendorizado en public/vendor (mismo origen: el CSP solo permite 'self').
+  const LEAFLET_CSS = '/vendor/leaflet/leaflet.css';
+  const LEAFLET_JS = '/vendor/leaflet/leaflet.js';
+
+  function loadAsset(tag, attrs) {
+    return new Promise((resolve, reject) => {
+      if (
+        document.querySelector(
+          `${tag}[data-sedesmap]${attrs.href ? `[href="${attrs.href}"]` : ''}${attrs.src ? `[src="${attrs.src}"]` : ''}`
+        )
+      ) {
+        resolve();
+        return;
+      }
+      const el = document.createElement(tag);
+      el.setAttribute('data-sedesmap', '');
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      el.onload = () => resolve();
+      el.onerror = () => reject(new Error('No se pudo cargar ' + (attrs.href || attrs.src)));
+      document.head.appendChild(el);
+    });
+  }
+
+  // Pin con el escudo del club: insignia blanca circular; la sede elegida
+  // lleva aro celeste + resplandor dorado para identificarse de un vistazo.
+  function shieldIcon(active) {
+    return window.L.divIcon({
+      className: 'sede-shield-wrap',
+      html: `<span class="sede-shield${active ? ' is-active' : ''}"><img src="/Logo-PCFC.svg" alt="Escudo Punta Cana FC" width="24" height="28" draggable="false" /></span>`,
+      iconSize: [46, 46],
+      iconAnchor: [23, 23],
+      popupAnchor: [0, -22],
+    });
+  }
+
+  function popupHtml(s) {
+    const addr = s.direccion.includes('PLACEHOLDER')
+      ? 'Dirección por confirmar — escríbenos por WhatsApp y te guiamos.'
+      : s.direccion;
+    return (
+      `<strong class="sede-popup-name">${s.nombre}</strong><br>` +
+      `<span>${addr}</span><br>` +
+      `<a href="tel:${s.telefono.replace(/\s/g, '')}">${s.telefono}</a> · ` +
+      `<a href="${s.mapsUrl}" target="_blank" rel="noopener">Cómo llegar →</a>`
+    );
+  }
+
+  async function init() {
+    const el = document.getElementById('sedes-map');
+    if (!el || el.dataset.ready === '1') return;
+    try {
+      await loadAsset('link', { rel: 'stylesheet', href: LEAFLET_CSS });
+      await loadAsset('script', { src: LEAFLET_JS });
+    } catch {
+      el.innerHTML =
+        '<p class="p-6 font-body text-sm text-navy-60">No se pudo cargar el mapa (se necesita internet). Usa el botón “Cómo llegar” de cada sede.</p>';
+      return;
+    }
+    const L = window.L;
+    el.dataset.ready = '1';
+
+    const streets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap',
+    });
+    const satellite = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: '© Esri, Maxar, Earthstar Geographics' }
+    );
+
+    const map = L.map(el, { layers: [streets], scrollWheelZoom: false }).setView(
+      [18.57, -68.39],
+      11
+    );
+    map.on('focus', () => map.scrollWheelZoom.enable());
+    map.on('blur', () => map.scrollWheelZoom.disable());
+
+    const markers = new Map();
+    const bounds = L.latLngBounds();
+    sedes.forEach((s) => {
+      const m = L.marker([s.lat, s.lng], { icon: shieldIcon(false) })
+        .addTo(map)
+        .bindPopup(popupHtml(s));
+      m.on('click', () => setActive(s.slug, false));
+      markers.set(s.slug, m);
+      bounds.extend([s.lat, s.lng]);
+    });
+    map.fitBounds(bounds, { padding: [40, 40] });
+
+    const pills = Array.from(document.querySelectorAll('[data-sede-pill]'));
+
+    function setActive(slug, fly = true) {
+      pills.forEach((p) => {
+        const on = p.dataset.sedePill === slug;
+        p.classList.toggle('is-active', on);
+        p.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      markers.forEach((m, key) => m.setIcon(shieldIcon(key === slug)));
+      if (slug === '__all' || !markers.has(slug)) {
+        if (fly) map.flyToBounds(bounds, { padding: [40, 40], duration: 1.2 });
+        return;
+      }
+      const m = markers.get(slug);
+      if (fly) {
+        map.flyTo(m.getLatLng(), 16, { duration: 1.4 });
+        map.once('moveend', () => m.openPopup());
+      } else {
+        m.openPopup();
+      }
+    }
+
+    pills.forEach((p) => p.addEventListener('click', () => setActive(p.dataset.sedePill)));
+
+    document.querySelectorAll('[data-basemap]').forEach((b) =>
+      b.addEventListener('click', () => {
+        document
+          .querySelectorAll('[data-basemap]')
+          .forEach((x) => x.classList.toggle('is-active', x === b));
+        if (b.dataset.basemap === 'satellite') {
+          if (!map.hasLayer(satellite)) map.addLayer(satellite);
+          if (map.hasLayer(streets)) map.removeLayer(streets);
+        } else {
+          if (!map.hasLayer(streets)) map.addLayer(streets);
+          if (map.hasLayer(satellite)) map.removeLayer(satellite);
+        }
+      })
+    );
+
+    // Botones "Ver en mapa" de las tarjetas: bajan al mapa y enfocan la sede.
+    document.querySelectorAll('[data-sede-fly]').forEach((a) =>
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        document
+          .getElementById('mapa-sedes')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActive(a.dataset.sedeFly);
+      })
+    );
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
+
+<style is:global>
+  /* is:global porque los pines los inyecta Leaflet por JS (fuera del markup). */
+  .sede-pill {
+    border: 1px solid rgba(0, 40, 92, 0.2);
+    background: #fff;
+    color: #00285c;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  .sede-pill:hover {
+    border-color: rgba(0, 40, 92, 0.45);
+  }
+  .sede-pill.is-active {
+    background: #00285c;
+    border-color: #00285c;
+    color: #fff;
+  }
+  #sedes-map {
+    background: #eef2f6;
+  }
+  .sede-shield-wrap {
+    background: transparent;
+    border: none;
+  }
+  .sede-shield {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: #fff;
+    border: 3px solid #00285c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .sede-shield img {
+    width: 24px;
+    height: 28px;
+    pointer-events: none;
+  }
+  .sede-shield.is-active {
+    transform: scale(1.18);
+    border-color: #0098b7;
+    box-shadow:
+      0 0 0 3px rgba(0, 152, 183, 0.35),
+      0 0 18px rgba(201, 160, 106, 0.8);
+  }
+  .sede-popup-name {
+    font-size: 0.95rem;
+  }
+  #sedes-map img {
+    max-width: none !important;
+  }
+</style>

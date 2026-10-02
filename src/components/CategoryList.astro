@@ -1,0 +1,60 @@
+---
+/**
+ * CategoryList — PCFC
+ * Grid de categorías formativas: mapea datos → CategoryCard.
+ * Los datos viven en cada página (no se unifican aquí).
+ *
+ * Props:
+ *   - categories: Category[]  Array con las 4 categorías
+ *
+ * Category = {
+ *   slug: "pre" | "form-baja" | "form-alta" | "elite",
+ *   title: string, ageRange: string, focus: string, format: string,
+ *   description: string, ageMin: number, ageMax: number, ctaHref: string,
+ * }
+ */
+
+import CategoryCard from './CategoryCard.astro';
+
+export interface Category {
+  slug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
+  title: string;
+  ageRange: string;
+  focus: string;
+  format: string;
+  description: string;
+  ageMin: number;
+  ageMax: number;
+  ctaHref: string;
+}
+
+interface Props {
+  categories: Category[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div
+  class="grid grid-cols-1 md:grid-cols-2 gap-8"
+  role="list"
+  aria-label="Lista de categorías formativas"
+>
+  {
+    categories.map((cat) => (
+      <div role="listitem">
+        <CategoryCard
+          slug={cat.slug}
+          title={cat.title}
+          ageRange={cat.ageRange}
+          focus={cat.focus}
+          format={cat.format}
+          description={cat.description}
+          ageMin={cat.ageMin}
+          ageMax={cat.ageMax}
+          ctaHref={cat.ctaHref}
+        />
+      </div>
+    ))
+  }
+</div>

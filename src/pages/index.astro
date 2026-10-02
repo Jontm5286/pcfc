@@ -5,7 +5,6 @@ import HomeCategories from '../components/HomeCategories.astro';
 import FeaturedPlayers from '../components/FeaturedPlayers.astro';
 import WhyPcfc from '../components/WhyPcfc.astro';
 import SeasonNumbers from '../components/SeasonNumbers.astro';
-import ValuePillars from '../components/ValuePillars.astro';
 import CommunityMosaic from '../components/CommunityMosaic.astro';
 import PathwayCards from '../components/PathwayCards.astro';
 import Sponsors from '../components/Sponsors.astro';
@@ -16,7 +15,6 @@ import {
   getPillarsData,
   getStatsData,
   getGalleryImagesData,
-  getValuePillarsData,
   getPathwayCardsData,
   getSponsorsData,
   getFeaturedPlayersData,
@@ -50,12 +48,8 @@ import { getSeasonPills } from '../lib/content';
 // entre hero y comunidad). Cada fuente con respaldo si falla: la página
 // nunca tumba por una fuente caída.
 const [feed, galleriesRes, livePlayers, heroLive, liveCategories] = await Promise.all([
-  fetchAcademyFeed().catch(
-    (): AcademyFeed => ({ upcoming: [], played: [] }),
-  ),
-  fetchPublishedGalleries().catch(
-    (): { galleries: PublishedGallery[] } => ({ galleries: [] }),
-  ),
+  fetchAcademyFeed().catch((): AcademyFeed => ({ upcoming: [], played: [] })),
+  fetchPublishedGalleries().catch((): { galleries: PublishedGallery[] } => ({ galleries: [] })),
   fetchPublishedPlayers().catch((): PublishedPlayer[] => []),
   fetchPublishedHero().catch((): PublishedHero | null => null),
   fetchPublishedCategories().catch((): PublishedCategory[] => []),
@@ -91,8 +85,7 @@ const staticCategories = getCategoriesData();
 const categories: Category[] =
   liveCategories.length >= 4
     ? liveCategories.map((c) => {
-        const fb =
-          staticCategories.find((s) => s.slug === c.slug) ?? staticCategories[0];
+        const fb = staticCategories.find((s) => s.slug === c.slug) ?? staticCategories[0];
         return {
           slug: c.slug || fb.slug,
           name: c.name || fb.name,
@@ -129,7 +122,6 @@ const heroGalleryImages = heroFromPartidos.length > 0 ? heroFromPartidos : galle
 // para completar los 5 tiles hasta que haya 5+ partidos con foto.
 const latestFromPartidos = await fetchLatestGalleryImages(galleriesRes.galleries, 5);
 const communityImages = [...latestFromPartidos, ...galleryImages].slice(0, 5);
-const valuePillars = getValuePillarsData();
 const pathwayCards = getPathwayCardsData();
 const sponsors = getSponsorsData();
 
@@ -145,13 +137,16 @@ const playerEntries = await getCollection('players');
 // el asset local (src/assets/players/<slug>.jpg) queda como respaldo.
 const localPlayerModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/players/*.{jpg,jpeg,png,webp,avif}',
-  { eager: true },
+  { eager: true }
 );
 const localPlayerPhotos: Record<string, ImageMetadata> = Object.fromEntries(
   Object.entries(localPlayerModules).map(([path, mod]) => [
-    path.split('/').pop()!.replace(/\.[^.]+$/, ''),
+    path
+      .split('/')
+      .pop()!
+      .replace(/\.[^.]+$/, ''),
     mod.default,
-  ]),
+  ])
 );
 const featuredPlayers: FeaturedPlayer[] =
   livePlayers.length > 0
@@ -170,22 +165,22 @@ const featuredPlayers: FeaturedPlayer[] =
       }))
     : playerEntries.length > 0
       ? playerEntries
-        .filter((e) => e.data.featured)
-        .sort((a, b) => a.data.order - b.data.order)
-        .map((e) => ({
-          name: e.data.name,
-          slug: e.data.slug,
-          position: e.data.position,
-          number: e.data.number,
-          photo: e.data.photo ?? localPlayerPhotos[e.data.slug],
-          photoAlt: e.data.photoAlt,
-          category: e.data.category,
-          matches: e.data.matches,
-          goals: e.data.goals,
-          assists: e.data.assists,
-          season: e.data.season,
-        }))
-    : getFeaturedPlayersData();
+          .filter((e) => e.data.featured)
+          .sort((a, b) => a.data.order - b.data.order)
+          .map((e) => ({
+            name: e.data.name,
+            slug: e.data.slug,
+            position: e.data.position,
+            number: e.data.number,
+            photo: e.data.photo ?? localPlayerPhotos[e.data.slug],
+            photoAlt: e.data.photoAlt,
+            category: e.data.category,
+            matches: e.data.matches,
+            goals: e.data.goals,
+            assists: e.data.assists,
+            season: e.data.season,
+          }))
+      : getFeaturedPlayersData();
 ---
 
 <Base title="Inicio" showFixtures={true}>

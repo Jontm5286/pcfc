@@ -1,0 +1,165 @@
+---
+/**
+ * LikeButton — PCFC
+ * Corazón + contador de likes para fotos. Solo grids (Fase 1, no lightbox).
+ * El <script> se ejecuta 1 vez por página: pide todos los conteos en
+ * 1 solo GET en lote y cablea todos los botones `[data-photo-key]`.
+ */
+interface Props {
+  photoKey: string;
+  label?: string;
+}
+
+const { photoKey, label = 'Me gusta esta foto' } = Astro.props;
+---
+
+<button
+  type="button"
+  class="like-btn"
+  data-photo-key={photoKey}
+  aria-pressed="false"
+  aria-label={label}
+  title="Me gusta"
+>
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path
+      d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+    ></path>
+  </svg>
+  <span class="like-count" data-like-count>0</span>
+</button>
+
+<style>
+  .like-btn {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 999px;
+    background: rgb(0 40 92 / 0.7);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    border: 1px solid rgb(255 255 255 / 0.25);
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease;
+    z-index: 2;
+  }
+  .like-btn:hover {
+    transform: scale(1.1);
+  }
+  .like-btn:focus-visible {
+    outline: 2px solid #0098b7;
+    outline-offset: 2px;
+  }
+  .like-btn[aria-pressed='true'] {
+    background: #0098b7;
+    border-color: #0098b7;
+  }
+  .like-btn[aria-pressed='true'] svg {
+    fill: #fff;
+  }
+  .like-btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+</style>
+
+<script>
+  (async () => {
+    const w = window as unknown as Record<string, unknown>;
+    if (w.__pcfcLikesInit) return;
+    w.__pcfcLikesInit = true;
+
+    const STORE_KEY = 'pcfc-liked-photos';
+    const loadLiked = (): Set<string> => {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+      } catch {
+        return new Set();
+      }
+    };
+    const saveLiked = (set: Set<string>) => {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify([...set]));
+      } catch {
+        /* almacenamiento no disponible: el voto igual se registra en servidor */
+      }
+    };
+
+    const liked = loadLiked();
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('.like-btn[data-photo-key]')];
+    if (buttons.length === 0) return;
+    const keys = [...new Set(buttons.map((b) => b.dataset.photoKey ?? '').filter(Boolean))];
+
+    const paint = (btn: HTMLButtonElement, count: number, isLiked: boolean) => {
+      const countEl = btn.querySelector('[data-like-count]');
+      if (countEl) countEl.textContent = String(count);
+      btn.setAttribute('aria-pressed', isLiked ? 'true' : 'false');
+      btn.setAttribute('aria-label', `Me gusta esta foto (${count})`);
+    };
+
+    // 1 request en lote por página.
+    try {
+      const res = await fetch(`/api/foto-likes?ids=${encodeURIComponent(keys.join(','))}`);
+      if (res.ok) {
+        const { counts } = (await res.json()) as { counts: Record<string, number> };
+        for (const btn of buttons) {
+          const k = btn.dataset.photoKey ?? '';
+          paint(btn, counts[k] ?? 0, liked.has(k));
+        }
+      }
+    } catch {
+      /* sin red: los botones quedan en 0 y el click lo intentará igual */
+    }
+
+    for (const btn of buttons) {
+      btn.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const k = btn.dataset.photoKey ?? '';
+        if (!k || btn.disabled) return;
+        btn.disabled = true;
+        try {
+          const res = await fetch('/api/foto-likes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ photo_key: k }),
+          });
+          if (res.status === 429) {
+            btn.title = 'Demasiados votos, intenta en una hora';
+            return;
+          }
+          if (!res.ok) return;
+          const { likes, liked: isLiked } = (await res.json()) as {
+            likes: number;
+            liked: boolean;
+          };
+          if (isLiked) liked.add(k);
+          else liked.delete(k);
+          saveLiked(liked);
+          paint(btn, likes, isLiked);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }
+  })();
+</script>

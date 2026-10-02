@@ -1,313 +1,117 @@
 ---
 /**
  * /fotos — PCFC
- * Página de galería de fotos por partido.
- * Sigue DESIGN.md §6 (sitemap narrativo, sección FOTOS):
- *   - HeroSection navy con título "Galería de fotos"
- *   - Grid de posts por partido usando PostCard
- *   - Post individual (galería) — placeholder con datos hardcodeados
- *   - Lightbox al hacer click en foto
- *   - Botón "Ver todas las fotos" → navega al post individual
+ * Portada de la galería: 8 fotos destacadas + una sección compacta por
+ * partido con las 4 fotos CON MÁS likes (orden server-side) + enlace a la
+ * página propia del partido (/fotos/<slug>) + CTA al archivo paginado.
  */
 import Base from '../layouts/Base.astro';
-import PostCard from '../components/PostCard.astro';
+import PageHero from '../components/PageHero.astro';
 import GalleryGrid from '../components/GalleryGrid.astro';
-import Lightbox from '../components/Lightbox.astro';
-import type { Photo } from '../components/GalleryGrid.astro';
-import StockImage from '../components/StockImage.astro';
-import { fetchPublishedGalleries } from '../lib/academy-feed';
+import { getAllPosts } from '../lib/fotos-posts';
+import { getLikesStore } from '../lib/foto-likes-db';
+import { pickDestacadas, photoKey } from '../lib/foto-likes-key';
 
-// ──────────────────────────────────────────────────────────────
-// Respaldo local — pool de assets propios (cero red externa).
-// WebP 1000px generados de src/assets (ver public/images/fotos-fallback).
-// Los posts hardcodeados rotan este pool; las alts/captions siguen
-// describiendo cada partido.
-// ──────────────────────────────────────────────────────────────
-const FALLBACK_POOL: string[] = Array.from(
-  { length: 12 },
-  (_, i) => `/images/fotos-fallback/fb-${String(i + 1).padStart(2, '0')}.webp`,
-);
+export const prerender = false;
 
+const { posts } = await getAllPosts();
+const featured = pickDestacadas(posts, 8);
+const featuredPhotos = featured.map((d) => ({ src: d.src, alt: d.alt, caption: d.caption }));
+const featuredKeys = featured.map((d) => photoKey(d.galleryId, d.index));
 
-// ──────────────────────────────────────────────────────────────
-// Datos hardcodeados — 8 posts mínimos tal como exige la tarea
-// ──────────────────────────────────────────────────────────────
-
-interface MatchPost {
-  id: string;
-  categorySlug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
-  categoryLabel: string;
-  team1: string;
-  team2: string;
-  date: string;
-  photoCount: number;
-  thumbnail: string;
-  thumbnailAlt: string;
-  photos: Photo[];
+// Conteos de likes resueltos server-side en el render (1 store, por lotes
+// de 200): el orden top-4 por partido NO depende de N requests del cliente.
+// El <script> de LikeButton hace 1 solo GET en lote por página para pintar.
+const store = await getLikesStore((Astro.locals as unknown as Record<string, unknown>).DB ?? null);
+const allKeys = posts.flatMap((p) => p.photos.map((_, i) => photoKey(p.id, i)));
+const counts: Record<string, number> = {};
+for (let i = 0; i < allKeys.length; i += 200) {
+  Object.assign(counts, await store.getCounts(allKeys.slice(i, i + 200)));
 }
 
-const posts: MatchPost[] = [
-  {
-    id: 'pcfc-vs-atlantico-6sep',
-    categorySlug: 'elite',
-    categoryLabel: 'Elite / Reserva',
-    team1: 'PCFC',
-    team2: 'Atlántico FC',
-    date: '6 sep 2026',
-    photoCount: 24,
-    thumbnail: FALLBACK_POOL[0],
-    thumbnailAlt: 'PCFC vs Atlántico FC — Partido Elite en Cancha Principal',
-    photos: Array.from({ length: 24 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC vs Atlántico FC — Foto ${i + 1}`,
-      caption: i === 0 ? 'El once inicial' : i === 11 ? 'Gol de cabeza' : undefined,
-      downloadName: `pcfc-atlantico-6sep-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub15-vs-santiago-30ago',
-    categorySlug: 'form-alta',
-    categoryLabel: 'Formativas Altas',
-    team1: 'PCFC Sub-15',
-    team2: 'Santiago FC',
-    date: '30 ago 2026',
-    photoCount: 18,
-    thumbnail: FALLBACK_POOL[3],
-    thumbnailAlt: 'PCFC Sub-15 vs Santiago FC — Partido Formativas Altas',
-    photos: Array.from({ length: 18 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-15 vs Santiago FC — Foto ${i + 1}`,
-      caption: i === 0 ? 'Alineación del equipo' : undefined,
-      downloadName: `pcfc-sub15-santiago-30ago-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub10-vs-canay-24ago',
-    categorySlug: 'form-baja',
-    categoryLabel: 'Formativas Bajas',
-    team1: 'PCFC Sub-10',
-    team2: 'Canay FC',
-    date: '24 ago 2026',
-    photoCount: 15,
-    thumbnail: FALLBACK_POOL[6],
-    thumbnailAlt: 'PCFC Sub-10 vs Canay FC — Partido Formativas Bajas',
-    photos: Array.from({ length: 15 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-10 vs Canay FC — Foto ${i + 1}`,
-      downloadName: `pcfc-sub10-canay-24ago-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub8-vs-escuela-bavaro-21ago',
-    categorySlug: 'pre',
-    categoryLabel: 'Pre-Formativas',
-    team1: 'PCFC Sub-8',
-    team2: 'Escuela Bávaro',
-    date: '21 ago 2026',
-    photoCount: 12,
-    thumbnail: FALLBACK_POOL[9],
-    thumbnailAlt: 'PCFC Sub-8 vs Escuela Bávaro — Partido Pre-Formativas',
-    photos: Array.from({ length: 12 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-8 vs Escuela Bávaro — Foto ${i + 1}`,
-      caption: i === 0 ? '¡El equipo al completo!' : undefined,
-      downloadName: `pcfc-sub8-bavaro-21ago-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-reserva-vs-higuey-28sep',
-    categorySlug: 'elite',
-    categoryLabel: 'Elite / Reserva',
-    team1: 'PCFC Reserva',
-    team2: 'Higüey United',
-    date: '28 sep 2026',
-    photoCount: 22,
-    thumbnail: FALLBACK_POOL[0],
-    thumbnailAlt: 'PCFC Reserva vs Higüey United — Partido Elite',
-    photos: Array.from({ length: 22 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Reserva vs Higüey United — Foto ${i + 1}`,
-      downloadName: `pcfc-reserva-higuey-28sep-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub14-vs-seleccion-16ago',
-    categorySlug: 'form-alta',
-    categoryLabel: 'Formativas Altas',
-    team1: 'PCFC Sub-14',
-    team2: 'Selección Federativa',
-    date: '16 ago 2026',
-    photoCount: 16,
-    thumbnail: FALLBACK_POOL[3],
-    thumbnailAlt: 'PCFC Sub-14 vs Selección Federativa — Partido Formativas Altas',
-    photos: Array.from({ length: 16 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-14 vs Selección Federativa — Foto ${i + 1}`,
-      downloadName: `pcfc-sub14-fed-16ago-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub6-vs-casa-espana-9ago',
-    categorySlug: 'pre',
-    categoryLabel: 'Pre-Formativas',
-    team1: 'PCFC Sub-6',
-    team2: 'Casa España',
-    date: '9 ago 2026',
-    photoCount: 10,
-    thumbnail: FALLBACK_POOL[6],
-    thumbnailAlt: 'PCFC Sub-6 vs Casa España — Partido Pre-Formativas',
-    photos: Array.from({ length: 10 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-6 vs Casa España — Foto ${i + 1}`,
-      caption: i === 0 ? 'Nuestros pequeños cracks' : undefined,
-      downloadName: `pcfc-sub6-casa-espana-9ago-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-  {
-    id: 'pcfc-sub13-vs-casa-espana-2sep',
-    categorySlug: 'form-alta',
-    categoryLabel: 'Formativas Altas',
-    team1: 'PCFC Sub-13',
-    team2: 'Casa España',
-    date: '2 sep 2026',
-    photoCount: 14,
-    thumbnail: FALLBACK_POOL[9],
-    thumbnailAlt: 'PCFC Sub-13 vs Casa España — Partido Formativas Altas',
-    photos: Array.from({ length: 14 }, (_, i) => ({
-      src: FALLBACK_POOL[i % FALLBACK_POOL.length],
-      alt: `PCFC Sub-13 vs Casa España — Foto ${i + 1}`,
-      downloadName: `pcfc-sub13-casa-espana-2sep-${String(i + 1).padStart(2, '0')}.jpg`,
-    })),
-  },
-];
+// Top-4 con más likes por partido (empates: índice original primero).
+const sections = posts.map((post) => {
+  const ranked = post.photos
+    .map((ph, i) => ({ ph, i, likes: counts[photoKey(post.id, i)] ?? 0 }))
+    .sort((a, b) => b.likes - a.likes || a.i - b.i)
+    .slice(0, 4);
+  return {
+    post,
+    photos: ranked.map((r) => r.ph),
+    keys: ranked.map((r) => photoKey(post.id, r.i)),
+  };
+});
 
-// Galerías desde EmDash (colección `partidos`, un partido = una galería).
-// Solo publicadas + con fotos. Si EmDash viene vacío, se usa el respaldo local.
-const { galleries: emdashGalleries, cacheHint: galleriesCacheHint } =
-  await fetchPublishedGalleries();
-if (galleriesCacheHint) Astro.cache.set(galleriesCacheHint);
-
-const emdashPosts: MatchPost[] = emdashGalleries.map((g) => ({
-  id: g.slug,
-  categorySlug: g.categorySlug,
-  categoryLabel: g.categoryLabel,
-  team1: g.team1,
-  team2: g.team2,
-  date: g.date,
-  photoCount: g.photos.length,
-  thumbnail: g.thumbnail,
-  thumbnailAlt: g.thumbnailAlt,
-  photos: g.photos.map((ph, i) => ({
-    src: ph.src,
-    alt: ph.alt,
-    caption: ph.caption,
-    downloadName: `${g.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
-  })),
-}));
-
-const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
+const title = 'Galería de fotos | Punta Cana FC';
+const description =
+  'Las mejores fotos de los partidos de Punta Cana FC. Explora el archivo completo por partido y descarga las fotos de tu hijo en acción.';
 ---
 
-<Base
-  title="Galería de Fotos"
-  description="Galería completa de fotos de todos los partidos de Punta Cana FC. Imágenes de los partidos de las cuatro categorías formativas."
->
-  <!-- Lightbox — un solo componente para toda la página -->
-  <Lightbox />
+<Base title={title} description={description}>
+  <!-- ============================================ -->
+  <!-- HERO — emoción + contexto                    -->
+  <!-- ============================================ -->
+  <PageHero
+    eyebrow="GALERÍA POR PARTIDO"
+    title="Galería de fotos"
+    lede="Cada partido es un recuerdo. Descarga las fotos de tu hijo en acción."
+    image="partido-sub13"
+    alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
+  />
 
   <!-- ============================================ -->
-  <!-- HERO — Galería de fotos                   -->
-  <!-- ============================================ -->
-  <section
-    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
-  >
-    <StockImage
-      name="partido-sub13"
-      alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
-      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
-      width={1600}
-      height={1200}
-      loading="eager"
-      fetchpriority="high"
-    />
-    <div class="hero-overlay"></div>
-    <div class="container-x relative z-10">
-      <p class="eyebrow eyebrow--on-navy">GALERÍA POR PARTIDO</p>
-      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
-        Galería de fotos
-      </h1>
-      <p class="lede lede--on-navy max-w-[52ch]">
-        Cada partido es un recuerdo. Descarga las fotos de tu hijo en acción.
-      </p>
-    </div>
-  </section>
-  <!-- ============================================ -->
-  <!-- GRID DE POSTS POR PARTIDO — descubrimiento  -->
+  <!-- DESTACADAS — 8 fotos                         -->
   <!-- ============================================ -->
   <section class="section bg-white">
     <div class="container-x">
-      <div class="mb-10">
-        <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] mb-2">Partidos recientes</h2>
+      <div class="mb-10 text-center max-w-[60ch] mx-auto">
+        <p class="eyebrow mb-3">LO MEJOR DE LA CANCHA</p>
+        <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] mb-2">Fotos destacadas</h2>
         <p class="lede text-[0.95rem]">
-          {allPosts.length} partidos con galería de fotos. Haz clic en una tarjeta para ver todas las imágenes
-          del encuentro.
+          Una selección de los últimos partidos. Toca el corazón para votar por tus favoritas.
         </p>
       </div>
 
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        id="posts-grid"
-      >
-        {
-          allPosts.map((post) => (
-            <PostCard
-              href={`#${post.id}`}
-              thumbnail={post.thumbnail}
-              thumbnailAlt={post.thumbnailAlt}
-              categorySlug={post.categorySlug}
-              categoryLabel={post.categoryLabel}
-              team1={post.team1}
-              team2={post.team2}
-              date={post.date}
-              photoCount={post.photoCount}
-            />
-          ))
-        }
-      </div>
+      {
+        featuredPhotos.length > 0 ? (
+          <GalleryGrid
+            photos={featuredPhotos}
+            galleryId="destacadas"
+            photoKeys={featuredKeys}
+            likes={true}
+            eager={true}
+          />
+        ) : (
+          <p class="text-center text-navy-60">Pronto publicaremos las primeras fotos.</p>
+        )
+      }
     </div>
   </section>
 
   <!-- ============================================ -->
-  <!-- POSTS INDIVIDUALES — emoción + propiedad    -->
+  <!-- POR PARTIDO — top-4 con más likes + Ver todas -->
   <!-- ============================================ -->
   {
-    allPosts.map((post) => (
-      <section
-        id={post.id}
-        class="section bg-pure-white border-t border-navy/10"
-        aria-labelledby={`post-heading-${post.id}`}
-      >
+    sections.map(({ post, photos, keys }) => (
+      <section id={post.id} class="section bg-pure-white border-t border-navy/10">
         <div class="container-x">
-          {/* Encabezado del post individual */}
           <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10">
             <div>
               <span class={`badge badge--${post.categorySlug} mb-3`}>{post.categoryLabel}</span>
-              <h2
-                id={`post-heading-${post.id}`}
-                class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]"
-              >
+              <h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]">
                 {post.team1} vs {post.team2}
               </h2>
-              <time datetime={post.date} class="mt-2 text-[0.9rem] text-navy-60 font-medium">
+              <time datetime={post.date} class="mt-2 block text-[0.9rem] text-navy-60 font-medium">
                 {[post.date, `${post.photoCount} fotos`].filter(Boolean).join(' · ')}
               </time>
             </div>
+          </div>
 
-            <a
-              href="#posts-grid"
-              class="btn btn--outline btn--lg flex-shrink-0 self-start sm:self-auto"
-              aria-label={`Volver al grid de partidos — ${post.team1} vs ${post.team2}`}
-            >
+          <GalleryGrid photos={photos} galleryId={`top-${post.id}`} photoKeys={keys} likes={true} />
+
+          <div class="mt-8">
+            <a href={`/fotos/${post.id}`} class="btn btn--primary">
+              Ver todas las fotos de este partido
               <svg
                 width="16"
                 height="16"
@@ -316,31 +120,44 @@ const allPosts: MatchPost[] = emdashPosts.length > 0 ? emdashPosts : posts;
                 stroke="currentColor"
                 stroke-width="2.4"
                 stroke-linecap="round"
+                stroke-linejoin="round"
                 aria-hidden="true"
               >
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
               </svg>
-              Ver todos los partidos
             </a>
           </div>
-
-          {/* Grid de fotos */}
-          <GalleryGrid photos={post.photos} galleryId={post.id} eager={post.id === allPosts[0]?.id} />
         </div>
       </section>
     ))
   }
-</Base>
 
-<script>
-  // Si la URL tiene un hash (#post-id), hacer scroll suave a esa sección
-  if (window.location.hash) {
-    const target = document.querySelector(window.location.hash);
-    if (target) {
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }
-</script>
+  <!-- ============================================ -->
+  <!-- ARCHIVO — CTA final al paginado              -->
+  <!-- ============================================ -->
+  <section class="section bg-white border-t border-navy/10">
+    <div class="container-x text-center">
+      <a href="/fotos/todas" class="btn btn--outline btn--lg">
+        Abrir archivo completo paginado (10 partidos/página)
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+      <p class="mt-3 text-[0.85rem] text-navy-60 font-medium">
+        {posts.length} partidos con galería de fotos
+      </p>
+    </div>
+  </section>
+</Base>

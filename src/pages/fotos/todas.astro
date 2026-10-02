@@ -1,0 +1,168 @@
+---
+/**
+ * /fotos/todas — PCFC
+ * Archivo de galerías por partido: 10 partidos recientes por página.
+ * Query ?pagina=N con clamp + nav Anterior / números / Siguiente.
+ */
+import Base from '../../layouts/Base.astro';
+import GalleryGrid from '../../components/GalleryGrid.astro';
+import { getAllPosts } from '../../lib/fotos-posts';
+
+export const prerender = false;
+
+const PER_PAGE = 10;
+
+const { posts } = await getAllPosts();
+const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+
+const rawPage = Number.parseInt(Astro.url.searchParams.get('pagina') ?? '1', 10);
+const pagina = Number.isFinite(rawPage) ? Math.min(Math.max(rawPage, 1), totalPages) : 1;
+
+const pagePosts = posts.slice((pagina - 1) * PER_PAGE, pagina * PER_PAGE);
+
+const pageUrl = (n: number) => (n <= 1 ? '/fotos/todas' : `/fotos/todas?pagina=${n}`);
+
+const title = `Archivo de fotos por partido — página ${pagina} | Punta Cana FC`;
+const description =
+  'Archivo completo de galerías de fotos de los partidos de Punta Cana FC, 10 partidos por página.';
+---
+
+<Base title={title} description={description}>
+  <section class="section bg-white pt-[clamp(6rem,12vw,9rem)]">
+    <div class="container-x">
+      <div class="mb-10">
+        <p class="eyebrow mb-3">ARCHIVO</p>
+        <h1 class="h-section text-[clamp(1.75rem,4vw,2.75rem)] mb-2">Fotos por partido</h1>
+        <p class="lede text-[0.95rem]">
+          {posts.length} partidos con galería · página {pagina} de {totalPages}. Toca el corazón
+          para votar por tus fotos favoritas.
+        </p>
+        <a href="/fotos" class="btn btn--outline mt-5">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Volver a destacadas
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {
+    pagePosts.map((post, i) => (
+      <section
+        id={post.id}
+        class="section bg-pure-white border-t border-navy/10"
+        aria-labelledby={`post-heading-${post.id}`}
+      >
+        <div class="container-x">
+          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10">
+            <div>
+              <span class={`badge badge--${post.categorySlug} mb-3`}>{post.categoryLabel}</span>
+              <h2
+                id={`post-heading-${post.id}`}
+                class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]"
+              >
+                {post.team1} vs {post.team2}
+              </h2>
+              <time datetime={post.date} class="mt-2 text-[0.9rem] text-navy-60 font-medium">
+                {[post.date, `${post.photoCount} fotos`].filter(Boolean).join(' · ')}
+              </time>
+            </div>
+          </div>
+
+          <GalleryGrid photos={post.photos} galleryId={post.id} likes={true} eager={i === 0} />
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    totalPages > 1 && (
+      <nav
+        class="section bg-white border-t border-navy/10"
+        aria-label="Paginación del archivo de fotos"
+      >
+        <div class="container-x flex flex-wrap items-center justify-center gap-2">
+          {pagina > 1 ? (
+            <a
+              href={pageUrl(pagina - 1)}
+              class="btn btn--outline"
+              rel="prev"
+              aria-label="Página anterior"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              Anterior
+            </a>
+          ) : (
+            <span class="btn btn--outline opacity-40 pointer-events-none" aria-disabled="true">
+              Anterior
+            </span>
+          )}
+
+          {Array.from({ length: totalPages }, (_, n) => n + 1).map((n) =>
+            n === pagina ? (
+              <span class="btn btn--primary pointer-events-none" aria-current="page">
+                {n}
+              </span>
+            ) : (
+              <a href={pageUrl(n)} class="btn btn--outline" aria-label={`Ir a la página ${n}`}>
+                {n}
+              </a>
+            )
+          )}
+
+          {pagina < totalPages ? (
+            <a
+              href={pageUrl(pagina + 1)}
+              class="btn btn--outline"
+              rel="next"
+              aria-label="Página siguiente"
+            >
+              Siguiente
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          ) : (
+            <span class="btn btn--outline opacity-40 pointer-events-none" aria-disabled="true">
+              Siguiente
+            </span>
+          )}
+        </div>
+      </nav>
+    )
+  }
+</Base>

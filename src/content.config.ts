@@ -1,4 +1,5 @@
 import { defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
 import { z } from 'zod';
 
 /**
@@ -47,9 +48,7 @@ const heroCollection = defineCollection({
     // Imagen fondo (local .webp o URL)
     backgroundImage: ImageSchema.default('/images/stock/jugadores-cancha.webp'),
     // Imagen alt (WCAG: siempre requerido)
-    backgroundAlt: z
-      .string()
-      .default('Jugadores de Punta Cana FC entrenando en cancha'),
+    backgroundAlt: z.string().default('Jugadores de Punta Cana FC entrenando en cancha'),
     // CTAs (opcionales)
     ctaPrimary: CtaSchema.optional(),
     ctaSecondary: CtaSchema.optional(),
@@ -59,7 +58,7 @@ const heroCollection = defineCollection({
         z.object({
           src: ImageSchema,
           alt: z.string().min(3, 'Alt accesible requerido para WCAG'),
-        }),
+        })
       )
       .default([]),
   }),
@@ -177,14 +176,15 @@ const statsCollection = defineCollection({
 // EXPORT
 // ─────────────────────────────────────────────────────────
 
-// COLLECTION 8: next_match
+// COLLECTION 8: next-match (key con guion = nombre del dir src/content/next-match/,
+// igual que 'club-history' y 'stats-pillars'; lo lee getNextMatch() en lib/content.ts)
 const nextMatchCollection = defineCollection({
-  type: "data",
+  type: 'data',
   schema: z.object({
     date: z.string(),
     time: z.string(),
     category: z.string(),
-    categorySlug: z.enum(["pre", "form-baja", "form-alta", "elite"]),
+    categorySlug: z.enum(['pre', 'form-baja', 'form-alta', 'elite']),
     home: z.string(),
     homeLogo: ImageSchema.optional(),
     away: z.string(),
@@ -194,17 +194,28 @@ const nextMatchCollection = defineCollection({
 });
 
 // COLLECTION 9: blog
+// NOTA FASE 3: colección moderna con `loader` explícito (Astro 7 ignora las
+// colecciones legacy solo-`type` porque `legacy.collectionsBackwardsCompat`
+// es false en este proyecto). Sin `loader`, getCollection('blog') = [].
+// `body` (array de párrafos markdown) + ctaPrimary/ctaSecondary existen en
+// los 4 .md de src/content/blog/ — se validan aquí con defaults opcionales
+// en vez de reescribir los .md (lado que menos rompe).
+// `coverImage` acepta "" (3 posts la traen vacía → sin cover).
+// Local file-based: NO pasa por EmDash (queda fuera de .emdash/schema.json).
 const blogCollection = defineCollection({
-  type: "content",
+  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
     title: z.string().min(3),
     slug: z.string(),
-    category: z.string().default("Noticias"),
+    category: z.string().default('Noticias'),
     publishedAt: z.string(),
-    coverImage: ImageSchema.optional(),
+    coverImage: z.union([ImageSchema, z.literal('')]).optional(),
     coverAlt: z.string().optional(),
     excerpt: z.string().optional(),
     published: z.boolean().default(true),
+    body: z.array(z.string()).default([]),
+    ctaPrimary: z.object({ label: z.string(), href: z.string() }).optional(),
+    ctaSecondary: z.object({ label: z.string(), href: z.string() }).optional(),
   }),
 });
 
@@ -212,22 +223,22 @@ const blogCollection = defineCollection({
 // Jugadores destacados de la home — editable nombre/foto/posición/stats.
 // El cliente cambia datos, nunca layout.
 const playersCollection = defineCollection({
-  type: "data",
+  type: 'data',
   schema: z.object({
-    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+    name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
     slug: z.string(),
-    position: z.enum(["Portero", "Defensa", "Centrocampista", "Atacante"]),
+    position: z.enum(['Portero', 'Defensa', 'Centrocampista', 'Atacante']),
     number: z.number().int().min(1).max(99),
     photo: ImageSchema.or(z.string().regex(/^\.\.\/assets\/.+\.(jpg|jpeg|png|webp|avif)$/)),
-    photoAlt: z.string().min(3, "Alt accesible requerido para WCAG"),
-    category: z.enum(["pre", "form-baja", "form-alta", "elite"]).optional(),
+    photoAlt: z.string().min(3, 'Alt accesible requerido para WCAG'),
+    category: z.enum(['pre', 'form-baja', 'form-alta', 'elite']).optional(),
     featured: z.boolean().default(true),
     order: z.number().int().default(99),
     // Stats temporada actual (opcionales)
     matches: z.number().int().default(0),
     goals: z.number().int().default(0),
     assists: z.number().int().default(0),
-    season: z.string().default("2026/2027"),
+    season: z.string().default('2026/2027'),
   }),
 });
 
@@ -238,7 +249,7 @@ export const collections = {
   calendar: calendarCollection,
   gallery: galleryCollection,
   'stats-pillars': statsCollection,
-  next_match: nextMatchCollection,
+  'next-match': nextMatchCollection,
   blog: blogCollection,
   players: playersCollection,
 };

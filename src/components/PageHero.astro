@@ -1,0 +1,77 @@
+---
+/**
+ * PageHero — PCFC
+ * Hero con imagen de fondo compartido por las páginas internas.
+ * Patrón: `section.hero-with-image > StockImage 1600x1200 eager
+ * fetchpriority=high + .hero-overlay + .container-x(eyebrow/h1/lede)`.
+ *
+ * Props:
+ *   - eyebrow: string       Texto superior (ej. "Nuestro Club")
+ *   - title: string          Título H1 (admite HTML, ej. "Únete a la<br />academia")
+ *   - lede?: string          Subtítulo descriptivo
+ *   - image: string          Clave de stock (StockImage `name`)
+ *   - alt: string            Texto accesible de la imagen (REQUERIDO)
+ *   - align?: "left"|"center"  Alineación del texto (default "left")
+ *   - contentClass?: string  Clases extra del contenedor (ej. "max-w-[720px]")
+ *   - titleClass?: string    Override de tamaño/ancho del H1
+ *   - ledeClass?: string     Override de ancho del lede
+ */
+
+import StockImage from './StockImage.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+  image: string;
+  alt: string;
+  align?: 'left' | 'center';
+  contentClass?: string;
+  titleClass?: string;
+  ledeClass?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  lede,
+  image,
+  alt,
+  align = 'left',
+  contentClass = '',
+  titleClass = 'text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]',
+  ledeClass = 'max-w-[52ch]',
+} = Astro.props;
+
+const centered = align === 'center';
+---
+
+<section
+  class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
+>
+  <StockImage
+    name={image}
+    alt={alt}
+    className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+    width={1600}
+    height={1200}
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="hero-overlay"></div>
+  <div class:list={['container-x relative z-10', contentClass, { 'text-center': centered }]}>
+    <p class="eyebrow eyebrow--on-navy">{eyebrow}</p>
+    <h1
+      class:list={['h-display h-display--on-navy', titleClass, { 'mx-auto': centered }]}
+      set:html={title}
+    />
+    {
+      lede && (
+        <p
+          class:list={['lede lede--on-navy', ledeClass, { 'mx-auto': centered }]}
+          set:html={lede}
+        />
+      )
+    }
+  </div>
+</section>

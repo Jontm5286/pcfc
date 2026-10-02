@@ -12,7 +12,10 @@ import infantilLogo from '../assets/leagues/infantil.webp';
 import prejuvenilLogo from '../assets/leagues/prejuvenil.webp';
 import lijnLogo from '../assets/leagues/lijn.webp';
 
-interface Props { pills: SeasonPill[]; livePlayed: number | null }
+interface Props {
+  pills: SeasonPill[];
+  livePlayed: number | null;
+}
 const { pills, livePlayed } = Astro.props;
 
 const defaults: SeasonPill[] = [
@@ -42,14 +45,17 @@ const leagues = [
   <div class="mx-auto max-w-6xl px-5 py-10 md:py-12">
     <div class="flex flex-wrap items-end justify-between gap-6" data-reveal="up">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">Temporada 2026/2027</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#79B8D3]">
+          Temporada 2026/2027
+        </p>
         <h2 class="mt-2 text-2xl font-extrabold md:text-3xl">La temporada en números</h2>
         <p class="mt-2 text-sm text-white/70">El rendimiento del club, actualizado cada jornada.</p>
       </div>
       <a
         href="/calendario"
         class="inline-block rounded-lg border border-[#429AC0] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#429AC0]"
-      >Ver calendario</a>
+        >Ver calendario</a
+      >
     </div>
 
     <dl class="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
@@ -57,12 +63,16 @@ const leagues = [
         <dt class="order-2 mt-1 text-sm text-white/80">{stats[0].label}</dt>
         <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{played}</dd>
       </div>
-      {stats.slice(1).map((s) => (
-        <div class="border-l-2 border-[#429AC0] pl-4">
-          <dt class="order-2 mt-1 text-sm text-white/80">{s.label}</dt>
-          <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>{s.value}</dd>
-        </div>
-      ))}
+      {
+        stats.slice(1).map((s) => (
+          <div class="border-l-2 border-[#429AC0] pl-4">
+            <dt class="order-2 mt-1 text-sm text-white/80">{s.label}</dt>
+            <dd class="order-1 text-3xl font-extrabold md:text-4xl" data-countup>
+              {s.value}
+            </dd>
+          </div>
+        ))
+      }
     </dl>
   </div>
 </section>

@@ -21,7 +21,7 @@ interface Props {
   href: string;
   thumbnail: string;
   thumbnailAlt: string;
-  categorySlug: "pre" | "form-baja" | "form-alta" | "elite";
+  categorySlug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
   categoryLabel: string;
   team1: string;
   team2: string;
@@ -82,15 +82,14 @@ const {
     <div class="p-4">
       <div class="flex items-center justify-between gap-2 mb-2">
         <span class={`badge badge--${categorySlug}`}>{categoryLabel}</span>
-        <time
-          datetime={date}
-          class="text-[0.75rem] text-navy-60 font-medium whitespace-nowrap"
-        >
+        <time datetime={date} class="text-[0.75rem] text-navy-60 font-medium whitespace-nowrap">
           {date}
         </time>
       </div>
       <h3 class="font-body font-semibold text-[0.95rem] text-navy leading-snug">
-        {team1} <span class="font-normal text-navy-60">vs</span> {team2}
+        {team1}
+        <span class="font-normal text-navy-60">vs</span>
+        {team2}
       </h3>
     </div>
   </a>

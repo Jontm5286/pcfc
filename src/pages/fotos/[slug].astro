@@ -1,0 +1,98 @@
+---
+/**
+ * /fotos/[slug] — PCFC
+ * Página propia de un partido: TODAS sus fotos (título + fecha,
+ * grid con LikeButton). 404 si el slug no existe.
+ * Nota: /fotos/todas.astro (ruta estática) tiene prioridad sobre
+ * esta ruta dinámica, así que /fotos/todas sigue intacta.
+ */
+import Base from '../../layouts/Base.astro';
+import GalleryGrid from '../../components/GalleryGrid.astro';
+import { getAllPosts } from '../../lib/fotos-posts';
+
+export const prerender = false;
+
+const slug = Astro.params.slug ?? '';
+const { posts } = await getAllPosts();
+const post = posts.find((p) => p.id === slug);
+
+if (!post) {
+  Astro.response.status = 404;
+}
+
+const title = post
+  ? `${post.team1} vs ${post.team2} — Fotos | Punta Cana FC`
+  : 'Partido no encontrado | Punta Cana FC';
+const description = post
+  ? `Todas las fotos del partido ${post.team1} vs ${post.team2} (${post.date}). Vota por tus favoritas con el corazón.`
+  : 'El partido que buscas no existe en la galería de fotos de Punta Cana FC.';
+---
+
+<Base title={title} description={description}>
+  {
+    post ? (
+      <>
+        <section class="section bg-white pt-[clamp(6rem,12vw,9rem)]">
+          <div class="container-x">
+            <div class="mb-10">
+              <p class="eyebrow mb-3">GALERÍA DEL PARTIDO</p>
+              <span class={`badge badge--${post.categorySlug} mb-3`}>{post.categoryLabel}</span>
+              <h1 class="h-section text-[clamp(1.75rem,4vw,2.75rem)] mb-2 max-w-[22ch]">
+                {post.team1} vs {post.team2}
+              </h1>
+              <time datetime={post.date} class="block text-[0.95rem] text-navy-60 font-medium">
+                {[post.date, `${post.photoCount} fotos`].filter(Boolean).join(' · ')}
+              </time>
+              <p class="lede text-[0.95rem] mt-3">
+                Toca el corazón para votar por tus fotos favoritas.
+              </p>
+              <div class="flex flex-wrap gap-3 mt-5">
+                <a href="/fotos" class="btn btn--outline">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                  >
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                  </svg>
+                  Volver a la galería
+                </a>
+                <a href="/fotos/todas" class="btn btn--outline">
+                  Archivo por partido
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section bg-pure-white border-t border-navy/10">
+          <div class="container-x">
+            <GalleryGrid photos={post.photos} galleryId={post.id} likes={true} eager={true} />
+          </div>
+        </section>
+      </>
+    ) : (
+      <section class="section bg-white pt-[clamp(6rem,12vw,9rem)]">
+        <div class="container-x text-center max-w-[60ch] mx-auto">
+          <p class="eyebrow mb-3">404</p>
+          <h1 class="h-section text-[clamp(1.75rem,4vw,2.75rem)] mb-2">Partido no encontrado</h1>
+          <p class="lede text-[0.95rem]">La galería que buscas no existe o fue retirada.</p>
+          <div class="flex flex-wrap justify-center gap-3 mt-8">
+            <a href="/fotos" class="btn btn--primary">
+              Volver a la galería
+            </a>
+            <a href="/fotos/todas" class="btn btn--outline">
+              Archivo por partido
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>

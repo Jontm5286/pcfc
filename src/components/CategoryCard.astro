@@ -22,7 +22,7 @@
  */
 
 interface Props {
-  slug: "pre" | "form-baja" | "form-alta" | "elite";
+  slug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
   title: string;
   ageRange: string;
   focus: string;
@@ -43,7 +43,7 @@ const {
   description,
   ageMin,
   ageMax,
-  ctaHref = "/inscribete",
+  ctaHref = '/inscribete',
 } = Astro.props;
 
 const badgeClass = `badge badge--${slug}`;
@@ -80,13 +80,17 @@ const badgeClass = `badge badge--${slug}`;
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-navy/10">
       <div>
-        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
+        <dt
+          class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1"
+        >
           Foco
         </dt>
         <dd class="font-body text-[0.9rem] text-navy leading-snug">{focus}</dd>
       </div>
       <div>
-        <dt class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1">
+        <dt
+          class="font-body text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-sky mb-1"
+        >
           Formato
         </dt>
         <dd class="font-body text-[0.9rem] text-navy leading-snug">{format}</dd>

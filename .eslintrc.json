@@ -14,12 +14,12 @@
   },
   "plugins": ["@typescript-eslint", "astro"],
   "rules": {
+    "no-undef": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "warn",
     "prefer-const": "error",
-    "no-var": "error",
-    "astro/no-conflict-set-html": "warn"
+    "no-var": "error"
   },
   "overrides": [
     {
@@ -28,8 +28,11 @@
       "parserOptions": {
         "parser": "@typescript-eslint/parser",
         "extraFileExtensions": [".astro"]
+      },
+      "rules": {
+        "no-undef": "off"
       }
     }
   ],
-  "ignorePatterns": ["dist/", "node_modules/", ".astro/"]
+  "ignorePatterns": ["dist/", "node_modules/", ".astro/", ".wrangler/", "public/vendor/", "plugins/"]
 }

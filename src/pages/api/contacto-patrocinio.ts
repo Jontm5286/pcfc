@@ -23,7 +23,11 @@ function str(v: unknown, max: number): string {
 }
 
 function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function json(body: Record<string, unknown>, status = 200): Response {
@@ -70,8 +74,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const { env } = getEnv(locals);
   const destino =
-    (typeof env.SPONSOR_EMAIL === 'string' && env.SPONSOR_EMAIL.trim()) ||
-    DESTINO_DEFAULT;
+    (typeof env.SPONSOR_EMAIL === 'string' && env.SPONSOR_EMAIL.trim()) || DESTINO_DEFAULT;
   const remitente =
     (typeof env.SPONSOR_FROM === 'string' && env.SPONSOR_FROM.trim()) || REMITENTE_DEFAULT;
 
@@ -107,7 +110,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.error('[contacto-patrocinio] Error enviando email:', err);
       return json(
         { ok: false, error: 'No pudimos enviar tu solicitud. Inténtalo de nuevo en unos minutos.' },
-        502,
+        502
       );
     }
     return json({ ok: true });
@@ -129,6 +132,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   console.error('[contacto-patrocinio] Sin binding SEB en producción.');
   return json(
     { ok: false, error: 'Servicio no disponible. Escríbenos a rrhhpuntacanafc@gmail.com.' },
-    503,
+    503
   );
 };

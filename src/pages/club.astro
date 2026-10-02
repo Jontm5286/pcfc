@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import StockImage from '../components/StockImage.astro';
+import PageHero from '../components/PageHero.astro';
+import TwoColMedia from '../components/TwoColMedia.astro';
 import { Image } from 'astro:assets';
 import luisFlores from '../assets/luis-flores.jpg';
 import anaFlores from '../assets/ana-flores.jpg';
@@ -11,59 +12,45 @@ import anaFlores from '../assets/ana-flores.jpg';
   description="Conoce la historia, misión y visión de Punta Cana FC. Más de 10 años formando campeones en el Caribe."
 >
   <!-- Hero -->
-  <section
-    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
-  >
-    <StockImage
-      name="historia"
-      alt="Jugadores de Punta Cana FC entrenando — más de 10 años formando campeones en el Caribe"
-      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
-      width={1600}
-      height={1200}
-      loading="eager"
-      fetchpriority="high"
-    />
-    <div class="hero-overlay"></div>
-    <div class="container-x relative z-10">
-      <p class="eyebrow eyebrow--on-navy">Nuestro Club</p>
-      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
-        Conoce Punta Cana FC
-      </h1>
-      <p class="lede lede--on-navy max-w-[52ch]">
-        Más de 10 años dedicados a formar no solo futbolistas, sino personas de bien.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Nuestro Club"
+    title="Conoce Punta Cana FC"
+    lede="Más de 10 años dedicados a formar no solo futbolistas, sino personas de bien."
+    image="historia"
+    alt="Jugadores de Punta Cana FC entrenando — más de 10 años formando campeones en el Caribe"
+  />
 
   <!-- Historia -->
   <section class="section" id="historia">
     <div class="container-x">
-      <div class="two-col">
-        <div>
-          <p class="eyebrow">Nuestra Historia</p>
-          <h2 class="h-section">De Un Sueño a la Realidad</h2>
-          <p class="text-block">
-            Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el
-            Caribe. Desde un pequeño grupo de jugadores ha crecido hasta convertirse en la academia
-            de fútbol más importante de la región.
-          </p>
-          <p class="text-block">
-            A lo largo de nuestros más de 10 años de trayectoria, hemos formado cientos de jugadores
-            que han llegado a competir en ligas profesionales nacionales e internacionales.
-          </p>
-          <a href="/inscribete" class="btn btn--sky">Únete al Club</a>
-        </div>
-        <div class="image-placeholder">
-          <StockImage
-            name="historia"
-            alt="Historia de Punta Cana FC — formando campeones en el Caribe por más de 10 años"
-            className="placeholder-img"
+      <TwoColMedia
+        eyebrow="Nuestra Historia"
+        title="De Un Sueño a la Realidad"
+        paragraphs={[
+          'Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe. Desde un pequeño grupo de jugadores ha crecido hasta convertirse en la academia de fútbol más importante de la región.',
+          'A lo largo de nuestros más de 10 años de trayectoria, hemos formado cientos de jugadores que han llegado a competir en ligas profesionales nacionales e internacionales.',
+        ]}
+      >
+        <a href="/inscribete" class="btn btn--sky">Únete al Club</a>
+        <div slot="media" class="historia-collage">
+          <img
+            src="/images/historia/fundador-mate-bn.jpg"
+            alt="Fundador de Punta Cana FC tomando mate — retrato en blanco y negro"
+            class="historia-collage__main"
             loading="lazy"
-            width={1600}
-            height={1200}
+            width={1920}
+            height={1280}
+          />
+          <img
+            src="/images/historia/entrenador-gorra.jpg"
+            alt="Entrenador de Punta Cana FC con gorra del club en la cancha"
+            class="historia-collage__overlap"
+            loading="lazy"
+            width={1200}
+            height={900}
           />
         </div>
-      </div>
+      </TwoColMedia>
     </div>
   </section>
 
@@ -154,36 +141,32 @@ import anaFlores from '../assets/ana-flores.jpg';
       <p class="eyebrow">Equipo Directivo</p>
       <h2 class="h-section">Liderazgo con Visión</h2>
       <div class="team-grid">
-        <div class="team-card">
-          <div class="team-avatar">
-            <Image
-              src={luisFlores}
-              alt="Luis Flores, Director General de Punta Cana FC"
-              class="team-avatar-img"
-              loading="lazy"
-              width={200}
-              height={200}
-              widths={[160, 320]}
-              sizes="80px"
-            />
-          </div>
-          <h3 class="h-card">Luis Flores</h3>
+        <div class="team-member">
+          <Image
+            src={luisFlores}
+            alt="Luis Flores, Director General de Punta Cana FC"
+            class="team-photo"
+            loading="lazy"
+            width={640}
+            height={800}
+            widths={[320, 640]}
+            sizes="(max-width: 768px) 100vw, 340px"
+          />
+          <h3 class="team-name">Luis Flores</h3>
           <p class="team-role">Director General</p>
         </div>
-        <div class="team-card">
-          <div class="team-avatar">
-            <Image
-              src={anaFlores}
-              alt="Ana Flores, Directora Deportiva de Punta Cana FC"
-              class="team-avatar-img"
-              loading="lazy"
-              width={200}
-              height={200}
-              widths={[160, 320]}
-              sizes="80px"
-            />
-          </div>
-          <h3 class="h-card">Ana Flores</h3>
+        <div class="team-member">
+          <Image
+            src={anaFlores}
+            alt="Ana Flores, Directora Deportiva de Punta Cana FC"
+            class="team-photo"
+            loading="lazy"
+            width={640}
+            height={800}
+            widths={[320, 640]}
+            sizes="(max-width: 768px) 100vw, 340px"
+          />
+          <h3 class="team-name">Ana Flores</h3>
           <p class="team-role">Directora Deportiva</p>
         </div>
       </div>
@@ -192,75 +175,30 @@ import anaFlores from '../assets/ana-flores.jpg';
 </Base>
 
 <style>
-  .club-hero {
-    padding: 10rem 0 5rem;
-    background: linear-gradient(135deg, var(--color-navy-dark), var(--color-navy));
-    border-bottom: 1px solid var(--color-navy-10);
-  }
-
-  .club-hero__title {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 900;
-    text-transform: uppercase;
-    color: var(--color-white);
-    margin-bottom: 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  .club-hero__desc {
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: var(--color-white);
-    opacity: 0.78;
-    max-width: 600px;
-  }
-
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .text-block {
-    color: var(--color-navy-60);
-    font-size: 1rem;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-  }
-
-  .image-placeholder {
+  .historia-collage {
     width: 100%;
-    aspect-ratio: 4/3;
   }
-  .placeholder-img {
-    width: 100%;
-    height: 100%;
+  .historia-collage__main {
+    width: 88%;
+    height: auto;
+    aspect-ratio: 3/2;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 16px;
     display: block;
+    box-shadow: 0 16px 48px rgba(0, 40, 92, 0.18);
   }
-
-  .placeholder-box {
-    width: 100%;
-    height: 100%;
-    background: var(--color-navy-05);
-    border: 2px dashed var(--color-navy-10);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    color: var(--color-navy-30);
-    font-size: 1rem;
-  }
-
-  .placeholder-box i {
-    font-size: 3rem;
-    color: var(--color-sky);
-    opacity: 0.5;
+  .historia-collage__overlap {
+    width: 54%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    margin-left: auto;
+    margin-top: -24%;
+    border: 6px solid var(--color-pure-white);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0, 40, 92, 0.22);
+    position: relative;
   }
 
   .mv-section {
@@ -316,48 +254,30 @@ import anaFlores from '../assets/ana-flores.jpg';
   .team-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 3rem 2rem;
     margin-top: 3rem;
-    max-width: 760px;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
   }
 
-  .team-card {
-    background: var(--color-pure-white);
-    border: 1px solid var(--color-navy-10);
-    border-radius: 16px;
+  .team-member {
     text-align: center;
-    padding: 2.5rem 1.5rem;
-    transition:
-      box-shadow 200ms ease,
-      border-color 200ms ease;
   }
 
-  .team-card:hover {
-    box-shadow: 0 8px 32px rgba(0, 40, 92, 0.1);
-    border-color: var(--color-sky-30);
-  }
-
-  .team-avatar {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .team-avatar-img {
+  .team-photo {
     width: 100%;
-    height: 100%;
+    max-width: 340px;
+    height: auto;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
+    border-radius: 20px;
     display: block;
+    margin: 0 auto 1.25rem;
   }
 
-  .team-card h3 {
-    font-size: 1.1rem;
+  .team-name {
+    font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--color-navy);
@@ -372,8 +292,12 @@ import anaFlores from '../assets/ana-flores.jpg';
   }
 
   @media (max-width: 992px) {
-    .two-col {
-      grid-template-columns: 1fr;
+    .historia-collage__main {
+      width: 100%;
+    }
+    .historia-collage__overlap {
+      width: 78%;
+      margin-top: -14%;
     }
     .mv-grid {
       grid-template-columns: 1fr;

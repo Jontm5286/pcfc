@@ -1,0 +1,92 @@
+---
+/**
+ * SedeCards — PCFC
+ * Grid de sedes compartido (antes duplicado en inscribete y
+ * area-deportiva): card por sede con nombre, dirección, teléfono
+ * y CTAs. Variante por props para las diferencias entre páginas.
+ *
+ * Props:
+ *   - sedes: SedeContacto[]  Sedes de `getSedes()` (src/data/sedes.ts)
+ *   - variant?: "inscribete" | "area"  (default "area")
+ *     · "inscribete": CTA `/inscribete?sede=<slug>#formulario`
+ *       ("Elegir esta sede"), sin email ni "Ver en mapa".
+ *     · "area": CTA `/inscribete?sede=<slug>` ("Inscríbete aquí"),
+ *       con email extra y enlace "Ver en mapa".
+ */
+
+import type { SedeContacto } from '../data/sedes';
+
+interface Props {
+  sedes: SedeContacto[];
+  variant?: 'inscribete' | 'area';
+}
+
+const { sedes, variant = 'area' } = Astro.props;
+const isForm = variant === 'inscribete';
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {
+    sedes.map((s) => (
+      <article class="relative overflow-hidden bg-white border border-navy/10 rounded-lg p-6 md:p-8 transition-[border-color,box-shadow] duration-200 hover:border-navy/25 hover:shadow-[0_4px_20px_rgba(0,40,92,0.08)] flex flex-col gap-4">
+        <div>
+          <h3 class="h-card mb-2">{s.nombre}</h3>
+          <p class="font-body text-[0.95rem] leading-[1.55] text-navy-60">
+            {s.direccion.includes('PLACEHOLDER')
+              ? 'Dirección por confirmar — escríbenos por WhatsApp y te guiamos.'
+              : s.direccion}
+          </p>
+        </div>
+        <p class="font-body text-[0.95rem] leading-[1.55]">
+          <a
+            href={`tel:${s.telefono.replace(/\s/g, '')}`}
+            class="text-navy underline underline-offset-4"
+          >
+            {s.telefono}
+          </a>
+          {!isForm && (
+            <>
+              {' · '}
+              <a href={`mailto:${s.email}`} class="text-navy underline underline-offset-4">
+                {s.email}
+              </a>
+            </>
+          )}
+        </p>
+        <footer class:list={['pt-2 mt-auto flex flex-wrap gap-3', { 'items-center': !isForm }]}>
+          <a
+            href={isForm ? `/inscribete?sede=${s.slug}#formulario` : `/inscribete?sede=${s.slug}`}
+            class="btn btn--primary"
+            aria-label={
+              isForm ? `Elegir la sede ${s.nombre} en el formulario` : `Inscríbete en ${s.nombre}`
+            }
+          >
+            {isForm ? 'Elegir esta sede' : 'Inscríbete aquí'}
+            <span class="arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+          <a
+            href={s.mapsUrl}
+            class="btn btn--secondary"
+            target="_blank"
+            rel="noopener"
+            aria-label={`Cómo llegar a ${s.nombre}`}
+          >
+            Cómo llegar
+          </a>
+          {!isForm && (
+            <a
+              href="#mapa-sedes"
+              data-sede-fly={s.slug}
+              class="ml-auto font-body text-sm font-bold text-sky underline underline-offset-2"
+              aria-label={`Ver ${s.nombre} en el mapa`}
+            >
+              Ver en mapa
+            </a>
+          )}
+        </footer>
+      </article>
+    ))
+  }
+</div>

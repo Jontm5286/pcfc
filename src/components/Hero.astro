@@ -66,12 +66,12 @@ interface Props {
 
 const {
   eyebrow,
-  title = "Pasión por el Fútbol",
+  title = 'Pasión por el Fútbol',
   description,
   backgroundImage = heroBg,
   bullets = [],
-  ctaPrimary = { label: "Inscríbete", href: "/inscribete" },
-  ctaSecondary = { label: "Conoce el club", href: "/club" },
+  ctaPrimary = { label: 'Inscríbete', href: '/inscribete' },
+  ctaSecondary = { label: 'Conoce el club', href: '/club' },
   galleryImages = [],
   nextMatch,
   eyebrowOnDark = true,
@@ -81,50 +81,50 @@ const {
 <section
   class="hero relative flex flex-col justify-center text-white overflow-hidden pt-[clamp(4rem,8vw,7rem)] pb-[clamp(2rem,4vw,3rem)] lg:min-h-[calc(100svh-5rem)] lg:min-h-[640px]"
 >
-  <!-- Background image + overlay -->
+  {/* Background image + overlay */}
   <div class="absolute inset-0 z-0" aria-hidden="true">
-    {typeof backgroundImage === 'string' ? (
-      <img
-        src={backgroundImage}
-        alt=""
-        loading="eager"
-        class="w-full h-full object-cover object-[center_30%]"
-      />
-    ) : (
-      <Picture
-        src={backgroundImage}
-        alt=""
-        widths={[800, 1600]}
-        sizes="100vw"
-        formats={['avif', 'webp']}
-                  quality={65}
-        loading="eager"
-        fetchpriority="high"
-        class="w-full h-full object-cover object-[center_30%]"
-      />
-    )}
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-navy/[0.55] to-navy/[0.85]"
-    >
-    </div>
+    {
+      typeof backgroundImage === 'string' ? (
+        <img
+          src={backgroundImage}
+          alt=""
+          loading="eager"
+          class="w-full h-full object-cover object-[center_30%]"
+        />
+      ) : (
+        <Picture
+          src={backgroundImage}
+          alt=""
+          widths={[800, 1600]}
+          sizes="100vw"
+          formats={['avif', 'webp']}
+          quality={65}
+          loading="eager"
+          fetchpriority="high"
+          class="w-full h-full object-cover object-[center_30%]"
+        />
+      )
+    }
+    <div class="absolute inset-0 bg-gradient-to-b from-navy/[0.55] to-navy/[0.85]"></div>
   </div>
 
-  <!-- Two-column content -->
+  {/* Two-column content */}
   <div class="container-x relative z-10 max-w-[1200px]">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      <!-- Columna izquierda: texto -->
+      {/* Columna izquierda: texto */}
       <div class="min-w-0">
         {
           eyebrow && (
-            <p class={`eyebrow ${eyebrowOnDark ? "eyebrow--on-navy" : ""}`} data-reveal="up">
+            <p class={`eyebrow ${eyebrowOnDark ? 'eyebrow--on-navy' : ''}`} data-reveal="up">
               {eyebrow}
             </p>
           )
         }
 
         <h1
-          class={`h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5 lg:mb-6 max-w-[14ch] ${!eyebrow ? "mt-0" : ""}`}
-          data-reveal="up" data-reveal-delay="80"
+          class={`h-display h-display--on-navy text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5 lg:mb-6 max-w-[14ch] ${!eyebrow ? 'mt-0' : ''}`}
+          data-reveal="up"
+          data-reveal-delay="80"
         >
           {title}
         </h1>
@@ -132,8 +132,9 @@ const {
         {
           description && (
             <p
-              class={`lede lede--on-navy mb-5 lg:mb-6 max-w-[52ch] ${!eyebrow ? "mt-4" : ""}`}
-              data-reveal="up" data-reveal-delay="160"
+              class={`lede lede--on-navy mb-5 lg:mb-6 max-w-[52ch] ${!eyebrow ? 'mt-4' : ''}`}
+              data-reveal="up"
+              data-reveal-delay="160"
             >
               {description}
             </p>
@@ -142,7 +143,11 @@ const {
 
         {
           bullets.length > 0 && (
-            <ul data-reveal="up" data-reveal-delay="240" class="benefits-carousel min-w-0 mb-6 lg:mb-7 flex gap-3 list-none overflow-x-auto snap-x snap-mandatory scroll-px-1 pb-2 -mx-1 px-1 lg:overflow-visible lg:snap-none lg:flex-col lg:flex lg:gap-3 lg:pb-0 lg:mx-0 lg:px-0">
+            <ul
+              data-reveal="up"
+              data-reveal-delay="240"
+              class="benefits-carousel min-w-0 mb-6 lg:mb-7 flex gap-3 list-none overflow-x-auto snap-x snap-mandatory scroll-px-1 pb-2 -mx-1 px-1 lg:overflow-visible lg:snap-none lg:flex-col lg:flex lg:gap-3 lg:pb-0 lg:mx-0 lg:px-0"
+            >
               {bullets.map((b) => (
                 <li class="bullet-card hidden lg:flex items-start gap-2.5 shrink-0 snap-start">
                   <span class="shrink-0 w-5 h-5 rounded-full bg-sky flex items-center justify-center text-navy-dark mt-0.5 lg:mt-0.5">
@@ -184,7 +189,7 @@ const {
         </div>
       </div>
 
-      <!-- Columna derecha: grid 3x2 de partidos destacados con rotación en hover -->
+      {/* Columna derecha: grid 3x2 de partidos destacados con rotación en hover */}
       {
         galleryImages.length > 0 && (
           <div
@@ -251,100 +256,100 @@ const {
       }
     </div>
   </div>
+</section>
 
-  </section>
-
-  <!-- Banda "Próximo partido" — va ENTRE el hero y la siguiente sección -->
-  {
-    nextMatch && (
-      <aside
-        class="relative z-20 bg-navy-dark border-t-4 border-sky text-white"
-        aria-label="Próximo partido"
-        data-reveal="right" data-reveal-delay="200"
-      >
-        <div class="container-x py-7 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-8 items-center text-center lg:text-left lg:items-start">
-          <div class="flex flex-col gap-2 items-center lg:items-start">
-            <span class="badge badge--sky-on-navy">Próximo partido</span>
-            <span class="text-[0.8rem] text-sky-30 font-semibold tracking-[0.08em] uppercase">
-              {nextMatch.date} · {nextMatch.time}
+{/* Banda "Próximo partido" — va ENTRE el hero y la siguiente sección */}
+{
+  nextMatch && (
+    <aside
+      class="relative z-20 bg-navy-dark border-t-4 border-sky text-white"
+      aria-label="Próximo partido"
+      data-reveal="right"
+      data-reveal-delay="200"
+    >
+      <div class="container-x py-7 grid grid-cols-1 lg:grid-cols-[auto_1fr_auto] gap-6 lg:gap-8 items-center text-center lg:text-left lg:items-start">
+        <div class="flex flex-col gap-2 items-center lg:items-start">
+          <span class="badge badge--sky-on-navy">Próximo partido</span>
+          <span class="text-[0.8rem] text-sky-30 font-semibold tracking-[0.08em] uppercase">
+            {nextMatch.date} · {nextMatch.time}
+          </span>
+          {nextMatch.category && (
+            <span class="font-display text-[0.95rem] text-white/85 tracking-[0.02em]">
+              {nextMatch.category}
             </span>
-            {nextMatch.category && (
-              <span class="font-display text-[0.95rem] text-white/85 tracking-[0.02em]">
-                {nextMatch.category}
-              </span>
-            )}
-          </div>
+          )}
+        </div>
 
-          <div class="flex items-center justify-center gap-4 lg:gap-6">
-            <!-- Local -->
-            <div class="flex flex-col items-center min-w-[110px]">
-              {nextMatch.homeLogo ? (
-                <img
-                  src={nextMatch.homeLogo}
-                  alt={`Logo ${nextMatch.home}`}
-                  class="w-12 h-12 object-contain"
-                  loading="lazy"
-                />
-              ) : (
-                <span class="font-display text-2xl text-white tracking-[0.02em]">
-                  {nextMatch.home}
-                </span>
-              )}
-              <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+        <div class="flex items-center justify-center gap-4 lg:gap-6">
+          {/* Local */}
+          <div class="flex flex-col items-center min-w-[110px]">
+            {nextMatch.homeLogo ? (
+              <img
+                src={nextMatch.homeLogo}
+                alt={`Logo ${nextMatch.home}`}
+                class="w-12 h-12 object-contain"
+                loading="lazy"
+              />
+            ) : (
+              <span class="font-display text-2xl text-white tracking-[0.02em]">
                 {nextMatch.home}
               </span>
-            </div>
+            )}
+            <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+              {nextMatch.home}
+            </span>
+          </div>
 
-            <span class="font-display text-lg text-sky-30">VS</span>
+          <span class="font-display text-lg text-sky-30">VS</span>
 
-            <!-- Visitante -->
-            <div class="flex flex-col items-center min-w-[110px]">
-              {nextMatch.awayLogo ? (
-                <img
-                  src={nextMatch.awayLogo}
-                  alt={`Logo ${nextMatch.away}`}
-                  class="w-12 h-12 object-contain"
-                  loading="lazy"
-                />
-              ) : (
-                <span class="font-display text-2xl text-white tracking-[0.02em]">
-                  {nextMatch.away}
-                </span>
-              )}
-              <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+          {/* Visitante */}
+          <div class="flex flex-col items-center min-w-[110px]">
+            {nextMatch.awayLogo ? (
+              <img
+                src={nextMatch.awayLogo}
+                alt={`Logo ${nextMatch.away}`}
+                class="w-12 h-12 object-contain"
+                loading="lazy"
+              />
+            ) : (
+              <span class="font-display text-2xl text-white tracking-[0.02em]">
                 {nextMatch.away}
               </span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-2 lg:items-end lg:text-right">
-            <span class="inline-flex items-center gap-1.5 text-white/70 text-[0.85rem]">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              {nextMatch.venue}
+            )}
+            <span class="font-display text-[1rem] text-white tracking-[0.02em] mt-1">
+              {nextMatch.away}
             </span>
-            <a
-              href={nextMatch.calendarHref ?? "/calendario"}
-              class="text-sky-30 text-[0.85rem] font-semibold inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-white"
-            >
-              Ver calendario
-              <span aria-hidden="true">→</span>
-            </a>
           </div>
         </div>
-      </aside>
-    )
-  }
+
+        <div class="flex flex-col gap-2 lg:items-end lg:text-right">
+          <span class="inline-flex items-center gap-1.5 text-white/70 text-[0.85rem]">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            {nextMatch.venue}
+          </span>
+          <a
+            href={nextMatch.calendarHref ?? '/calendario'}
+            class="text-sky-30 text-[0.85rem] font-semibold inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-white"
+          >
+            Ver calendario
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  )
+}
 
 <style>
   /* Scrollbar del carrusel de beneficios (móvil) */
@@ -411,19 +416,17 @@ const {
   document
     .querySelectorAll<HTMLElement>('[data-component="featured-rotator"]')
     .forEach((rotator) => {
-      const ms = parseInt(rotator.dataset.rotationMs ?? "5000", 10);
-      const figures = [
-        ...rotator.querySelectorAll<HTMLElement>(".rotator-figure"),
-      ];
+      const ms = parseInt(rotator.dataset.rotationMs ?? '5000', 10);
+      const figures = [...rotator.querySelectorAll<HTMLElement>('.rotator-figure')];
       if (figures.length < 2) return;
 
       let current = 0;
       let timer: ReturnType<typeof setTimeout> | undefined;
 
       function highlight(index: number) {
-        figures.forEach((f) => f.classList.remove("is-featured"));
+        figures.forEach((f) => f.classList.remove('is-featured'));
         current = index;
-        figures[current]?.classList.add("is-featured");
+        figures[current]?.classList.add('is-featured');
       }
 
       function tick() {
@@ -444,21 +447,19 @@ const {
 
       // Auto-rotación desde el inicio (apagada con movimiento reducido)
       highlight(0);
-      const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!reduceMotion) startAuto();
 
       // Pausa cuando el usuario hace hover en una foto específica
       figures.forEach((fig, i) => {
-        fig.addEventListener("mouseenter", () => {
+        fig.addEventListener('mouseenter', () => {
           stopAuto();
           highlight(i);
         });
       });
 
       // Reanuda cuando el cursor sale del grid completo
-      rotator.addEventListener("mouseleave", () => {
+      rotator.addEventListener('mouseleave', () => {
         highlight(current); // mantiene la última destacada mientras el cursor está fuera
         startAuto();
       });
