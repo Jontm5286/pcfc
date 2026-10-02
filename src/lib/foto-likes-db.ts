@@ -218,9 +218,9 @@ export async function resolveD1Binding(locals: unknown): Promise<unknown> {
   const l = (locals ?? {}) as Record<string, unknown>;
   if (l.DB) return l.DB;
   try {
-    const cf = (await import(
-      /* @vite-ignore */ 'cloudflare:workers'
-    )) as unknown as { env?: Record<string, unknown> };
+    const cf = (await import(/* @vite-ignore */ 'cloudflare:workers')) as unknown as {
+      env?: Record<string, unknown>;
+    };
     return cf.env?.DB ?? null;
   } catch {
     return null;
