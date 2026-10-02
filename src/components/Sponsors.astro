@@ -23,6 +23,12 @@ export interface Sponsor {
   href?: string;
   /** Tile oscuro para logos claros (texto blanco). */
   dark?: boolean;
+  /** Dimensiones intrínsecas + srcset (vienen de homeData; ausentes en live). */
+  width?: number;
+  height?: number;
+  logoSrcSet?: string;
+  tier?: 'principal' | 'aliado';
+  order?: number;
 }
 
 interface Props {
@@ -120,25 +126,25 @@ const tileClass = (s: Sponsor) => (s.dark ? 'rounded-xl bg-navy px-6 py-6' : '')
                     aria-label={`Visitar ${sponsor.name}`}
                     class="flex items-center justify-center w-full h-24 md:h-28"
                   >
-                  <img
-                    src={sponsor.logo}
-                    width={sponsor.width}
-                    height={sponsor.height}
-                    srcset={sponsor.logoSrcSet}
-                    sizes="(max-width: 768px) 45vw, 182px"
-                    alt={`Logo de ${sponsor.name}`}
-                    loading="lazy"
-                    class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
-                  />
-                </a>
+                    <img
+                      src={sponsor.logo}
+                      width={sponsor.width}
+                      height={sponsor.height}
+                      srcset={sponsor.logoSrcSet}
+                      sizes="(max-width: 768px) 45vw, 182px"
+                      alt={`Logo de ${sponsor.name}`}
+                      loading="lazy"
+                      class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
+                    />
+                  </a>
                 ) : (
                   <div class="flex items-center justify-center w-full h-24 md:h-28">
                     <img
                       src={sponsor.logo}
                       width={sponsor.width}
                       height={sponsor.height}
-                    srcset={sponsor.logoSrcSet}
-                    sizes="(max-width: 768px) 45vw, 182px"
+                      srcset={sponsor.logoSrcSet}
+                      sizes="(max-width: 768px) 45vw, 182px"
                       alt={`Logo de ${sponsor.name}`}
                       loading="lazy"
                       class="max-h-14 md:max-h-16 w-auto max-w-full object-contain"
@@ -168,8 +174,8 @@ const tileClass = (s: Sponsor) => (s.dark ? 'rounded-xl bg-navy px-6 py-6' : '')
                       src={sponsor.logo}
                       width={sponsor.width}
                       height={sponsor.height}
-                    srcset={sponsor.logoSrcSet}
-                    sizes="(max-width: 768px) 45vw, 182px"
+                      srcset={sponsor.logoSrcSet}
+                      sizes="(max-width: 768px) 45vw, 182px"
                       alt={`Logo de ${sponsor.name}`}
                       loading="lazy"
                       class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
@@ -181,8 +187,8 @@ const tileClass = (s: Sponsor) => (s.dark ? 'rounded-xl bg-navy px-6 py-6' : '')
                       src={sponsor.logo}
                       width={sponsor.width}
                       height={sponsor.height}
-                    srcset={sponsor.logoSrcSet}
-                    sizes="(max-width: 768px) 45vw, 182px"
+                      srcset={sponsor.logoSrcSet}
+                      sizes="(max-width: 768px) 45vw, 182px"
                       alt={`Logo de ${sponsor.name}`}
                       loading="lazy"
                       class="max-h-12 md:max-h-14 w-auto max-w-full object-contain"
@@ -193,7 +199,10 @@ const tileClass = (s: Sponsor) => (s.dark ? 'rounded-xl bg-navy px-6 py-6' : '')
             ))}
 
             {/* CTA: completa la fila de 5 y convierte */}
-            <div role="listitem" class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-navy-10 px-5 py-5 text-center">
+            <div
+              role="listitem"
+              class="col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-navy-10 px-5 py-5 text-center"
+            >
               <p class="text-navy-60 text-sm leading-snug">¿Tu marca aquí?</p>
               <a href="/sponsors#contacto" class="btn btn--sky shrink-0">
                 Ser patrocinador

@@ -7,11 +7,11 @@
  */
 
 const categories = [
-  { id: "todas", label: "Todas" },
-  { id: "pre", label: "Pre-Formativas" },
-  { id: "form-baja", label: "Formativas Bajas" },
-  { id: "form-alta", label: "Formativas Altas" },
-  { id: "elite", label: "Elite / Reserva" },
+  { id: 'todas', label: 'Todas' },
+  { id: 'pre', label: 'Pre-Formativas' },
+  { id: 'form-baja', label: 'Formativas Bajas' },
+  { id: 'form-alta', label: 'Formativas Altas' },
+  { id: 'elite', label: 'Elite / Reserva' },
 ];
 ---
 
@@ -26,7 +26,7 @@ const categories = [
       <button
         type="button"
         role="tab"
-        aria-selected={cat.id === "todas" ? "true" : "false"}
+        aria-selected={cat.id === 'todas' ? 'true' : 'false'}
         aria-controls="match-list"
         data-filter={cat.id}
         class="
@@ -61,26 +61,26 @@ const categories = [
 </style>
 
 <script>
-  const filters = document.querySelectorAll<HTMLElement>(".calendar-tab");
-  const list = document.getElementById("match-list");
+  const filters = document.querySelectorAll<HTMLElement>('.calendar-tab');
+  const list = document.getElementById('match-list');
 
   filters.forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener('click', () => {
       filters.forEach((f) => {
-        f.classList.remove("active");
-        f.setAttribute("aria-selected", "false");
+        f.classList.remove('active');
+        f.setAttribute('aria-selected', 'false');
       });
-      btn.classList.add("active");
-      btn.setAttribute("aria-selected", "true");
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
 
       if (!list) return;
-      const filter = btn.dataset.filter ?? "todas";
-      const items = list.querySelectorAll<HTMLElement>("[data-category]");
+      const filter = btn.dataset.filter ?? 'todas';
+      const items = list.querySelectorAll<HTMLElement>('[data-category]');
       items.forEach((item) => {
-        if (filter === "todas" || item.dataset.category === filter) {
-          item.style.display = "";
+        if (filter === 'todas' || item.dataset.category === filter) {
+          item.style.display = '';
         } else {
-          item.style.display = "none";
+          item.style.display = 'none';
         }
       });
     });
@@ -88,6 +88,6 @@ const categories = [
 
   // Activate "Todas" by default
   const todasBtn = document.querySelector<HTMLElement>('[data-filter="todas"]');
-  todasBtn?.classList.add("active");
-  todasBtn?.setAttribute("aria-selected", "true");
+  todasBtn?.classList.add('active');
+  todasBtn?.setAttribute('aria-selected', 'true');
 </script>

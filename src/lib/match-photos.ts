@@ -8,8 +8,8 @@
  * Lo usan:
  *   - src/pages/calendario.astro → photosHref `/fotos#<slug>` (solo si la
  *     entrada existe en la colección `match_photos` y está publicada).
- *   - scripts/sync-match-photos.mjs → crea el draft `published: false`
- *     en src/content/match_photos/<slug>.md (¡mantener el algoritmo igual!).
+ *   - scripts/sync-match-photos.mjs → crea el draft en la colección
+ *     EmDash `match_photos` con ese slug (¡mantener el algoritmo igual!).
  */
 
 const ES_MONTHS = [

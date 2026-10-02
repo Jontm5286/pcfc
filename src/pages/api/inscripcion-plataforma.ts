@@ -76,7 +76,11 @@ function str(v: unknown, max: number): string {
 }
 
 function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 export interface SecondGuardian {
@@ -99,7 +103,11 @@ export function parseSecondGuardian(v: unknown): SecondGuardian | null {
 
 export function secondGuardianLine(g: SecondGuardian | null): string {
   if (!g) return 'Segundo tutor: (no indicado)';
-  const parts = [g.name || '(sin nombre)', g.relationship ? `(${g.relationship})` : '', g.phone ? `— ${g.phone}` : '']
+  const parts = [
+    g.name || '(sin nombre)',
+    g.relationship ? `(${g.relationship})` : '',
+    g.phone ? `— ${g.phone}` : '',
+  ]
     .filter(Boolean)
     .join(' ');
   return `Segundo tutor: ${parts}`;
@@ -122,8 +130,8 @@ function fechaValida(fecha: string): boolean {
 }
 
 function readEnv(locals: unknown, key: string): string {
-  const fromRuntime = (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)?.runtime
-    ?.env?.[key];
+  const fromRuntime = (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)
+    ?.runtime?.env?.[key];
   if (typeof fromRuntime === 'string' && fromRuntime.trim()) return fromRuntime.trim();
   try {
     const fromMeta = (import.meta as unknown as { env?: Record<string, unknown> })?.env?.[key];
@@ -132,7 +140,9 @@ function readEnv(locals: unknown, key: string): string {
     /* import.meta.env no disponible */
   }
   const fromProcess =
-    typeof process !== 'undefined' ? (process.env as Record<string, string | undefined>)[key] : undefined;
+    typeof process !== 'undefined'
+      ? (process.env as Record<string, string | undefined>)[key]
+      : undefined;
   return typeof fromProcess === 'string' ? fromProcess.trim() : '';
 }
 
@@ -190,7 +200,9 @@ async function enviarFallbackEmail(opts: {
     school ? `Colegio: ${school}` : `Colegio: (no indicado)`,
     ``,
     `Tutor: ${parentName} (${parentRelationship})`,
-    parentOccupation ? `Ocupación del tutor: ${parentOccupation}` : `Ocupación del tutor: (no indicada)`,
+    parentOccupation
+      ? `Ocupación del tutor: ${parentOccupation}`
+      : `Ocupación del tutor: (no indicada)`,
     `Teléfono: ${parentPhone}`,
     `Correo: ${parentEmail}`,
     secondGuardianLine(secondGuardian),
@@ -227,7 +239,14 @@ async function enviarFallbackEmail(opts: {
   const binding = env.SEB as EmailBinding | undefined;
   if (binding && typeof binding.send === 'function') {
     try {
-      await binding.send({ to: destino, from: remitente, replyTo: parentEmail, subject, text, html });
+      await binding.send({
+        to: destino,
+        from: remitente,
+        replyTo: parentEmail,
+        subject,
+        text,
+        html,
+      });
       return true;
     } catch (err) {
       console.error('[inscripcion-plataforma] Error en fallback email:', err);
@@ -235,13 +254,16 @@ async function enviarFallbackEmail(opts: {
     }
   }
   if (import.meta.env.DEV) {
-    console.log('[inscripcion-plataforma:dev] Fallback email no enviado (sin binding SEB). Datos:', {
-      destino,
-      motivo,
-      firstName,
-      lastName,
-      sedeSlug,
-    });
+    console.log(
+      '[inscripcion-plataforma:dev] Fallback email no enviado (sin binding SEB). Datos:',
+      {
+        destino,
+        motivo,
+        firstName,
+        lastName,
+        sedeSlug,
+      }
+    );
     return true;
   }
   console.error('[inscripcion-plataforma] Sin binding SEB en producción.');
@@ -277,7 +299,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const terminos = body.terminos === true;
   const secondGuardian = parseSecondGuardian(body.secondGuardian);
   if (secondGuardian?.relationship && !PARENTESCOS.has(secondGuardian.relationship)) {
-    return json({ ok: false, error: 'Selecciona un parentesco válido para el segundo tutor.' }, 400);
+    return json(
+      { ok: false, error: 'Selecciona un parentesco válido para el segundo tutor.' },
+      400
+    );
   }
 
   if (
@@ -317,7 +342,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // sedeId de plataforma (null si el mapeo quedó desactualizado → 400 fail-safe).
   const sedeId = SEDE_ID_POR_SLUG[sede];
   if (!sedeId) {
-    return json({ ok: false, error: 'Sede desconocida en plataforma. Escríbenos y te inscribimos.' }, 400);
+    return json(
+      { ok: false, error: 'Sede desconocida en plataforma. Escríbenos y te inscribimos.' },
+      400
+    );
   }
 
   const runtimeEnv =
@@ -349,7 +377,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (ok) return json({ ok: true, fallback: 'email' });
     return json(
       { ok: false, error: 'Servicio no disponible. Escríbenos a rrhhpuntacanafc@gmail.com.' },
-      503,
+      503
     );
   }
 
@@ -403,7 +431,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (ok) return json({ ok: true, fallback: 'email' });
     return json(
       { ok: false, error: 'No pudimos enviar tu inscripción. Inténtalo de nuevo en unos minutos.' },
-      502,
+      502
     );
   }
 
@@ -419,7 +447,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     /* respuesta no JSON */
   }
   console.error(
-    `[inscripcion-plataforma] Plataforma respondió ${platformRes.status} (${detail || 'sin detalle'}), fallback email.`,
+    `[inscripcion-plataforma] Plataforma respondió ${platformRes.status} (${detail || 'sin detalle'}), fallback email.`
   );
   const ok = await enviarFallbackEmail({
     env: runtimeEnv,
@@ -447,6 +475,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
   return json(
     { ok: false, error: 'No pudimos enviar tu inscripción. Inténtalo de nuevo en unos minutos.' },
-    502,
+    502
   );
 };

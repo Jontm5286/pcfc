@@ -1,0 +1,101 @@
+---
+/**
+ * CardGrid — cards `.card` (fondo claro) / `.req-card` (fondo oscuro)
+ * unificadas (antes copiadas en padres.astro y jugadores.astro).
+ * NO usar para mv-card con imágenes (club) ni facility specs
+ * (area-deportiva): esos mantienen su layout propio.
+ *
+ * Props:
+ *   - items: { icon?, title, copy }[]
+ *   - columns?: number        — columnas en desktop (default 4)
+ *   - variant?: 'light'|'dark' — 'light' = .card, 'dark' = .req-card
+ *   - gridClass?: string      — clases de grid propias (p. ej. Tailwind);
+ *                               si se pasa, `columns` se ignora
+ */
+interface CardItem {
+  icon?: string;
+  title: string;
+  copy: string;
+}
+
+interface Props {
+  items: CardItem[];
+  columns?: number;
+  variant?: 'light' | 'dark';
+  gridClass?: string;
+}
+
+const { items, columns = 4, variant = 'light', gridClass } = Astro.props;
+const dark = variant === 'dark';
+---
+
+<div class={gridClass ?? 'cg'} role="list" style={gridClass ? undefined : `--cg-cols: ${columns}`}>
+  {
+    items.map((item) => (
+      <div role="listitem" class:list={['cg-card', dark ? 'cg-card--dark' : 'cg-card--light']}>
+        {item.icon && (
+          <div class="cg-icon" aria-hidden="true">
+            {item.icon}
+          </div>
+        )}
+        <h3 class:list={['h-card', 'mb-2', { 'h-card--on-navy': dark }]}>{item.title}</h3>
+        <p class={dark ? 'cg-desc' : 'text-block'}>{item.copy}</p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .cg {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .cg {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cg {
+      grid-template-columns: repeat(var(--cg-cols, 4), 1fr);
+    }
+  }
+
+  .cg-card {
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+  }
+
+  .cg-card--light {
+    background: var(--color-white);
+    border: 1px solid var(--color-navy-10);
+  }
+
+  .cg-card--dark {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .cg-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .text-block {
+    color: var(--color-navy-60);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .cg-desc {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+/**
+ * FinalCta — PCFC
+ * CTA navy final compartido (antes duplicado literal en
+ * categorias y area-deportiva): eyebrow + título + lede + botones.
+ *
+ * Props:
+ *   - eyebrow?: string        (default "Siguiente paso")
+ *   - title?: string          (default "INSCRIBE A TU HIJO HOY")
+ *   - lede?: string           Texto descriptivo
+ *   - primaryLabel?: string   (default "Iniciar inscripción")
+ *   - primaryHref?: string    (default "/inscribete")
+ *   - secondaryLabel?: string Si se omite, no se renderiza el 2º botón
+ *   - secondaryHref?: string
+ *   - border?: boolean        Borde superior navy-60/40 (default true)
+ */
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  lede?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  border?: boolean;
+}
+
+const {
+  eyebrow = 'Siguiente paso',
+  title = 'INSCRIBE A TU HIJO HOY',
+  lede = 'Completa el formulario de inscripción en menos de tres minutos. Si tienes dudas, escríbenos por WhatsApp y te guiamos en el proceso.',
+  primaryLabel = 'Iniciar inscripción',
+  primaryHref = '/inscribete',
+  secondaryLabel,
+  secondaryHref = '/club',
+  border = true,
+} = Astro.props;
+---
+
+<section
+  class:list={[
+    'bg-navy text-white py-[clamp(4rem,8vw,6rem)]',
+    { 'border-t border-navy-60/40': border },
+  ]}
+>
+  <div
+    class="container-x flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between"
+  >
+    <div class="max-w-[52ch]">
+      <p class="eyebrow eyebrow--on-navy">{eyebrow}</p>
+      <h2 class="h-section h-section--on-navy mb-3">
+        {title}
+      </h2>
+      <p class="lede lede--on-navy">
+        {lede}
+      </p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+      <a href={primaryHref} class="btn btn--sky btn--on-navy btn--lg">
+        {primaryLabel}
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      {
+        secondaryLabel && (
+          <a href={secondaryHref} class="btn btn--outline-on-navy btn--lg">
+            {secondaryLabel}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

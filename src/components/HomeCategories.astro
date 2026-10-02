@@ -3,7 +3,7 @@
  * HomeCategories component.
  * Displays the youth categories roadmap on the homepage.
  */
-import type { Category } from "../data/homeData";
+import type { Category } from '../data/homeData';
 
 export interface Props {
   categories: Category[];
@@ -18,15 +18,19 @@ const { categories } = Astro.props;
       <p class="eyebrow">Categorías</p>
       <h2 class="h-section">UN CAMINO CLARO,<br />DE 4 A 19 AÑOS</h2>
       <p class="lede mt-4">
-        Cuatro etapas formativas con objetivos propios, evaluación continua y
-        progresión garantizada hacia el alto rendimiento.
+        Cuatro etapas formativas con objetivos propios, evaluación continua y progresión garantizada
+        hacia el alto rendimiento.
       </p>
     </header>
 
     <ol class="list-none grid grid-cols-1 border-t border-navy/10" role="list">
       {
         categories.map((cat, i) => (
-          <li class="border-b border-navy/10" data-reveal="up" data-reveal-delay={Math.min(i * 70, 280)}>
+          <li
+            class="border-b border-navy/10"
+            data-reveal="up"
+            data-reveal-delay={Math.min(i * 70, 280)}
+          >
             <a
               href={`/area-deportiva#${cat.slug}`}
               class="cat-row grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_auto] gap-8 items-center py-7 transition-[background,padding] duration-200 hover:bg-sky-10 lg:hover:px-4"
@@ -41,9 +45,7 @@ const { categories } = Astro.props;
                 </span>
               </div>
               <h3 class="h-card text-2xl font-bold">{cat.name}</h3>
-              <p class="text-navy-60 text-[0.95rem] leading-[1.55] mb-2 lg:mb-0">
-                {cat.copy}
-              </p>
+              <p class="text-navy-60 text-[0.95rem] leading-[1.55] mb-2 lg:mb-0">{cat.copy}</p>
               <span class="hidden lg:inline-flex items-center gap-1.5 text-sky font-semibold text-[0.85rem] uppercase tracking-[0.08em] whitespace-nowrap">
                 Ver requisitos y detalles
                 <span class="arrow" aria-hidden="true">

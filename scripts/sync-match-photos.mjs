@@ -3,9 +3,9 @@
  * sync-match-photos — PCFC
  * =========================
  * Por cada partido JUGADO del feed FutbolPro Academy crea un draft en la
- * colección EmDash `partidos` (un partido = una galería).
+ * colección EmDash `match_photos` (CANÓNICA: un partido = una galería).
  * Ahí es donde luego se suben las fotos en /_emdash/admin y se publica.
- * Sin fotos no hay galería: /fotos y /calendario solo usan publicadas con fotos.
+ * Sin fotos no hay galería: /fotos solo usa publicadas con fotos.
  *
  * El slug DEBE coincidir con src/lib/match-photos.ts (buildMatchSlug).
  * Si cambias el algoritmo aquí, cámbialo allá también.
@@ -66,20 +66,17 @@ for (const m of played) {
   const team1 = `PCFC ${cat.short}`;
   const team2 = m.opponent || 'Rival por confirmar';
   const slug = buildMatchSlug(team1, team2, m.matchDate);
-  const exists = await repo.findBySlug('partidos', slug).catch(() => null);
+  const exists = await repo.findBySlug('match_photos', slug).catch(() => null);
   if (exists) continue;
   await repo.create({
-    type: 'partidos',
+    type: 'match_photos',
     slug,
     status: 'draft',
     data: {
       name: `${team1} vs ${team2}`,
-      local: team1,
-      visitante: team2,
-      categoria: cat.label,
-      fecha: (m.matchDate || '').slice(0, 10) || undefined,
-      academy_id: m.id || undefined,
-      thumbnail: { src: '/images/stock/partido-sub13.webp', alt: `${team1} vs ${team2}` },
+      home_team: team1,
+      away_team: team2,
+      date: (m.matchDate || '').slice(0, 10) || undefined,
       images: [],
     },
   });

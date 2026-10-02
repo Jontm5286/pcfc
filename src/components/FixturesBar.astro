@@ -155,7 +155,7 @@ if (playedCards.length > 0) {
 }
 {
   const shown = new Set(
-    slots.filter((s) => s.kind === 'sponsor').map((s) => (s.card as SponsorItem).name),
+    slots.filter((s) => s.kind === 'sponsor').map((s) => (s.card as SponsorItem).name)
   );
   for (const sponsor of sponsors) {
     if (!shown.has(sponsor.name)) {

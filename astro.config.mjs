@@ -56,10 +56,6 @@ export default defineConfig({
             database: d1({ binding: 'DB', session: 'auto' }),
             storage: r2({ binding: 'MEDIA' }),
             plugins: [pcfcMediaGalleryPlugin()],
-            contentCollections: {
-              enabled: true,
-              dir: 'src/content',
-            },
           }
         : {
             // Alineado con el comentario: apunta a data/emdash.db para evitar el error 'unable to open database file'
@@ -71,13 +67,6 @@ export default defineConfig({
               baseUrl: '/_emdash/api/media/file',
             }),
             plugins: [pcfcMediaGalleryPlugin()],
-            contentCollections: {
-              enabled: true,
-              dir: 'src/content',
-            },
-            auth: {
-              mode: process.env.NODE_ENV === 'production' ? 'email' : 'dev',
-            },
           },
     ),
   ],

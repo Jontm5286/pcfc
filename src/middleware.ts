@@ -41,7 +41,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://static.cloudflareinsights.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: https://images.unsplash.com https://picsum.photos https://images.emdash.com",
+      "img-src 'self' data: https://images.unsplash.com https://picsum.photos https://images.emdash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://server.arcgisonline.com",
       "font-src 'self' https://fonts.gstatic.com",
       "connect-src 'self'",
       "frame-ancestors 'none'",

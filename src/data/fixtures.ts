@@ -23,7 +23,7 @@ export interface Fixture {
 
 export const categoryColors: Record<string, string> = {
   'U-14': '#2563eb',
-  'Prueba': '#10b981',
+  Prueba: '#10b981',
   'U-10': '#f59e0b',
   'Casa 1': '#64748b',
 };

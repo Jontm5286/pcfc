@@ -35,11 +35,7 @@ const { defaultGalleryId } = Astro.props;
   hidden
 >
   <!-- Backdrop clickeable para cerrar -->
-  <button
-    type="button"
-    class="lightbox__backdrop"
-    data-lightbox-close
-    aria-label="Cerrar visor"
+  <button type="button" class="lightbox__backdrop" data-lightbox-close aria-label="Cerrar visor"
   ></button>
 
   <!-- Contenido del lightbox -->
@@ -61,8 +57,8 @@ const { defaultGalleryId } = Astro.props;
         stroke-linecap="round"
         aria-hidden="true"
       >
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </button>
 
@@ -84,7 +80,7 @@ const { defaultGalleryId } = Astro.props;
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <polyline points="15 18 9 12 15 6" />
+        <polyline points="15 18 9 12 15 6"></polyline>
       </svg>
     </button>
 
@@ -112,7 +108,7 @@ const { defaultGalleryId } = Astro.props;
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <polyline points="9 18 15 12 9 6" />
+        <polyline points="9 18 15 12 9 6"></polyline>
       </svg>
     </button>
 
@@ -137,9 +133,9 @@ const { defaultGalleryId } = Astro.props;
           stroke-linejoin="round"
           aria-hidden="true"
         >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
         </svg>
         <span>Descargar</span>
       </a>
@@ -261,8 +257,12 @@ const { defaultGalleryId } = Astro.props;
     height: 48px;
     padding: 0;
   }
-  .lightbox__btn--prev { left: clamp(0.5rem, 2vw, 1.25rem); }
-  .lightbox__btn--next { right: clamp(0.5rem, 2vw, 1.25rem); }
+  .lightbox__btn--prev {
+    left: clamp(0.5rem, 2vw, 1.25rem);
+  }
+  .lightbox__btn--next {
+    right: clamp(0.5rem, 2vw, 1.25rem);
+  }
   /* Prev/next usan translateY(-50%): el :active debe conservarlo o saltan. */
   .lightbox__btn--prev:active,
   .lightbox__btn--next:active {
@@ -314,12 +314,18 @@ const { defaultGalleryId } = Astro.props;
   }
 
   @keyframes lightbox-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .lightbox { animation: none; }
+    .lightbox {
+      animation: none;
+    }
   }
 </style>
 
@@ -337,34 +343,22 @@ const { defaultGalleryId } = Astro.props;
 
   interface LightboxState {
     galleryId: string;
-    photos: PhotoEventDetail["photos"];
+    photos: PhotoEventDetail['photos'];
     index: number;
   }
 
   function setupLightbox(root: HTMLElement) {
-    const imgEl = root.querySelector<HTMLImageElement>(".lightbox__img");
-    const contentEl = root.querySelector<HTMLElement>(".lightbox__content");
-    const captionEl = root.querySelector<HTMLElement>("[data-lightbox-caption]");
-    const counterEl = root.querySelector<HTMLElement>("[data-lightbox-counter]");
-    const downloadEl = root.querySelector<HTMLAnchorElement>(
-      "[data-lightbox-download]",
-    );
-    const prevBtn = root.querySelector<HTMLButtonElement>("[data-lightbox-prev]");
-    const nextBtn = root.querySelector<HTMLButtonElement>("[data-lightbox-next]");
-    const closeBtns = root.querySelectorAll<HTMLButtonElement>(
-      "[data-lightbox-close]",
-    );
-    if (
-      !imgEl ||
-      !captionEl ||
-      !counterEl ||
-      !downloadEl ||
-      !prevBtn ||
-      !nextBtn
-    )
-      return;
+    const imgEl = root.querySelector<HTMLImageElement>('.lightbox__img');
+    const contentEl = root.querySelector<HTMLElement>('.lightbox__content');
+    const captionEl = root.querySelector<HTMLElement>('[data-lightbox-caption]');
+    const counterEl = root.querySelector<HTMLElement>('[data-lightbox-counter]');
+    const downloadEl = root.querySelector<HTMLAnchorElement>('[data-lightbox-download]');
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-lightbox-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-lightbox-next]');
+    const closeBtns = root.querySelectorAll<HTMLButtonElement>('[data-lightbox-close]');
+    if (!imgEl || !captionEl || !counterEl || !downloadEl || !prevBtn || !nextBtn) return;
 
-    const defaultGalleryId = root.dataset.defaultGalleryId || "";
+    const defaultGalleryId = root.dataset.defaultGalleryId || '';
     let state: LightboxState | null = null;
 
     const render = () => {
@@ -373,32 +367,29 @@ const { defaultGalleryId } = Astro.props;
       if (!photo) return;
       imgEl.src = photo.src;
       imgEl.alt = photo.alt;
-      captionEl.textContent = photo.caption ?? "";
+      captionEl.textContent = photo.caption ?? '';
       counterEl.textContent = `${state.index + 1} / ${state.photos.length}`;
       // Descarga vía servidor (gate 4K primer mes / 2000px después).
       downloadEl.href = `/api/foto-descarga?galeria=${encodeURIComponent(state.galleryId)}&foto=${state.index}`;
-      downloadEl.setAttribute(
-        "download",
-        photo.downloadName || deriveDownloadName(photo.src),
-      );
+      downloadEl.setAttribute('download', photo.downloadName || deriveDownloadName(photo.src));
       const hasMany = state.photos.length > 1;
       prevBtn.hidden = !hasMany;
       nextBtn.hidden = !hasMany;
     };
 
-    const open = (photos: PhotoEventDetail["photos"], index: number, galleryId: string) => {
+    const open = (photos: PhotoEventDetail['photos'], index: number, galleryId: string) => {
       state = { photos, index, galleryId };
       root.hidden = false;
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
       render();
     };
 
     const close = () => {
       root.hidden = true;
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
       // Limpia src para liberar memoria en el navegador
-      imgEl.src = "";
-      imgEl.alt = "";
+      imgEl.src = '';
+      imgEl.alt = '';
       state = null;
     };
 
@@ -409,7 +400,7 @@ const { defaultGalleryId } = Astro.props;
       render();
     };
 
-    document.addEventListener("photo:open", (event) => {
+    document.addEventListener('photo:open', (event) => {
       const e = event as CustomEvent<PhotoEventDetail>;
       if (
         defaultGalleryId &&
@@ -422,25 +413,25 @@ const { defaultGalleryId } = Astro.props;
       open(e.detail.photos, e.detail.index, e.detail.galleryId);
     });
 
-    closeBtns.forEach((btn) => btn.addEventListener("click", close));
+    closeBtns.forEach((btn) => btn.addEventListener('click', close));
     // Clic afuera de la foto (directo en el contenedor) también cierra.
     // El backdrop queda tapado por .lightbox__content (100%×100%), por eso
     // se compara e.target: hijos (foto, botones) no deben cerrar.
-    contentEl?.addEventListener("click", (e) => {
+    contentEl?.addEventListener('click', (e) => {
       if (e.target === contentEl) close();
     });
-    prevBtn.addEventListener("click", () => step(-1));
-    nextBtn.addEventListener("click", () => step(1));
+    prevBtn.addEventListener('click', () => step(-1));
+    nextBtn.addEventListener('click', () => step(1));
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener('keydown', (event) => {
       if (root.hidden) return;
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         event.preventDefault();
         close();
-      } else if (event.key === "ArrowLeft") {
+      } else if (event.key === 'ArrowLeft') {
         event.preventDefault();
         step(-1);
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === 'ArrowRight') {
         event.preventDefault();
         step(1);
       }
@@ -450,14 +441,12 @@ const { defaultGalleryId } = Astro.props;
   function deriveDownloadName(src: string): string {
     try {
       const url = new URL(src, window.location.href);
-      const path = url.pathname.split("/").pop() || "foto.jpg";
+      const path = url.pathname.split('/').pop() || 'foto.jpg';
       return path;
     } catch {
-      return "foto.jpg";
+      return 'foto.jpg';
     }
   }
 
-  document
-    .querySelectorAll<HTMLElement>('[data-component="lightbox"]')
-    .forEach(setupLightbox);
+  document.querySelectorAll<HTMLElement>('[data-component="lightbox"]').forEach(setupLightbox);
 </script>

@@ -7,6 +7,7 @@
 
 import Base from '../layouts/Base.astro';
 import StockImage from '../components/StockImage.astro';
+import Sponsors from '../components/Sponsors.astro';
 import { getSponsorsData } from '../data/homeData';
 
 const sponsors = getSponsorsData();
@@ -40,6 +41,9 @@ const sponsors = getSponsorsData();
     </div>
   </section>
 
+  <!-- Patrocinadores — grid compartido -->
+  <Sponsors eyebrow="Aliados" title="PATROCINADORES Y ALIADOS" sponsors={sponsors} />
+
   <!-- Contacto alianzas — formulario de patrocinio -->
   <section id="contacto" class="section bg-white scroll-mt-24">
     <div class="container-x">
@@ -51,67 +55,6 @@ const sponsors = getSponsorsData();
             Únete a las marcas que impulsan el fútbol formativo en el Caribe. Completa el formulario
             y el equipo de alianzas te contactará en menos de 48 horas laborables.
           </p>
-
-          <!-- Logos de patrocinadores -->
-          <div class="mt-10" aria-label="Patrocinadores">
-            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-navy-60 mb-4">
-              Nos apoyan
-            </p>
-            {
-              sponsors.length > 0 ? (
-                <div
-                  class="grid grid-cols-2 gap-x-6 gap-y-6 items-center"
-                  role="list"
-                  aria-label="Lista de patrocinadores"
-                >
-                  {sponsors.map((sponsor) => {
-                    return (
-                      <div
-                        role="listitem"
-                        class="flex items-center justify-center px-2 py-2"
-                      >
-                        {sponsor.href ? (
-                          <a
-                            href={sponsor.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Visitar sitio de ${sponsor.name}`}
-                            class="flex items-center justify-center w-full min-h-[56px] opacity-80 hover:opacity-100 transition-opacity duration-200"
-                          >
-                            <img
-                              src={sponsor.logo}
-                              width={sponsor.width}
-                              height={sponsor.height}
-                              srcset={sponsor.logoSrcSet}
-                              sizes="200px"
-                              alt={`Logo de ${sponsor.name}`}
-                              loading="lazy"
-                              class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
-                            />
-                          </a>
-                        ) : (
-                          <div class="flex items-center justify-center w-full min-h-[56px] opacity-80">
-                            <img
-                              src={sponsor.logo}
-                              width={sponsor.width}
-                              height={sponsor.height}
-                              srcset={sponsor.logoSrcSet}
-                              sizes="200px"
-                              alt={`Logo de ${sponsor.name}`}
-                              loading="lazy"
-                              class="min-h-[50px] max-h-14 w-auto max-w-[200px] object-contain"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p class="text-sm text-navy-60">Patrocinadores próximamente</p>
-              )
-            }
-          </div>
         </div>
 
         <div class="sponsor-form-card">
@@ -283,6 +226,8 @@ const sponsors = getSponsorsData();
   </script>
 
   <style>
+    /* Card del formulario (lo específico de esta página; la base de
+       .form-* vive en src/styles/global.css → FormStyles) */
     .sponsor-form-card {
       background: var(--color-pure-white);
       border: 1px solid var(--color-navy-10);
@@ -294,118 +239,6 @@ const sponsors = getSponsorsData();
       .sponsor-form-card {
         padding: 2.5rem;
       }
-    }
-
-    .form-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    @media (max-width: 640px) {
-      .form-row-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--color-navy-30);
-      margin-bottom: 0.375rem;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: var(--color-pure-white);
-      border: 1px solid var(--color-navy-10);
-      border-radius: 0.5rem;
-      color: var(--color-navy);
-      font-family: var(--font-mono);
-      font-size: 0.9375rem;
-      line-height: 1.4;
-      transition:
-        border-color 200ms ease,
-        box-shadow 200ms ease;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--color-sky);
-      box-shadow: 0 0 0 3px rgba(66, 154, 192, 0.18);
-    }
-
-    .form-input::placeholder {
-      color: var(--color-navy-10);
-    }
-
-    textarea.form-input {
-      resize: vertical;
-      min-height: 5rem;
-    }
-
-    .form-checkbox {
-      width: 1.125rem;
-      height: 1.125rem;
-      min-width: 1.125rem;
-      accent-color: var(--color-sky);
-      cursor: pointer;
-      margin-top: 0.1rem;
-    }
-
-    .checkbox-label {
-      display: flex;
-      gap: 0.625rem;
-      align-items: flex-start;
-      cursor: pointer;
-    }
-
-    .form-link {
-      color: var(--color-sky);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .hp-field {
-      position: absolute;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      opacity: 0;
-    }
-
-    .btn-full {
-      width: 100%;
-    }
-
-    .btn-full:disabled {
-      opacity: 0.65;
-      cursor: wait;
-    }
-
-    .form-status {
-      margin: 0 0 1rem;
-      padding: 0.875rem 1rem;
-      border-radius: 0.5rem;
-      font-size: 0.9375rem;
-      line-height: 1.5;
-      color: var(--color-navy);
-      background: var(--color-navy-05);
-      border: 1px solid var(--color-navy-10);
-      border-left: 4px solid var(--color-sky);
-    }
-
-    .form-status[data-kind='error'] {
-      border-left-color: #b3261e;
     }
   </style>
 </Base>

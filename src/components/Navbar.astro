@@ -43,8 +43,24 @@ const isCurrent = (href: string) =>
 <header class="sticky top-0 z-[100] bg-navy border-b border-white/5" data-component="navbar">
   <div class="container-x flex items-center gap-14 h-20">
     <!-- Brand -->
-    <a href="/" class="flex items-center shrink-0 no-underline" aria-label="Punta Cana FC — Inicio">
-      <img src="/Logo-PCFC.svg" alt="Punta Cana FC" width="412" height="485" class="h-[52px] w-auto object-contain" />
+    <a
+      href="/"
+      class="flex items-center gap-2.5 shrink-0 no-underline"
+      aria-label="Punta Cana FC — Inicio"
+    >
+      <img
+        src="/Logo-PCFC.svg"
+        alt=""
+        aria-hidden="true"
+        width="412"
+        height="485"
+        class="h-[52px] w-auto object-contain"
+      />
+      <span
+        class="font-display font-bold uppercase leading-none tracking-wide text-white text-[0.85rem] sm:text-[1.05rem] whitespace-nowrap"
+        style="color:#fff!important"
+        aria-hidden="true">Punta Cana FC</span
+      >
     </a>
 
     <!-- Nav -->
@@ -243,7 +259,7 @@ const isCurrent = (href: string) =>
     }
   }
 
-[data-component='navbar'] {
+  [data-component='navbar'] {
     transition: box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   [data-component='navbar'].is-scrolled {

@@ -21,7 +21,7 @@
  */
 
 interface Props {
-  categorySlug: "pre" | "form-baja" | "form-alta" | "elite";
+  categorySlug: 'pre' | 'form-baja' | 'form-alta' | 'elite';
   categoryLabel: string;
   date: string;
   time?: string;
@@ -53,9 +53,7 @@ const {
   class="match-item border-b border-navy/10 last:border-b-0 bg-white hover:bg-sky-05 transition-colors duration-150"
   data-category={categorySlug}
 >
-  <div
-    class="container-x flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4"
-  >
+  <div class="container-x flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4">
     <!-- Fecha + Hora -->
     <div class="flex items-center gap-3 sm:min-w-[160px]">
       <span class={`badge badge--${categorySlug}`}>{categoryLabel}</span>
@@ -63,11 +61,7 @@ const {
         <span class="text-[0.8rem] font-semibold text-navy tracking-wide">
           {date}
         </span>
-        {
-          time && (
-            <span class="text-[0.75rem] text-navy-60 font-normal">{time}</span>
-          )
-        }
+        {time && <span class="text-[0.75rem] text-navy-60 font-normal">{time}</span>}
       </div>
     </div>
 
@@ -85,7 +79,9 @@ const {
           <span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>
         )
       }
-      <span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate inline-flex items-center gap-1.5">
+      <span
+        class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate inline-flex items-center gap-1.5"
+      >
         {
           opponentLogo && (
             <img
@@ -114,8 +110,8 @@ const {
         class="shrink-0 text-navy-60"
         aria-hidden="true"
       >
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-        <circle cx="12" cy="10" r="3" />
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
       </svg>
       <span class="text-[0.8rem] text-navy-60 whitespace-nowrap">{venue}</span>
     </div>
@@ -148,11 +144,7 @@ const {
           <span class="text-[0.8rem] text-navy-60 italic">Sin fotos</span>
         ) : null
       }
-      {
-        !past && (
-          <span class="badge badge--sky text-[0.7rem]">Próximo</span>
-        )
-      }
+      {!past && <span class="badge badge--sky text-[0.7rem]">Próximo</span>}
     </div>
   </div>
 </li>

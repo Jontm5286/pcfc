@@ -3,8 +3,8 @@
  * CommunityMosaic component.
  * Displays photo gallery mosaic for the community section on the homepage.
  */
-import type { GalleryImage } from "../data/homeData";
-import { Picture } from "astro:assets";
+import type { GalleryImage } from '../data/homeData';
+import { Picture } from 'astro:assets';
 
 export interface Props {
   images?: GalleryImage[];
@@ -34,51 +34,65 @@ const { images = [] } = Astro.props;
     <div
       class="mosaic grid grid-cols-2 md:grid-cols-4 grid-rows-[200px_160px_160px] md:grid-rows-[280px_220px] gap-3"
     >
-      {images.length >= 5 ? (
-        <>
-          {(() => {
-            const tiles = [images[0], ...images.slice(1, 5)];
-            const sizes = [
-              { widths: [800, 1200] as const, sizes: '(max-width: 768px) 800px, 1200px' },
-              ...tiles.slice(1).map(() => ({ widths: [400, 800] as const, sizes: '(max-width: 768px) 400px, 800px' })),
-            ];
-            return tiles.map((img, i) => {
-              const pic = typeof img.src === 'string' ? (
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
-                />
-              ) : (
-                <Picture
-                  src={img.src}
-                  alt={img.alt}
-                  widths={[...sizes[i].widths]}
-                  sizes={sizes[i].sizes}
-                  formats={['avif', 'webp']}
-                  quality={65}
-                  loading="lazy"
-                  class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
-                />
-              );
-              const cls =
-                i === 0
-                  ? 'mosaic__item group relative block overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2'
-                  : 'group relative block overflow-hidden bg-navy-30';
-              return img.href ? (
-                <a href={img.href} class={cls} aria-label={`Ver galería: ${img.alt}`} data-reveal="zoom" data-reveal-delay={i * 90}>
-                  {pic}
-                </a>
-              ) : (
-                <figure class={cls} data-reveal="zoom" data-reveal-delay={i * 90}>{pic}</figure>
-              );
-            });
-          })()}
-        </>
-      ) : (
-        <p class="text-white/60">No hay suficientes imágenes para mostrar la galería.</p>
-      )}
+      {
+        images.length >= 5 ? (
+          <>
+            {(() => {
+              const tiles = [images[0], ...images.slice(1, 5)];
+              const sizes = [
+                { widths: [800, 1200] as const, sizes: '(max-width: 768px) 800px, 1200px' },
+                ...tiles.slice(1).map(() => ({
+                  widths: [400, 800] as const,
+                  sizes: '(max-width: 768px) 400px, 800px',
+                })),
+              ];
+              return tiles.map((img, i) => {
+                const pic =
+                  typeof img.src === 'string' ? (
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      loading="lazy"
+                      class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <Picture
+                      src={img.src}
+                      alt={img.alt}
+                      widths={[...sizes[i].widths]}
+                      sizes={sizes[i].sizes}
+                      formats={['avif', 'webp']}
+                      quality={65}
+                      loading="lazy"
+                      class="w-full h-full object-cover transition-[opacity,transform] duration-300 group-hover:opacity-90 group-hover:scale-[1.04]"
+                    />
+                  );
+                const cls =
+                  i === 0
+                    ? 'mosaic__item group relative block overflow-hidden bg-navy-30 md:col-span-2 md:row-span-2'
+                    : 'group relative block overflow-hidden bg-navy-30';
+                return img.href ? (
+                  <a
+                    href={img.href}
+                    class={cls}
+                    aria-label={`Ver galería: ${img.alt}`}
+                    data-reveal="zoom"
+                    data-reveal-delay={i * 90}
+                  >
+                    {pic}
+                  </a>
+                ) : (
+                  <figure class={cls} data-reveal="zoom" data-reveal-delay={i * 90}>
+                    {pic}
+                  </figure>
+                );
+              });
+            })()}
+          </>
+        ) : (
+          <p class="text-white/60">No hay suficientes imágenes para mostrar la galería.</p>
+        )
+      }
     </div>
   </div>
 </section>

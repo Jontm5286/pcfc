@@ -66,13 +66,6 @@
     <priority>0.6</priority>
   </url>
 
-  <url>
-    <loc>https://puntacanafc.com/objetos-perdidos</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
   <!-- Blog posts -->
   <url>
     <loc>https://puntacanafc.com/blog/inicio-temporada-2026</loc>

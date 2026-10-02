@@ -44,7 +44,11 @@ function str(v: unknown, max: number): string {
 }
 
 function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function json(body: Record<string, unknown>, status = 200): Response {
@@ -114,8 +118,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const { env } = getEnv(locals);
   const destino =
-    (typeof env.ADMISSION_EMAIL === 'string' && env.ADMISSION_EMAIL.trim()) ||
-    DESTINO_DEFAULT;
+    (typeof env.ADMISSION_EMAIL === 'string' && env.ADMISSION_EMAIL.trim()) || DESTINO_DEFAULT;
   const remitente =
     (typeof env.ADMISSION_FROM === 'string' && env.ADMISSION_FROM.trim()) || REMITENTE_DEFAULT;
 
@@ -163,8 +166,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     } catch (err) {
       console.error('[inscripcion] Error enviando email:', err);
       return json(
-        { ok: false, error: 'No pudimos enviar tu inscripción. Inténtalo de nuevo en unos minutos.' },
-        502,
+        {
+          ok: false,
+          error: 'No pudimos enviar tu inscripción. Inténtalo de nuevo en unos minutos.',
+        },
+        502
       );
     }
     return json({ ok: true });
@@ -188,6 +194,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   console.error('[inscripcion] Sin binding SEB en producción.');
   return json(
     { ok: false, error: 'Servicio no disponible. Escríbenos a rrhhpuntacanafc@gmail.com.' },
-    503,
+    503
   );
 };

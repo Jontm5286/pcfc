@@ -6,10 +6,12 @@
  */
 
 import Base from '../layouts/Base.astro';
-import StockImage from '../components/StockImage.astro';
+import PageHero from '../components/PageHero.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import FaqSection from '../components/FaqSection.astro';
 import EnrollmentCta from '../components/EnrollmentCta.astro';
+import TwoColMedia from '../components/TwoColMedia.astro';
+import CardGrid from '../components/CardGrid.astro';
 ---
 
 <Base
@@ -19,29 +21,13 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
   <!-- ============================================ -->
   <!-- HERO -->
   <!-- ============================================ -->
-  <section
-    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
-  >
-    <StockImage
-      name="entrenamiento"
-      alt="Entrenamiento supervisado de niños en Punta Cana FC"
-      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
-      width={1600}
-      height={1200}
-      loading="eager"
-    />
-    <div class="hero-overlay"></div>
-    <div class="container-x relative z-10">
-      <p class="eyebrow eyebrow--on-navy">Para padres</p>
-      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
-        Tranquilo, tu hijo está en buenas manos
-      </h1>
-      <p class="lede lede--on-navy max-w-[52ch]">
-        Seguridad, metodología profesional y valores. Todo lo que necesitas
-        saber antes de inscribir a tu hijo en Punta Cana FC.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Para padres"
+    title="Tranquilo, tu hijo está en buenas manos"
+    lede="Seguridad, metodología profesional y valores. Todo lo que necesitas saber antes de inscribir a tu hijo en Punta Cana FC."
+    image="entrenamiento"
+    alt="Entrenamiento supervisado de niños en Punta Cana FC"
+  />
 
   <!-- ============================================ -->
   <!-- SEGURIDAD -->
@@ -54,36 +40,27 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
         subtitle="Cada detalle está pensado para que tu hijo entrene tranquilo y tú estés tranquilo viéndolo crecer."
       />
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
-        <div role="listitem" class="card">
-          <h3 class="h-card mb-2">Instalaciones cerradas</h3>
-          <p class="text-block">
-            4 canchas, gimnasio y aula académica dentro de un recinto
-            controlado. Acceso registrado y áreas delimitadas por edad.
-          </p>
-        </div>
-        <div role="listitem" class="card">
-          <h3 class="h-card mb-2">Sesiones supervisadas</h3>
-          <p class="text-block">
-            Grupos reducidos por etapa con entrenadores certificados UEFA.
-            Ningún niño entrena sin supervisión directa.
-          </p>
-        </div>
-        <div role="listitem" class="card">
-          <h3 class="h-card mb-2">Personal capacitado</h3>
-          <p class="text-block">
-            Cuerpo técnico con licencias federativas, formación en primeros
-            auxilios y protocolos claros ante cualquier incidente.
-          </p>
-        </div>
-        <div role="listitem" class="card">
-          <h3 class="h-card mb-2">Comunicación directa</h3>
-          <p class="text-block">
-            Canal abierto con entrenadores y coordinación. Te informamos del
-            progreso, horarios y cualquier novedad de tu hijo.
-          </p>
-        </div>
-      </div>
+      <CardGrid
+        gridClass="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        items={[
+          {
+            title: 'Instalaciones cerradas',
+            copy: '4 canchas, gimnasio y aula académica dentro de un recinto controlado. Acceso registrado y áreas delimitadas por edad.',
+          },
+          {
+            title: 'Sesiones supervisadas',
+            copy: 'Grupos reducidos por etapa con entrenadores certificados UEFA. Ningún niño entrena sin supervisión directa.',
+          },
+          {
+            title: 'Personal capacitado',
+            copy: 'Cuerpo técnico con licencias federativas, formación en primeros auxilios y protocolos claros ante cualquier incidente.',
+          },
+          {
+            title: 'Comunicación directa',
+            copy: 'Canal abierto con entrenadores y coordinación. Te informamos del progreso, horarios y cualquier novedad de tu hijo.',
+          },
+        ]}
+      />
     </div>
   </section>
 
@@ -92,35 +69,21 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
   <!-- ============================================ -->
   <section class="section bg-pure-white border-t border-navy/10" id="metodologia">
     <div class="container-x">
-      <div class="two-col">
-        <div>
-          <p class="eyebrow">Metodología</p>
-          <h2 class="h-section">Entrena según su etapa, no solo su edad</h2>
-          <p class="text-block">
-            Trabajamos por etapa biológica y nivel de desarrollo, no solo por
-            edad cronológica. Cada jugador avanza a su ritmo dentro de un plan
-            formativo claro desde los 4 hasta los 19 años.
-          </p>
-          <p class="text-block">
-            Técnica, táctica, físico y valores en cada sesión — con seguimiento
-            individual para que sepas exactamente cómo progresa tu hijo.
-          </p>
-          <div class="flex flex-wrap gap-3 mt-6">
-            <a href="/area-deportiva" class="btn btn--primary">Ver área deportiva</a>
-            <a href="/categorias" class="btn btn--outline">Explorar categorías</a>
-          </div>
+      <TwoColMedia
+        eyebrow="Metodología"
+        title="Entrena según su etapa, no solo su edad"
+        image="jugadores-cancha"
+        imageAlt="Jugadores formándose por etapas en Punta Cana FC"
+        paragraphs={[
+          'Trabajamos por etapa biológica y nivel de desarrollo, no solo por edad cronológica. Cada jugador avanza a su ritmo dentro de un plan formativo claro desde los 4 hasta los 19 años.',
+          'Técnica, táctica, físico y valores en cada sesión — con seguimiento individual para que sepas exactamente cómo progresa tu hijo.',
+        ]}
+      >
+        <div class="flex flex-wrap gap-3 mt-6">
+          <a href="/area-deportiva" class="btn btn--primary">Ver área deportiva</a>
+          <a href="/categorias" class="btn btn--outline">Explorar categorías</a>
         </div>
-        <div class="image-placeholder">
-          <StockImage
-            name="jugadores-cancha"
-            alt="Jugadores formándose por etapas en Punta Cana FC"
-            className="placeholder-img"
-            loading="lazy"
-            width={1600}
-            height={1200}
-          />
-        </div>
-      </div>
+      </TwoColMedia>
     </div>
   </section>
 
@@ -132,9 +95,8 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
       <p class="eyebrow eyebrow--on-navy">Valores</p>
       <h2 class="h-section h-section--on-navy mb-4">Más que fútbol, personas de bien</h2>
       <p class="lede lede--on-navy max-w-[62ch] mx-auto">
-        Disciplina, respeto, trabajo en equipo, perseverancia y pasión.
-        Formamos futbolistas de excelencia sin olvidar lo esencial:
-        personas íntegras dentro y fuera de la cancha.
+        Disciplina, respeto, trabajo en equipo, perseverancia y pasión. Formamos futbolistas de
+        excelencia sin olvidar lo esencial: personas íntegras dentro y fuera de la cancha.
       </p>
     </div>
   </section>
@@ -144,40 +106,28 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
   <!-- ============================================ -->
   <section class="section bg-white" id="visita">
     <div class="container-x">
-      <div class="two-col">
-        <div>
-          <p class="eyebrow">Visita las instalaciones</p>
-          <h2 class="h-section">Ven a verlo con tus propios ojos</h2>
-          <p class="text-block">
-            Nada aclara más dudas que una visita. Conoce las canchas, mira una
-            sesión en vivo y conversa con nuestros entrenadores sin compromiso.
-          </p>
-          <p class="text-block">
-            Escríbenos y coordinamos tu visita en el horario que te convenga.
-          </p>
-          <div class="flex flex-wrap gap-3 mt-6">
-            <a href="/inscribete" class="btn btn--sky btn--lg">Agendar visita</a>
-            <a
-              href="https://wa.me/18096529450"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn--outline btn--lg"
-            >
-              WhatsApp
-            </a>
-          </div>
+      <TwoColMedia
+        eyebrow="Visita las instalaciones"
+        title="Ven a verlo con tus propios ojos"
+        image="historia"
+        imageAlt="Instalaciones de Punta Cana FC abiertas a visitas de padres"
+        paragraphs={[
+          'Nada aclara más dudas que una visita. Conoce las canchas, mira una sesión en vivo y conversa con nuestros entrenadores sin compromiso.',
+          'Escríbenos y coordinamos tu visita en el horario que te convenga.',
+        ]}
+      >
+        <div class="flex flex-wrap gap-3 mt-6">
+          <a href="/inscribete" class="btn btn--sky btn--lg">Agendar visita</a>
+          <a
+            href="https://wa.me/18096529450"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--outline btn--lg"
+          >
+            WhatsApp
+          </a>
         </div>
-        <div class="image-placeholder">
-          <StockImage
-            name="historia"
-            alt="Instalaciones de Punta Cana FC abiertas a visitas de padres"
-            className="placeholder-img"
-            loading="lazy"
-            width={1600}
-            height={1200}
-          />
-        </div>
-      </div>
+      </TwoColMedia>
     </div>
   </section>
 
@@ -190,29 +140,35 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
     subtitle="Si tu duda no está aquí, escríbenos y te respondemos directamente."
     faqs={[
       {
-        question: "¿Es seguro? ¿Quién supervisa a los niños?",
-        answer: "Sí. Todas las sesiones son supervisadas por entrenadores certificados UEFA en grupos reducidos por etapa. Las instalaciones son un recinto controlado con acceso registrado, y el personal está capacitado en primeros auxilios con protocolos claros ante cualquier incidente."
+        question: '¿Es seguro? ¿Quién supervisa a los niños?',
+        answer:
+          'Sí. Todas las sesiones son supervisadas por entrenadores certificados UEFA en grupos reducidos por etapa. Las instalaciones son un recinto controlado con acceso registrado, y el personal está capacitado en primeros auxilios con protocolos claros ante cualquier incidente.',
       },
       {
-        question: "¿Puedo ver los entrenamientos de mi hijo?",
-        answer: "Por supuesto. Los padres pueden presenciar las sesiones desde las áreas designadas. Además, te invitamos a visitar las instalaciones antes de inscribirte para que veas cómo trabajamos."
+        question: '¿Puedo ver los entrenamientos de mi hijo?',
+        answer:
+          'Por supuesto. Los padres pueden presenciar las sesiones desde las áreas designadas. Además, te invitamos a visitar las instalaciones antes de inscribirte para que veas cómo trabajamos.',
       },
       {
-        question: "¿Cuáles son los horarios?",
-        answer: "Cada sede define sus horarios por categoría. Escríbenos y te confirmamos el de tu sede."
+        question: '¿Cuáles son los horarios?',
+        answer:
+          'Cada sede define sus horarios por categoría. Escríbenos y te confirmamos el de tu sede.',
       },
       {
-        question: "¿Qué debe llevar mi hijo el primer día?",
-        answer: "Ropa deportiva cómoda, tenis o botas de fútbol, espinilleras y su botella de agua. Al inscribirse recibe el equipamiento oficial del club. No necesita experiencia previa."
+        question: '¿Qué debe llevar mi hijo el primer día?',
+        answer:
+          'Ropa deportiva cómoda, tenis o botas de fútbol, espinilleras y su botella de agua. Al inscribirse recibe el equipamiento oficial del club. No necesita experiencia previa.',
       },
       {
-        question: "¿Cuánto cuesta y hay becas o facilidades?",
-        answer: "La cuota mensual incluye 3 entrenamientos semanales, uso de instalaciones, material deportivo y torneos internos. Hay becas de mérito para jugadores destacados. Escríbenos y te enviamos el detalle actualizado de costos y documentos (acta de nacimiento, cédula, certificado médico y fotos)."
+        question: '¿Cuánto cuesta y hay becas o facilidades?',
+        answer:
+          'La cuota mensual incluye 3 entrenamientos semanales, uso de instalaciones, material deportivo y torneos internos. Hay becas de mérito para jugadores destacados. Escríbenos y te enviamos el detalle actualizado de costos y documentos (acta de nacimiento, cédula, certificado médico y fotos).',
       },
       {
-        question: "¿Cómo me entero del progreso de mi hijo?",
-        answer: "Tienes comunicación directa con entrenadores y coordinación: informes de progreso por etapa, avisos de horarios y novedades por nuestros canales. Siempre sabrás en qué punto está y qué sigue."
-      }
+        question: '¿Cómo me entero del progreso de mi hijo?',
+        answer:
+          'Tienes comunicación directa con entrenadores y coordinación: informes de progreso por etapa, avisos de horarios y novedades por nuestros canales. Siempre sabrás en qué punto está y qué sigue.',
+      },
     ]}
     contactEmail="admisiones@puntacanafc.com"
     contactPhone="+1 809-652-9450"
@@ -224,45 +180,3 @@ import EnrollmentCta from '../components/EnrollmentCta.astro';
     copy="Completa el formulario y un entrenador de PCFC se pondrá en contacto en menos de 24 horas para resolver tus dudas."
   />
 </Base>
-
-<style>
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .text-block {
-    color: var(--color-navy-60);
-    font-size: 1rem;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-  }
-
-  .image-placeholder {
-    width: 100%;
-    aspect-ratio: 4/3;
-  }
-  .placeholder-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-    display: block;
-  }
-
-  .card {
-    background: var(--color-white);
-    border: 1px solid var(--color-navy-10);
-    border-radius: 16px;
-    padding: 2rem 1.5rem;
-  }
-
-  @media (max-width: 992px) {
-    .two-col {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-    }
-  }
-</style>

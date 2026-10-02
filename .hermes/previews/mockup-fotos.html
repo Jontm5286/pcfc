@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Nuevo layout /fotos | PCFC</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:#0A1633; color:#fff; }
+  .wrap { max-width:1200px; margin:0 auto; padding:0 20px; }
+  .hero { padding:72px 0 40px; border-bottom:1px solid rgba(255,255,255,.12); }
+  .eyebrow { display:inline-block; font-size:.75rem; letter-spacing:.18em; font-weight:800; color:#FFD23F; margin-bottom:12px; }
+  h1 { font-size:clamp(2rem,5vw,3.25rem); line-height:1.05; color:#fff; }
+  .lede { margin-top:12px; color:#fff; opacity:.92; max-width:60ch; font-size:1rem; }
+  .note { margin-top:14px; display:inline-block; font-size:.8rem; background:rgba(255,210,63,.14); border:1px solid rgba(255,210,63,.5); color:#fff; padding:8px 14px; border-radius:999px; }
+  section.block { padding:44px 0; border-bottom:1px solid rgba(255,255,255,.12); }
+  h2 { font-size:clamp(1.4rem,3vw,2rem); color:#fff; }
+  .sub { color:#fff; opacity:.85; margin-top:8px; font-size:.95rem; }
+  .meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:18px 0 20px; }
+  .badge { font-size:.72rem; font-weight:800; letter-spacing:.1em; background:#FFD23F; color:#0A1633; padding:5px 12px; border-radius:999px; }
+  time { color:#fff; opacity:.9; font-size:.9rem; font-weight:600; }
+  .grid-8 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:24px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:20px; }
+  .photo { position:relative; aspect-ratio:4/3; border-radius:14px; overflow:hidden;
+    background:linear-gradient(135deg,#1B2F66 0%,#2E4BA6 45%,#0E9BD8 100%);
+    border:1px solid rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; }
+  .photo.alt { background:linear-gradient(135deg,#3A1C71 0%,#D76D77 55%,#FFAF7B 100%); }
+  .photo.alt2 { background:linear-gradient(135deg,#0F3443 0%,#34E89E 100%); }
+  .photo.alt3 { background:linear-gradient(135deg,#232526 0%,#414345 60%,#F7971E 130%); }
+  .photo span.label { font-weight:800; font-size:1.05rem; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.6); }
+  .like { position:absolute; top:10px; right:10px; display:inline-flex; align-items:center; gap:6px;
+    background:rgba(5,10,28,.78); border:1px solid rgba(255,255,255,.35); color:#fff;
+    font-size:.82rem; font-weight:700; padding:6px 11px; border-radius:999px; }
+  .like i { font-style:normal; color:#FF5C7A; font-size:.95rem; }
+  .btn { display:inline-flex; align-items:center; gap:8px; margin-top:22px; padding:13px 24px; border-radius:12px;
+    font-weight:800; font-size:.92rem; text-decoration:none; color:#0A1633; background:#FFD23F; }
+  .btn--ghost { background:transparent; color:#fff; border:2px solid #FFD23F; }
+  .head-row { display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between; gap:12px; }
+  @media (max-width:900px){ .grid-8,.grid-4{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .grid-8,.grid-4{ grid-template-columns:1fr;} .hero{padding:52px 0 30px;} }
+</style>
+</head>
+<body style="background:#0A1633;color:#fff;">
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">MOCKUP · PROPUESTA /FOTOS</span>
+    <h1 style="color:#fff;">Galería de fotos</h1>
+    <p class="lede" style="color:#fff;">Cada partido es un recuerdo. Propuesta: destacados arriba + una sección compacta por partido con acceso al archivo completo.</p>
+    <span class="note">Mockup estático — placeholders con gradiente, sin imágenes reales</span>
+  </div>
+</header>
+
+<!-- 1) DESTACADOS -->
+<section class="block">
+  <div class="wrap">
+    <p class="eyebrow">LO MEJOR DE LA CANCHA</p>
+    <h2 style="color:#fff;">Fotos destacadas</h2>
+    <p class="sub" style="color:#fff;">8 fotos · grilla 4×2 en desktop, 1 columna en móvil. Toca el corazón para votar.</p>
+    <div class="grid-8">
+      <div class="photo"><span class="label">Foto 1</span><span class="like"><i>♥</i> 48</span></div>
+      <div class="photo alt"><span class="label">Foto 2</span><span class="like"><i>♥</i> 36</span></div>
+      <div class="photo alt2"><span class="label">Foto 3</span><span class="like"><i>♥</i> 29</span></div>
+      <div class="photo alt3"><span class="label">Foto 4</span><span class="like"><i>♥</i> 22</span></div>
+      <div class="photo alt2"><span class="label">Foto 5</span><span class="like"><i>♥</i> 19</span></div>
+      <div class="photo alt3"><span class="label">Foto 6</span><span class="like"><i>♥</i> 15</span></div>
+      <div class="photo"><span class="label">Foto 7</span><span class="like"><i>♥</i> 12</span></div>
+      <div class="photo alt"><span class="label">Foto 8</span><span class="like"><i>♥</i> 9</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2) SECCIÓN POR PARTIDO ×3 -->
+<section class="block">
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <span class="badge">SUB-13</span>
+        <h2 style="color:#fff;margin-top:10px;">PCFC vs Cibao FC</h2>
+        <div class="meta"><time datetime="2026-09-27" style="color:#fff;">27 sep 2026 · 24 fotos</time></div>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="photo"><span class="label">Foto 1</span><span class="like"><i>♥</i> 21</span></div>
+      <div class="photo alt"><span class="label">Foto 2</span><span class="like"><i>♥</i> 17</span></div>
+      <div class="photo alt2"><span class="label">Foto 3</span><span class="like"><i>♥</i> 11</span></div>
+      <div class="photo alt3"><span class="label">Foto 4</span><span class="like"><i>♥</i> 8</span></div>
+    </div>
+    <a class="btn" href="/fotos/todas?partido=pcfc-vs-cibao-fc">Ver todas las fotos de este partido →</a>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <span class="badge">SUB-15</span>
+        <h2 style="color:#fff;margin-top:10px;">PCFC vs Atlético Vega Real</h2>
+        <div class="meta"><time datetime="2026-09-20" style="color:#fff;">20 sep 2026 · 31 fotos</time></div>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="photo alt"><span class="label">Foto 1</span><span class="like"><i>♥</i> 33</span></div>
+      <div class="photo alt2"><span class="label">Foto 2</span><span class="like"><i>♥</i> 25</span></div>
+      <div class="photo"><span class="label">Foto 3</span><span class="like"><i>♥</i> 14</span></div>
+      <div class="photo alt3"><span class="label">Foto 4</span><span class="like"><i>♥</i> 6</span></div>
+    </div>
+    <a class="btn" href="/fotos/todas?partido=pcfc-vs-atletico-vega-real">Ver todas las fotos de este partido →</a>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <span class="badge">PRIMERA</span>
+        <h2 style="color:#fff;margin-top:10px;">PCFC vs O&amp;M FC</h2>
+        <div class="meta"><time datetime="2026-09-13" style="color:#fff;">13 sep 2026 · 18 fotos</time></div>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="photo alt2"><span class="label">Foto 1</span><span class="like"><i>♥</i> 27</span></div>
+      <div class="photo"><span class="label">Foto 2</span><span class="like"><i>♥</i> 18</span></div>
+      <div class="photo alt3"><span class="label">Foto 3</span><span class="like"><i>♥</i> 10</span></div>
+      <div class="photo alt"><span class="label">Foto 4</span><span class="like"><i>♥</i> 5</span></div>
+    </div>
+    <a class="btn" href="/fotos/todas?partido=pcfc-vs-om-fc">Ver todas las fotos de este partido →</a>
+  </div>
+</section>
+
+<footer style="padding:32px 0 48px;">
+  <div class="wrap">
+    <a class="btn btn--ghost" href="/fotos/todas" style="color:#fff;">Abrir archivo completo paginado (10 partidos/página) →</a>
+  </div>
+</footer>
+
+</body>
+</html>

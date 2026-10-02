@@ -7,6 +7,29 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [No Publicado]
 
+### Agregado — FASE 4 (documentación de cierre, 2026-10-02)
+
+#### Documentación reescrita
+- **README.md** — stack real (Astro 7 SSR + EmDash 0.36 + D1/R2), quickstart
+  (`pnpm dev`, admin `/_emdash/admin`, `pnpm deploy:cf`), estructura de carpetas,
+  tabla página→fuente y scripts vivos.
+- **AGENTS.md** — comandos reales (`verify`, `deploy:cf`, dev background),
+  convenciones (componentes compartidos, no duplicar CSS, fallbacks) y qué NO hacer
+  (R2/D1 prod, `data/`, schemas, archivos fuente de verdad).
+- **docs/GUIA-CLIENTE.md** — qué edita el cliente por colección (campos verificados
+  en `.emdash/schema.json`: `match_photos` + `show_in_hero`, `players`, `categories`,
+  `sponsors`, `hero`, `stats_pillars`, `gallery`), flujo publicar-galería y qué NO tocar.
+- **docs/ARQUITECTURA.md** — ADR ligero (Astro file-based vs EmDash DB vs feed
+  Academy vs fallbacks; `match_photos` canónica vs `partidos` legacy) + matriz
+  env/secrets (`PCFC_LIKES_DB`, `DEPLOY_TARGET`, efecto `NODE_ENV`;
+  `DATABASE_URL`/`EMDASH_DEV_AUTH` marcadas obsoletas).
+
+#### Archivado (sprints cerrados → `docs/archive/`, vía `git mv`)
+- `MIGRACION-EMDASH.md`, `evaluacion-proyecto.md`, `component-consistency-audit.md`,
+  `component-standardization-plan.md`, `copy-review-pcfc.md`, `website-audit-report.md`.
+- Vigentes (no mover): `GUIA-CLIENTE.md`, `ARQUITECTURA.md`,
+  `convocatorias-api-contract.md`, `DESIGN.md`, `MANUAL-DE-MARCA.md`.
+
 ### Agregado - 2026-09-08
 
 #### Seguridad

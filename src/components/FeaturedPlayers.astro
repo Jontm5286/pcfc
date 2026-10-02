@@ -18,8 +18,8 @@
  *   matches: number, goals: number, assists: number, season: string,
  * }
  */
-import type { FeaturedPlayer } from "../data/homeData";
-import { Picture } from "astro:assets";
+import type { FeaturedPlayer } from '../data/homeData';
+import { Picture } from 'astro:assets';
 
 interface Props {
   players: FeaturedPlayer[];
@@ -27,148 +27,181 @@ interface Props {
   title?: string;
 }
 
-const {
-  players,
-  eyebrow = "Plantilla",
-  title = "JUGADORES DESTACADOS",
-} = Astro.props;
+const { players, eyebrow = 'Plantilla', title = 'JUGADORES DESTACADOS' } = Astro.props;
 ---
 
-{players.length > 0 && (
-  <section
-    class="players-section relative w-full overflow-hidden bg-navy-dark py-14 md:py-20"
-    data-component="featured-players"
-    aria-labelledby="featured-players-title"
-  >
-    <div class="mx-auto max-w-[1280px] px-5 md:px-8">
-      <header class="relative mb-8 md:mb-10 flex flex-col items-center text-center">
-        <p class="eyebrow eyebrow--on-navy mb-3">{eyebrow}</p>
-        <h2 id="featured-players-title" class="h-section h-section--on-navy">
-          {title}
-        </h2>
-        <div class="players-nav pointer-events-none absolute inset-y-0 right-0 hidden items-center gap-2 md:flex">
-          <button
-            type="button"
-            class="players-prev pointer-events-auto grid size-11 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97] disabled:opacity-30"
-            aria-label="Ver jugadores anteriores"
-          >
-            <span aria-hidden="true">‹</span>
-          </button>
-          <button
-            type="button"
-            class="players-next pointer-events-auto grid size-11 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97] disabled:opacity-30"
-            aria-label="Ver siguientes jugadores"
-          >
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
-      </header>
-    </div>
-
-    <div class="mx-auto max-w-[1280px] pl-5 md:pl-8">
-      <div
-        class="players-track flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:gap-4"
-        role="list"
-        aria-roledescription="carrusel"
-        aria-label="Jugadores destacados"
-      >
-        {players.map((player) => (
-          <article
-            role="listitem"
-            tabindex="0"
-            data-tilt
-            class="player-card group relative w-[78%] shrink-0 snap-start overflow-hidden bg-navy sm:w-[46%] lg:w-[31.8%] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
-          >
-            <div class="relative aspect-[3/4] w-full overflow-hidden">
-              {typeof player.photo === 'string' ? (
-                <img
-                  src={player.photo}
-                  alt={player.photoAlt}
-                  loading="lazy"
-                  class="player-photo absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              ) : (
-                <Picture
-                  src={player.photo}
-                  alt={player.photoAlt}
-                  widths={[400, 800]}
-                  sizes="(max-width: 768px) 400px, 800px"
-                  formats={['avif', 'webp']}
-                  quality={65}
-                  loading="lazy"
-                  class="player-photo absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              )}
-              <div class="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/35 to-transparent" aria-hidden="true" />
-              <span
-                class="pointer-events-none absolute inset-x-0 bottom-24 select-none text-center font-display text-[7rem] leading-none text-white/15 md:text-[8.5rem]"
-                aria-hidden="true"
-              >
-                {player.number}
-              </span>
-              <div class="player-overlay absolute inset-x-0 bottom-0 border-t border-white/10 p-5 text-center md:p-6">
-                <h3 class="player-name font-display text-xl uppercase tracking-wide text-white md:text-2xl">
-                  {player.name}
-                </h3>
-                <p class="player-position mt-1 text-[0.8rem] font-semibold text-white/80">
-                  {player.position}
-                </p>
-                <dl class="player-stats mt-4 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 text-center">
-                  <div>
-                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Partidos</dt>
-                    <dd class="stat-value font-display text-xl text-white">{player.matches}</dd>
-                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
-                  </div>
-                  <div>
-                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Goles</dt>
-                    <dd class="stat-value font-display text-xl text-white">{player.goals}</dd>
-                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
-                  </div>
-                  <div>
-                    <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-white/60">Asistencias</dt>
-                    <dd class="stat-value font-display text-xl text-white">{player.assists}</dd>
-                    <dd class="stat-season text-[0.65rem] text-white/50">Temp. {player.season}</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div class="mt-6 flex items-center justify-center gap-2 pr-5 md:pr-8">
-        <div class="players-dots flex items-center gap-2" role="tablist" aria-label="Paginación del carrusel">
-          {players.map((player, i) => (
+{
+  players.length > 0 && (
+    <section
+      class="players-section relative w-full overflow-hidden bg-navy-dark py-14 md:py-20"
+      data-component="featured-players"
+      aria-labelledby="featured-players-title"
+    >
+      <div class="mx-auto max-w-[1280px] px-5 md:px-8">
+        <header class="relative mb-8 md:mb-10 flex flex-col items-center text-center">
+          <p class="eyebrow eyebrow--on-navy mb-3">{eyebrow}</p>
+          <h2 id="featured-players-title" class="h-section h-section--on-navy">
+            {title}
+          </h2>
+          <div class="players-nav pointer-events-none absolute inset-y-0 right-0 hidden items-center gap-2 md:flex">
             <button
               type="button"
-              role="tab"
-              aria-selected={i === 0 ? "true" : "false"}
-              aria-label={`Ir al jugador ${player.name}`}
-              data-index={i}
-              class="players-dot h-1 w-8 bg-white/25 transition-colors"
-            />
+              class="players-prev pointer-events-auto grid size-11 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97] disabled:opacity-30"
+              aria-label="Ver jugadores anteriores"
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button
+              type="button"
+              class="players-next pointer-events-auto grid size-11 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97] disabled:opacity-30"
+              aria-label="Ver siguientes jugadores"
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <div class="mx-auto max-w-[1280px] pl-5 md:pl-8">
+        <div
+          class="players-track flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:gap-4"
+          role="list"
+          aria-roledescription="carrusel"
+          aria-label="Jugadores destacados"
+        >
+          {players.map((player) => (
+            <article
+              role="listitem"
+              tabindex="0"
+              data-tilt
+              class="player-card group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-xl border-[3px] border-[#c9a06a] bg-navy shadow-[0_0_24px_rgba(201,160,106,0.35)] sm:w-[46%] lg:w-[31.8%] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+            >
+              <div class="relative aspect-[3/4] w-full overflow-hidden">
+                {/* 3 franjas del logo DETRÁS de la foto: en reposo abajo fuera de vista,
+                    al hover suben de abajo hacia arriba */}
+                <span
+                  aria-hidden="true"
+                  class="player-stripes pointer-events-none absolute inset-0 z-0 translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0"
+                />
+                {typeof player.photo === 'string' ? (
+                  <img
+                    src={player.photo}
+                    alt={player.photoAlt}
+                    loading="lazy"
+                    class="player-photo absolute inset-0 z-10 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[0.96]"
+                  />
+                ) : (
+                  <Picture
+                    src={player.photo}
+                    alt={player.photoAlt}
+                    widths={[400, 800]}
+                    sizes="(max-width: 768px) 400px, 800px"
+                    formats={['avif', 'webp']}
+                    quality={65}
+                    loading="lazy"
+                    class="player-photo absolute inset-0 z-10 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[0.96]"
+                  />
+                )}
+                <div
+                  class="absolute inset-0 z-20 bg-gradient-to-t from-navy-dark via-navy-dark/35 to-transparent"
+                  aria-hidden="true"
+                />
+                {/* Dorsal + posición estilo carta: siempre visible, dorado */}
+                <div class="absolute left-3 top-3 z-30 text-center leading-none">
+                  <span class="font-display text-4xl font-black text-[#f3d894] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    {player.number}
+                  </span>
+                  <span class="mt-1 block text-xs font-bold tracking-widest text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    {player.position.slice(0, 3).toUpperCase()}
+                  </span>
+                </div>
+                <span
+                  class="pointer-events-none absolute inset-x-0 bottom-24 z-20 select-none text-center font-display text-[7rem] leading-none text-[#c9a06a]/20 md:text-[8.5rem]"
+                  aria-hidden="true"
+                >
+                  {player.number}
+                </span>
+
+                <div class="player-overlay absolute inset-x-0 bottom-0 z-20 border-t-2 border-[#c9a06a] bg-gradient-to-t from-navy-dark via-navy-dark/85 to-transparent p-5 text-center md:p-6">
+                  <h3 class="player-name font-display text-xl uppercase tracking-wide text-[#f3d894] md:text-2xl">
+                    {player.name}
+                  </h3>
+                  <p class="player-position mt-1 text-[0.8rem] font-semibold text-white/80">
+                    {player.position}
+                  </p>
+                  <dl class="player-stats mt-4 grid grid-cols-3 gap-2 border-t border-[#c9a06a]/40 pt-3 text-center">
+                    <div>
+                      <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-[#e8c87e]">
+                        Partidos
+                      </dt>
+                      <dd class="stat-value font-display text-xl text-white">{player.matches}</dd>
+                      <dd class="stat-season text-[0.65rem] text-white/50">
+                        Temp. {player.season}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-[#e8c87e]">
+                        Goles
+                      </dt>
+                      <dd class="stat-value font-display text-xl text-white">{player.goals}</dd>
+                      <dd class="stat-season text-[0.65rem] text-white/50">
+                        Temp. {player.season}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="stat-label text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-[#e8c87e]">
+                        Asistencias
+                      </dt>
+                      <dd class="stat-value font-display text-xl text-white">{player.assists}</dd>
+                      <dd class="stat-season text-[0.65rem] text-white/50">
+                        Temp. {player.season}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
-        <div class="ml-4 flex items-center gap-2 md:hidden">
-          <button
-            type="button"
-            class="players-prev grid size-10 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97]"
-            aria-label="Ver jugadores anteriores"
+
+        <div class="mt-6 flex items-center justify-center gap-2 pr-5 md:pr-8">
+          <div
+            class="players-dots flex items-center gap-2"
+            role="tablist"
+            aria-label="Paginación del carrusel"
           >
-            <span aria-hidden="true">‹</span>
-          </button>
-          <button
-            type="button"
-            class="players-next grid size-10 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97]"
-            aria-label="Ver siguientes jugadores"
-          >
-            <span aria-hidden="true">›</span>
-          </button>
+            {players.map((player, i) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-label={`Ir al jugador ${player.name}`}
+                data-index={i}
+                class="players-dot h-1 w-8 bg-white/25 transition-colors"
+              />
+            ))}
+          </div>
+          <div class="ml-4 flex items-center gap-2 md:hidden">
+            <button
+              type="button"
+              class="players-prev grid size-10 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97]"
+              aria-label="Ver jugadores anteriores"
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button
+              type="button"
+              class="players-next grid size-10 place-items-center rounded-full border border-white/25 text-white/80 transition-[border-color,color,transform] duration-150 hover:border-white hover:text-white active:scale-[0.97]"
+              aria-label="Ver siguientes jugadores"
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-)}
+    </section>
+  )
+}
 
 <style>
   .players-section {
@@ -182,7 +215,7 @@ const {
   .players-track::-webkit-scrollbar {
     display: none;
   }
-  .players-dot[aria-selected="true"] {
+  .players-dot[aria-selected='true'] {
     background: var(--color-amber-400, #fbbf24);
   }
   .player-card[data-tilt] {
@@ -201,11 +234,34 @@ const {
     transform: translateY(-1px);
   }
 
+  /* 3 franjas verticales celestes del logo (#0098b7) al hover, 55% opacidad. */
+  .player-stripes {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      transparent 14%,
+      rgba(0, 152, 183, 0.55) 14%,
+      rgba(0, 152, 183, 0.55) 28%,
+      transparent 28%,
+      transparent 38%,
+      rgba(0, 152, 183, 0.55) 38%,
+      rgba(0, 152, 183, 0.55) 62%,
+      transparent 62%,
+      transparent 72%,
+      rgba(0, 152, 183, 0.55) 72%,
+      rgba(0, 152, 183, 0.55) 86%,
+      transparent 86%,
+      transparent 100%
+    );
+  }
+
   /* Hover: nombre + stats ocultos en reposo; suben con fade escalonado al hover/foco. */
   .player-card .player-overlay {
     opacity: 0;
     transform: translateY(100%);
-    transition: opacity 0.32s ease, transform 0.32s ease;
+    transition:
+      opacity 0.32s ease,
+      transform 0.32s ease;
   }
 
   /* En móvil (sin hover) el overlay está visible por defecto. */
@@ -229,9 +285,20 @@ const {
 
   /* Stats con delay escalonado: nombre 0ms, cada stat-label +100ms, stat-value +150ms */
   @media (hover: hover) and (pointer: fine) {
-    .player-card .player-name          { transition-delay: 0.00s; }
-    .player-card .player-position      { transition-delay: 0.05s; }
-    .player-card .player-stats         { opacity: 0; transform: translateY(0.5rem); transition: opacity 0.32s ease, transform 0.32s ease; transition-delay: 0.10s; }
+    .player-card .player-name {
+      transition-delay: 0s;
+    }
+    .player-card .player-position {
+      transition-delay: 0.05s;
+    }
+    .player-card .player-stats {
+      opacity: 0;
+      transform: translateY(0.5rem);
+      transition:
+        opacity 0.32s ease,
+        transform 0.32s ease;
+      transition-delay: 0.1s;
+    }
 
     .player-card:hover .player-stats,
     .player-card:focus-within .player-stats {
@@ -239,36 +306,54 @@ const {
       transform: translateY(0);
     }
 
-    .player-card .stat-label:nth-child(1) { transition-delay: 0.12s; }
-    .player-card .stat-value:nth-child(2) { transition-delay: 0.14s; }
+    .player-card .stat-label:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+    .player-card .stat-value:nth-child(2) {
+      transition-delay: 0.14s;
+    }
 
-    .player-card .stat-label:nth-child(4) { transition-delay: 0.18s; }
-    .player-card .stat-value:nth-child(5) { transition-delay: 0.20s; }
+    .player-card .stat-label:nth-child(4) {
+      transition-delay: 0.18s;
+    }
+    .player-card .stat-value:nth-child(5) {
+      transition-delay: 0.2s;
+    }
 
-    .player-card .stat-label:nth-child(7) { transition-delay: 0.24s; }
-    .player-card .stat-value:nth-child(8) { transition-delay: 0.26s; }
+    .player-card .stat-label:nth-child(7) {
+      transition-delay: 0.24s;
+    }
+    .player-card .stat-value:nth-child(8) {
+      transition-delay: 0.26s;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .player-card .player-overlay { transition: none; }
-    .player-card .player-stats { transition: none; }
+    .player-card .player-overlay {
+      transition: none;
+    }
+    .player-card .player-stats {
+      transition: none;
+    }
     .player-card .stat-label,
     .player-card .stat-value,
-    .player-card .stat-season { transition: none; }
+    .player-card .stat-season {
+      transition: none;
+    }
   }
 </style>
 
 <script>
   function initPlayersCarousel(root: HTMLElement) {
-    const track = root.querySelector<HTMLElement>(".players-track");
-    const cards = [...root.querySelectorAll<HTMLElement>(".player-card")];
-    const dots = [...root.querySelectorAll<HTMLButtonElement>(".players-dot")];
-    const prevBtns = [...root.querySelectorAll<HTMLButtonElement>(".players-prev")];
-    const nextBtns = [...root.querySelectorAll<HTMLButtonElement>(".players-next")];
+    const track = root.querySelector<HTMLElement>('.players-track');
+    const cards = [...root.querySelectorAll<HTMLElement>('.player-card')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('.players-dot')];
+    const prevBtns = [...root.querySelectorAll<HTMLButtonElement>('.players-prev')];
+    const nextBtns = [...root.querySelectorAll<HTMLButtonElement>('.players-next')];
     if (!track || cards.length === 0) return;
 
     const step = () => {
-      const gap = parseFloat(getComputedStyle(track).columnGap || "12");
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12');
       return cards[0].offsetWidth + gap;
     };
 
@@ -276,9 +361,7 @@ const {
 
     const paint = () => {
       const i = Math.min(currentIndex(), cards.length - 1);
-      dots.forEach((d, di) =>
-        d.setAttribute("aria-selected", di === i ? "true" : "false"),
-      );
+      dots.forEach((d, di) => d.setAttribute('aria-selected', di === i ? 'true' : 'false'));
       const atStart = track.scrollLeft <= 4;
       const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
       prevBtns.forEach((b) => (b.disabled = atStart));
@@ -286,34 +369,34 @@ const {
     };
 
     prevBtns.forEach((b) =>
-      b.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: "smooth" })),
+      b.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }))
     );
     nextBtns.forEach((b) =>
-      b.addEventListener("click", () => track.scrollBy({ left: step(), behavior: "smooth" })),
+      b.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }))
     );
     dots.forEach((d) =>
-      d.addEventListener("click", () =>
-        track.scrollTo({ left: Number(d.dataset.index) * step(), behavior: "smooth" }),
-      ),
+      d.addEventListener('click', () =>
+        track.scrollTo({ left: Number(d.dataset.index) * step(), behavior: 'smooth' })
+      )
     );
-    track.addEventListener("scroll", () => requestAnimationFrame(paint), { passive: true });
+    track.addEventListener('scroll', () => requestAnimationFrame(paint), { passive: true });
     paint();
 
     // Tilt 3D sutil en cards (solo puntero fino, sin reduced motion)
     const canTilt =
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (canTilt) {
       const MAX = 6;
       cards.forEach((card) => {
-        card.addEventListener("mousemove", (ev) => {
+        card.addEventListener('mousemove', (ev) => {
           const r = card.getBoundingClientRect();
           const px = (ev.clientX - r.left) / r.width - 0.5;
           const py = (ev.clientY - r.top) / r.height - 0.5;
           card.style.transform = `perspective(800px) rotateX(${(-py * MAX).toFixed(2)}deg) rotateY(${(px * MAX).toFixed(2)}deg)`;
         });
-        card.addEventListener("mouseleave", () => {
-          card.style.transform = "";
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = '';
         });
       });
     }

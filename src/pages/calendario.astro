@@ -6,7 +6,7 @@
  */
 
 import Base from '../layouts/Base.astro';
-import StockImage from '../components/StockImage.astro';
+import PageHero from '../components/PageHero.astro';
 import CalendarFilters from '../components/CalendarFilters.astro';
 import MatchListItem from '../components/MatchListItem.astro';
 import SectionHeader from '../components/SectionHeader.astro';
@@ -200,15 +200,15 @@ const { galleries: publishedGalleries, cacheHint: galleriesCacheHint } =
 if (galleriesCacheHint) Astro.cache.set(galleriesCacheHint);
 const publishedGallerySlugs = new Set(publishedGalleries.map((g) => g.slug));
 const gallerySlugByAcademyId = new Map(
-  publishedGalleries.flatMap((g) => (g.academyId ? [[g.academyId, g.slug] as const] : [])),
+  publishedGalleries.flatMap((g) => (g.academyId ? [[g.academyId, g.slug] as const] : []))
 );
 
 // Feed en vivo (después de los respaldos por el TDZ de const).
 const feed = await fetchAcademyFeed();
-let liveUpcoming: CalendarMatchItem[] = feed.upcoming.map((m: AcademyMatch) =>
-  toCalendarItem(m, false),
+const liveUpcoming: CalendarMatchItem[] = feed.upcoming.map((m: AcademyMatch) =>
+  toCalendarItem(m, false)
 );
-let livePlayed: CalendarMatchItem[] = feed.played.map((m: AcademyMatch) => {
+const livePlayed: CalendarMatchItem[] = feed.played.map((m: AcademyMatch) => {
   const item = toCalendarItem(m, true);
   const slug =
     gallerySlugByAcademyId.get(m.id) ?? buildMatchSlug(item.team1, item.team2, m.matchDate);
@@ -218,8 +218,7 @@ let livePlayed: CalendarMatchItem[] = feed.played.map((m: AcademyMatch) => {
 
 const displayUpcoming: CalendarMatchItem[] =
   liveUpcoming.length > 0 ? liveUpcoming : fallbackUpcomingMatches;
-const displayPast: CalendarMatchItem[] =
-  livePlayed.length > 0 ? livePlayed : fallbackPastMatches;
+const displayPast: CalendarMatchItem[] = livePlayed.length > 0 ? livePlayed : fallbackPastMatches;
 ---
 
 <Base
@@ -229,29 +228,13 @@ const displayPast: CalendarMatchItem[] =
   <!-- ============================================ -->
   <!-- HERO — Calendario -->
   <!-- ============================================ -->
-  <section
-    class="hero-with-image text-white pt-[clamp(6rem,12vw,9rem)] pb-[clamp(4rem,8vw,6rem)] relative"
-  >
-    <StockImage
-      name="partido-sub13"
-      alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
-      className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
-      width={1600}
-      height={1200}
-      loading="eager"
-    />
-    <div class="hero-overlay"></div>
-    <div class="container-x relative z-10">
-      <p class="eyebrow eyebrow--on-navy">Temporada 2026</p>
-      <h1 class="h-display h-display--on-navy text-[clamp(2.5rem,6vw,4.5rem)] mb-5 max-w-[16ch]">
-        Calendario
-      </h1>
-      <p class="lede lede--on-navy max-w-[52ch]">
-        Todos los partidos de la temporada, organizados por categoría. Marca tu calendario, filtra
-        por equipo y no te pierdas ningún encuentro de tu hijo.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    eyebrow="Temporada 2026"
+    title="Calendario"
+    lede="Todos los partidos de la temporada, organizados por categoría. Marca tu calendario, filtra por equipo y no te pierdas ningún encuentro de tu hijo."
+    image="partido-sub13"
+    alt="Partido de fútbol juvenil en cancha de Punta Cana FC"
+  />
 
   <!-- ============================================ -->
   <!-- FILTROS — control -->

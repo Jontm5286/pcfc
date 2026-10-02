@@ -116,9 +116,12 @@ export async function fetchAcademyFeed(timeoutMs = 3000): Promise<AcademyFeed> {
 }
 
 // ─────────────────────────────────────────────────────────
-// Galerías EmDash (colección `match_photos`) — fuente de verdad de /fotos.
+// Galerías EmDash — COLECCIÓN CANÓNICA: `match_photos` (FASE 2).
 // Una entrada = una galería. Solo published + con fotos enlaza/renderiza.
 // `partido` es el slug (para /fotos#<slug>); cae a entry.id si viene vacío.
+// NOTA: la colección rival `partidos` quedó archivada como definición
+// (docs/archive/schema.partidos.json); su lector (scripts/sync-match-photos.mjs)
+// se conserva solo como fallback/legacy y NO es fuente de verdad.
 // ─────────────────────────────────────────────────────────
 
 const ES_MONTHS_LONG = [
@@ -242,7 +245,8 @@ function mediaValueSrc(v: unknown): string | null {
 /** Caché en memoria 5 min (por isolate) para galerías y players.
  * Mismo patrón que el feed: el primer hit tras expirar paga D1. */
 const EMDASH_TTL_MS = 5 * 60 * 1000;
-let galleriesCache: { at: number; galleries: PublishedGallery[]; cacheHint?: unknown } | null = null;
+let galleriesCache: { at: number; galleries: PublishedGallery[]; cacheHint?: unknown } | null =
+  null;
 let playersCache: { at: number; players: PublishedPlayer[] } | null = null;
 let heroCache: { at: number; hero: PublishedHero | null } | null = null;
 let categoriesCache: { at: number; categories: PublishedCategory[] } | null = null;
@@ -261,7 +265,7 @@ export async function fetchPublishedGalleries(): Promise<{
     });
     const galleries: PublishedGallery[] = [];
     for (const entry of entries ?? []) {
-      const d = entry.data as Record<string, unknown>;
+      const d = entry.data as unknown as Record<string, unknown>;
       const rawPhotos = Array.isArray(d.images)
         ? d.images
         : typeof d.images === 'string'
@@ -272,7 +276,9 @@ export async function fetchPublishedGalleries(): Promise<{
         .map((p, i) => ({ p, i }))
         .filter(
           (e): e is { p: Record<string, unknown>; i: number } =>
-            !!e.p && typeof e.p === 'object' && typeof photoSrc(e.p) === 'string',
+            !!e.p &&
+            typeof e.p === 'object' &&
+            typeof photoSrc(e.p as Record<string, unknown>) === 'string'
         )
         .map((e) => ({
           src: String(photoSrc(e.p)),
@@ -293,13 +299,15 @@ export async function fetchPublishedGalleries(): Promise<{
           : d.portada;
       const thumbSrc = primaryPhoto?.src || mediaValueSrc(portadaRaw) || photos[0].src;
       const thumbAlt =
-        portadaRaw && typeof portadaRaw === 'object' && typeof (portadaRaw as Record<string, unknown>).alt === 'string'
+        portadaRaw &&
+        typeof portadaRaw === 'object' &&
+        typeof (portadaRaw as Record<string, unknown>).alt === 'string'
           ? String((portadaRaw as Record<string, unknown>).alt)
           : undefined;
       const team1 = String(d.home_team || 'PCFC');
       const team2 = String(d.away_team || 'Rival');
       const label = 'Galería';
-      const rawPub = (entry.publishedAt ?? d.publishedAt ?? d.published_at) as unknown;
+      const rawPub = (d.publishedAt ?? d.published_at) as unknown;
       const publishedAtIso =
         rawPub instanceof Date
           ? rawPub.toISOString()
@@ -343,7 +351,7 @@ export interface HeroGalleryImage {
  */
 export async function fetchHeroGalleryImages(
   fromGalleries?: PublishedGallery[],
-  limit = 6,
+  limit = 6
 ): Promise<HeroGalleryImage[]> {
   const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries
@@ -353,7 +361,7 @@ export async function fetchHeroGalleryImages(
         src: p.src,
         alt: p.alt || `${g.team1} vs ${g.team2}`,
         href: `/fotos#${g.slug}`,
-      })),
+      }))
     )
     .slice(0, limit);
 }
@@ -365,7 +373,7 @@ export async function fetchHeroGalleryImages(
  */
 export async function fetchLatestGalleryImages(
   fromGalleries?: PublishedGallery[],
-  count = 5,
+  count = 5
 ): Promise<HeroGalleryImage[]> {
   const galleries = fromGalleries ?? (await fetchPublishedGalleries()).galleries;
   return galleries.slice(0, count).map((g) => ({
@@ -420,9 +428,8 @@ export async function fetchPublishedPlayers(): Promise<PublishedPlayer[]> {
     });
     const players = (entries ?? [])
       .map((entry) => {
-        const d = entry.data as Record<string, unknown>;
-        const slug =
-          typeof d.slug === 'string' && d.slug ? d.slug : String(entry.id);
+        const d = entry.data as unknown as Record<string, unknown>;
+        const slug = typeof d.slug === 'string' && d.slug ? d.slug : String(entry.id);
         return {
           slug,
           name: String(d.name ?? ''),
@@ -506,7 +513,7 @@ export async function fetchPublishedHero(): Promise<PublishedHero | null> {
       heroCache = { at: Date.now(), hero: null };
       return null;
     }
-    const d = first.data as Record<string, unknown>;
+    const d = first.data as unknown as Record<string, unknown>;
     const hero: PublishedHero = {
       title: String(d.title ?? ''),
       subtitle: strField(d, 'subtitle', 'subtitle'),
@@ -561,7 +568,7 @@ export async function fetchPublishedCategories(): Promise<PublishedCategory[]> {
     });
     const categories = (entries ?? [])
       .map((entry) => {
-        const d = entry.data as Record<string, unknown>;
+        const d = entry.data as unknown as Record<string, unknown>;
         const slug =
           typeof d.item_slug === 'string' && d.item_slug
             ? d.item_slug
