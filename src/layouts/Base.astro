@@ -56,8 +56,8 @@ const {
     <link rel="canonical" href={Astro.site + Astro.url.pathname} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    <!-- Microsoft Clarity (ID yxo8cx0zsl): se carga tras window load para no
-      frenar el primer render. GA4 pendiente del Measurement ID (G-XXXX). -->
+    <!-- Microsoft Clarity (ID yxo8cx0zsl) + Google Analytics 4
+      (G-SS9SN2G5DQ): se cargan tras window load para no frenar el primer render. -->
     <script is:inline>
       window.addEventListener('load', function () {
         (function (c, l, a, r, i, t, y) {
@@ -72,6 +72,16 @@ const {
           y = l.getElementsByTagName(r)[0];
           y.parentNode.insertBefore(t, y);
         })(window, document, 'clarity', 'script', 'yxo8cx0zsl');
+        var g = document.createElement('script');
+        g.async = 1;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-SS9SN2G5DQ';
+        document.head.appendChild(g);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-SS9SN2G5DQ');
       });
     </script>
     <link rel="alternate" hreflang="es" href={Astro.site + Astro.url.pathname} />
