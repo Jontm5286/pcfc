@@ -1,0 +1,14 @@
+{
+  "name": "pcfc-email-resend",
+  "version": "1.0.0",
+  "description": "Proveedor de email transaccional para EmDash vía API HTTP de Resend (magic links, invitaciones, recuperación).",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/plugin.ts"
+  },
+  "peerDependencies": {
+    "emdash": ">=0.30.0"
+  }
+}

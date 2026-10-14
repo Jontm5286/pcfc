@@ -178,20 +178,20 @@ declare module 'astro:content' {
   filePath?: string;
   digest?: string | number;
 }>;
-"next_match": Record<string, {
+"next-match": Record<string, {
   id: string;
   body?: string;
-  collection: "next_match";
-  data: InferEntrySchema<"next_match">;
+  collection: "next-match";
+  data: InferEntrySchema<"next-match">;
   rendered?: RenderedContent;
   filePath?: string;
   digest?: string | number;
 }>;
-"sponsors": Record<string, {
+"players": Record<string, {
   id: string;
   body?: string;
-  collection: "sponsors";
-  data: InferEntrySchema<"sponsors">;
+  collection: "players";
+  data: InferEntrySchema<"players">;
   rendered?: RenderedContent;
   filePath?: string;
   digest?: string | number;

@@ -44,7 +44,7 @@
   "@type": "LocalBusiness",
   "name": "Punta Cana FC",
   "image": "https://puntacanafc.com/Logo-PCFC.svg",
-  "telephone": "+1 809-652-9450",
+  "telephone": "+1 829-246-4756",
   "address": { "@type": "PostalAddress", "addressLocality": "Punta Cana", "addressCountry": "DO" }
 }
 </script>

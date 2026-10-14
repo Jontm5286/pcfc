@@ -39,7 +39,9 @@ const isForm = variant === 'inscribete';
         </div>
         <p class="font-body text-[0.95rem] leading-[1.55]">
           <a
-            href={`tel:${s.telefono.replace(/\s/g, '')}`}
+            href={`https://wa.me/${s.telefono.replace(/\D/g, '')}`}
+            target="_blank"
+            rel="noopener"
             class="text-navy underline underline-offset-4"
           >
             {s.telefono}

@@ -114,7 +114,7 @@ const sedes = getSedes().map((s) => ({
     return (
       `<strong class="sede-popup-name">${s.nombre}</strong><br>` +
       `<span>${addr}</span><br>` +
-      `<a href="tel:${s.telefono.replace(/\s/g, '')}">${s.telefono}</a> · ` +
+      `<a href="https://wa.me/${s.telefono.replace(/\D/g, '')}" target="_blank" rel="noopener">${s.telefono}</a> · ` +
       `<a href="${s.mapsUrl}" target="_blank" rel="noopener">Cómo llegar →</a>`
     );
   }

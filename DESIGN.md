@@ -276,7 +276,7 @@ Cada página tiene un arco emocional. No es solo "hero + features + CTA".
 ### GaleríaGrid
 - Grid responsive: 4 columnas desktop, 3 tablet, 2 mobile.
 - Gap: 12px.
-- Thumbnails con `object-fit: cover`, aspect-ratio 4:3.
+- Thumbnails con `object-fit: cover`, aspect-ratio 4:5 (las fotos salen verticales de cámara, se ven completas sin recorte).
 - Hover: leve sombra, cursor pointer.
 - Click → lightbox overlay.
 

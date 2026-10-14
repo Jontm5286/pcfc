@@ -3,7 +3,11 @@
  * Footer — PCFC
  * Grid de 4 columnas: logo + descripción, Club, Categorías, Contacto.
  * Diseño: tokens del design system (bg-navy-dark, text-white/70, hover:text-sky).
+ * Contacto: teléfono por sede desde `getSedes()` con enlace wa.me.
  */
+import { getSedes } from '../data/sedes';
+
+const sedes = getSedes();
 ---
 
 <footer class="bg-navy-dark text-white/70 py-16 border-t border-white/5">
@@ -121,27 +125,25 @@
         Contacto
       </h3>
       <ul class="list-none flex flex-col gap-2.5">
-        <li>
-          <a
-            href="tel:+18096529450"
-            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
-            >+1 809-652-9450</a
-          >
-        </li>
+        {
+          sedes.map((s) => (
+            <li>
+              <a
+                href={`https://wa.me/${s.telefono.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noopener"
+                class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
+              >
+                {s.nombre}: {s.telefono}
+              </a>
+            </li>
+          ))
+        }
         <li>
           <a
             href="mailto:info@puntacanafc.com"
             class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
             >info@puntacanafc.com</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://wa.me/18096529450"
-            target="_blank"
-            rel="noopener"
-            class="text-[0.9rem] no-underline transition-colors duration-200 hover:text-sky"
-            >WhatsApp directo</a
           >
         </li>
       </ul>

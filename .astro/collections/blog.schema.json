@@ -19,12 +19,20 @@
     "coverImage": {
       "anyOf": [
         {
-          "type": "string",
-          "format": "uri"
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\/.*"
+            }
+          ]
         },
         {
           "type": "string",
-          "pattern": "^\\/.*"
+          "const": ""
         }
       ]
     },
@@ -37,6 +45,43 @@
     "published": {
       "default": true,
       "type": "boolean"
+    },
+    "body": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ctaPrimary": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ]
+    },
+    "ctaSecondary": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ]
     },
     "$schema": {
       "type": "string"

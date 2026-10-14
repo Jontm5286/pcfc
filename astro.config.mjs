@@ -11,6 +11,9 @@ import react from '@astrojs/react';
 
 // Galería multi-imagen vendorizada como código propio (plugins/pcfc-media-gallery).
 import { pcfcMediaGalleryPlugin } from 'pcfc-media-gallery';
+// Proveedor de email transaccional vía Resend (plugins/pcfc-email-resend).
+// Solo prod (Workers): habilita el magic link donde no hay proveedor de consola.
+import { pcfcEmailResendPlugin } from 'pcfc-email-resend';
 
 // ============================================================
 // PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
@@ -55,7 +58,9 @@ export default defineConfig({
         ? {
             database: d1({ binding: 'DB', session: 'auto' }),
             storage: r2({ binding: 'MEDIA' }),
-            plugins: [pcfcMediaGalleryPlugin()],
+            // Resend SOLO en prod: en dev el proveedor de consola basta
+            // y no hay API key configurada.
+            plugins: [pcfcMediaGalleryPlugin(), pcfcEmailResendPlugin()],
           }
         : {
             // Alineado con el comentario: apunta a data/emdash.db para evitar el error 'unable to open database file'
