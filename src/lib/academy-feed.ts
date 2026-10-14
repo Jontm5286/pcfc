@@ -169,6 +169,8 @@ export interface PublishedGallery {
   categoryLabel: string;
   team1: string;
   team2: string;
+  /** Título display: campo `name` del admin; fallback `team1 vs team2`. */
+  title: string;
   date: string;
   /** ISO publishedAt (para el gate de descarga 4K/2000px). */
   publishedAtIso: string | null;
@@ -306,6 +308,8 @@ export async function fetchPublishedGalleries(): Promise<{
           : undefined;
       const team1 = String(d.home_team || 'PCFC');
       const team2 = String(d.away_team || 'Rival');
+      const rawName = typeof d.name === 'string' ? d.name.trim() : '';
+      const title = rawName || `${team1} vs ${team2}`;
       const label = 'Galería';
       const rawPub = (d.publishedAt ?? d.published_at) as unknown;
       const publishedAtIso =
@@ -321,10 +325,11 @@ export async function fetchPublishedGalleries(): Promise<{
         categoryLabel: label,
         team1,
         team2,
+        title,
         date: formatDisplayDate(String(d.date || '')),
         publishedAtIso,
         thumbnail: thumbSrc,
-        thumbnailAlt: thumbAlt || `${team1} vs ${team2}`,
+        thumbnailAlt: thumbAlt || title,
         photos,
         showInHero: parseShowInHero(d.show_in_hero),
       });
@@ -359,7 +364,7 @@ export async function fetchHeroGalleryImages(
     .flatMap((g) =>
       g.photos.map((p) => ({
         src: p.src,
-        alt: p.alt || `${g.team1} vs ${g.team2}`,
+        alt: p.alt || g.title,
         href: `/fotos#${g.slug}`,
       }))
     )

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MediaPickerModal } from "@emdash-cms/admin";
-import { type GalleryItem, reindex, resolveOptions } from "../schema.js";
+import { type GalleryItem, reindex, resolveOptions, samePhoto } from "../schema.js";
 import { validateGallery } from "../validate.js";
 import { SearchPicker, urlFromStorageKey, useSearchEndpoint } from "./shared.js";
 
@@ -35,6 +35,8 @@ export default function GalleryField(props: FieldWidgetProps) {
   );
 
   const [urls, setUrls] = useState<Record<string, string>>({});
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
+  const [notice, setNotice] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -52,9 +54,18 @@ export default function GalleryField(props: FieldWidgetProps) {
         try {
           const res = await fetch(`/_emdash/api/media/${encodeURIComponent(it.mediaId)}`);
           if (!res.ok) return null;
-          const m = (await res.json()) as { url?: string; storageKey?: string };
-          const url = m.url ?? (m.storageKey ? urlFromStorageKey(m.storageKey) : null);
-          return url ? ([it.mediaId, url] as const) : null;
+          // La API responde { data: { item } }; se acepta también forma plana legacy.
+          const body = (await res.json()) as {
+            url?: string;
+            storageKey?: string;
+            data?: { item?: { url?: string; storageKey?: string } };
+          };
+          const nested = body.data?.item;
+          const url =
+            body.url ?? nested?.url ?? null;
+          const key = body.storageKey ?? nested?.storageKey;
+          const resolved = url ?? (key ? urlFromStorageKey(key) : null);
+          return resolved ? ([it.mediaId, resolved] as const) : null;
         } catch {
           return null;
         }
@@ -73,8 +84,7 @@ export default function GalleryField(props: FieldWidgetProps) {
     onChange(ensurePrimary(next).map((it, i) => ({ ...it, sortOrder: i })));
   }
 
-  function toGalleryItem(picked: MediaPick, sortOrder: number): GalleryItem {
-    const item: GalleryItem = {
+  function toGalleryItem(picked: MediaPick, sortOrder: number): GalleryItem {    const item: GalleryItem = {
       mediaId: picked.id,
       sortOrder,
       isPrimary: false,
@@ -95,11 +105,21 @@ export default function GalleryField(props: FieldWidgetProps) {
   function addMediaMany(pickedItems: MediaPick[]) {
     const newUrls: Record<string, string> = {};
     const newItems: GalleryItem[] = [];
+    let skippedDupes = 0;
     let offset = items.length;
 
+    const isDupe = (pick: MediaPick) =>
+      items.some((it) => samePhoto(it, pick.id, pick.storageKey, pick.blurhash)) ||
+      newItems.some((it) => samePhoto(it, pick.id, pick.storageKey, pick.blurhash));
+
     for (const picked of pickedItems) {
-      if (items.some((it) => it.mediaId === picked.id)) continue;
-      if (newItems.some((it) => it.mediaId === picked.id)) continue;
+      // Sin duplicadas: misma fila (mediaId), mismo archivo (storageKey) o
+      // mismo contenido (blurhash perceptivo — cubre la misma foto subida
+      // 2 veces por error, que genera otra fila con otra clave).
+      if (isDupe(picked)) {
+        skippedDupes++;
+        continue;
+      }
       if (offset >= options.maxItems) break;
       const url = picked.url ?? (picked.storageKey ? urlFromStorageKey(picked.storageKey) : null);
       if (url) newUrls[picked.id] = url;
@@ -107,6 +127,13 @@ export default function GalleryField(props: FieldWidgetProps) {
       offset++;
     }
 
+    if (skippedDupes > 0) {
+      setNotice(
+        skippedDupes === 1
+          ? '1 foto duplicada omitida (ya está en la galería).'
+          : `${skippedDupes} fotos duplicadas omitidas (ya están en la galería).`
+      );
+    }
     if (newItems.length === 0) return;
     if (Object.keys(newUrls).length > 0) setUrls((u) => ({ ...u, ...newUrls }));
     const next = [...items, ...newItems];
@@ -188,6 +215,12 @@ export default function GalleryField(props: FieldWidgetProps) {
         </div>
       ) : null}
 
+      {notice ? (
+        <div style={styles.notice} role="status">
+          {notice}
+        </div>
+      ) : null}
+
       {atLimit ? (
         <div style={styles.validationInfo}>
           Máximo de {options.maxItems} {options.maxItems === 1 ? "imagen" : "imágenes"} alcanzado.
@@ -220,8 +253,16 @@ export default function GalleryField(props: FieldWidgetProps) {
                 onDragEnd={handleDragEnd}
               >
                 <div style={styles.thumb}>
-                  {url ? (
-                    <img src={url} alt={item.meta.alt_en ?? item.meta.alt ?? ""} style={styles.img} loading="lazy" />
+                  {url && !failed[item.mediaId] ? (
+                    <img
+                      src={url}
+                      alt={item.meta.alt_en ?? item.meta.alt ?? ""}
+                      style={styles.img}
+                      loading="lazy"
+                      onError={() =>
+                        setFailed((f) => (f[item.mediaId] ? f : { ...f, [item.mediaId]: true }))
+                      }
+                    />
                   ) : (
                     <span style={styles.placeholder}>{shortId(item.mediaId)}</span>
                   )}
@@ -323,6 +364,14 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 8,
     padding: "4px 8px",
     background: "rgba(192,57,43,0.06)",
+    borderRadius: 3,
+  },
+  notice: {
+    fontSize: 12,
+    color: "#7d6608",
+    marginBottom: 8,
+    padding: "4px 8px",
+    background: "rgba(241,196,15,0.12)",
     borderRadius: 3,
   },
   validationInfo: {

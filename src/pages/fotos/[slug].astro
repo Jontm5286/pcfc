@@ -21,10 +21,10 @@ if (!post) {
 }
 
 const title = post
-  ? `${post.team1} vs ${post.team2} — Fotos | Punta Cana FC`
+  ? `${post.title} — Fotos | Punta Cana FC`
   : 'Partido no encontrado | Punta Cana FC';
 const description = post
-  ? `Todas las fotos del partido ${post.team1} vs ${post.team2} (${post.date}). Vota por tus favoritas con el corazón.`
+  ? `Todas las fotos del partido ${post.title} (${post.date}). Vota por tus favoritas con el corazón.`
   : 'El partido que buscas no existe en la galería de fotos de Punta Cana FC.';
 ---
 
@@ -38,7 +38,7 @@ const description = post
               <p class="eyebrow mb-3">GALERÍA DEL PARTIDO</p>
               <span class={`badge badge--${post.categorySlug} mb-3`}>{post.categoryLabel}</span>
               <h1 class="h-section text-[clamp(1.75rem,4vw,2.75rem)] mb-2 max-w-[22ch]">
-                {post.team1} vs {post.team2}
+                {post.title}
               </h1>
               <time datetime={post.date} class="block text-[0.95rem] text-navy-60 font-medium">
                 {[post.date, `${post.photoCount} fotos`].filter(Boolean).join(' · ')}

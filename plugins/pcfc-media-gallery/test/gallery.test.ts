@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { type GalleryItem, DEFAULT_OPTIONS, resolveOptions, toRawArray, reindex, isSafeStorageKey, mediaProxyUrl } from "../src/schema.js";
+import { type GalleryItem, DEFAULT_OPTIONS, resolveOptions, toRawArray, reindex, isSafeStorageKey, mediaProxyUrl, samePhoto } from "../src/schema.js";
 import { collectMediaIds, looksLikeGallery, validateGallery } from "../src/validate.js";
 import { hydrateMediaGallery, primaryImage, type MediaRow } from "../src/runtime.js";
+import { dedupeGalleryItems } from "../src/hook.js";
 
 const opts = DEFAULT_OPTIONS;
 
@@ -242,5 +243,40 @@ describe("storage key safety", () => {
       lookup,
     );
     expect(out).toEqual([]);
+  });
+
+  it("samePhoto matches by id, key or perceptual hash", () => {
+    const item = { mediaId: "m1", storageKey: "a/1.jpg", blurhash: "LABC123" };
+    expect(samePhoto(item, "m1")).toBe(true);
+    expect(samePhoto(item, "other", "a/1.jpg")).toBe(true);
+    expect(samePhoto(item, "other", "other.jpg", "LABC123")).toBe(true);
+    expect(samePhoto(item, "other", "other.jpg", "ZZZ")).toBe(false);
+    expect(samePhoto(item, "other")).toBe(false);
+    // Sin señales del otro lado no hay match aunque el item tenga clave/hash.
+    expect(samePhoto({ mediaId: "m1" }, "m1")).toBe(true);
+  });
+
+  it("dedupeGalleryItems keeps the first of each photo and reindexes", () => {
+    const mk = (mediaId: string, extra: Partial<GalleryItem> = {}, sortOrder = 0): GalleryItem => ({
+      mediaId, sortOrder, isPrimary: false, meta: {}, ...extra,
+    });
+    const items = [
+      mk("m1", { storageKey: "a/1.jpg", blurhash: "H1" }, 0),
+      mk("m1", { storageKey: "a/1.jpg", blurhash: "H1" }, 1), // mismo id
+      mk("m2", { storageKey: "a/1.jpg", blurhash: "H2" }, 2), // misma clave
+      mk("m3", { storageKey: "a/3.jpg", blurhash: "H1" }, 3), // mismo contenido (re-subida)
+      mk("m4", { storageKey: "a/4.jpg", blurhash: "H4" }, 4),
+    ];
+    const out = dedupeGalleryItems(items);
+    expect(out.map((i) => i.mediaId)).toEqual(["m1", "m4"]);
+    expect(out.map((i) => i.sortOrder)).toEqual([0, 1]);
+  });
+
+  it("dedupeGalleryItems returns the same array when there are no dupes", () => {
+    const items: GalleryItem[] = [
+      { mediaId: "m1", sortOrder: 0, isPrimary: false, meta: {} },
+      { mediaId: "m2", sortOrder: 1, isPrimary: false, meta: {} },
+    ];
+    expect(dedupeGalleryItems(items)).toBe(items);
   });
 });

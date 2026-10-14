@@ -1,7 +1,7 @@
 /**
  * fotos-posts — PCFC
  * Fuente única de posts de /fotos y /fotos/todas (+ validación de likes).
- * EmDash (`partidos`, solo publicadas + con fotos) o respaldo local
+ * EmDash (`match_photos`, solo publicadas + con fotos) o respaldo local
  * hardcodeado cuando EmDash viene vacío.
  */
 import type { Photo } from '../components/GalleryGrid.astro';
@@ -13,6 +13,8 @@ export interface MatchPost {
   categoryLabel: string;
   team1: string;
   team2: string;
+  /** Título display (= `name` del admin, fallback equipos). */
+  title: string;
   date: string;
   photoCount: number;
   thumbnail: string;
@@ -39,6 +41,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Elite / Reserva',
     team1: 'PCFC',
     team2: 'Atlántico FC',
+    title: 'PCFC vs Atlántico FC',
     date: '6 sep 2026',
     photoCount: 24,
     thumbnail: FALLBACK_POOL[0],
@@ -56,6 +59,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Formativas Altas',
     team1: 'PCFC Sub-15',
     team2: 'Santiago FC',
+    title: 'PCFC Sub-15 vs Santiago FC',
     date: '30 ago 2026',
     photoCount: 18,
     thumbnail: FALLBACK_POOL[3],
@@ -73,6 +77,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Formativas Bajas',
     team1: 'PCFC Sub-10',
     team2: 'Canay FC',
+    title: 'PCFC Sub-10 vs Canay FC',
     date: '24 ago 2026',
     photoCount: 15,
     thumbnail: FALLBACK_POOL[6],
@@ -89,6 +94,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Pre-Formativas',
     team1: 'PCFC Sub-8',
     team2: 'Escuela Bávaro',
+    title: 'PCFC Sub-8 vs Escuela Bávaro',
     date: '21 ago 2026',
     photoCount: 12,
     thumbnail: FALLBACK_POOL[9],
@@ -106,6 +112,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Elite / Reserva',
     team1: 'PCFC Reserva',
     team2: 'Higüey United',
+    title: 'PCFC Reserva vs Higüey United',
     date: '28 sep 2026',
     photoCount: 22,
     thumbnail: FALLBACK_POOL[0],
@@ -122,6 +129,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Formativas Altas',
     team1: 'PCFC Sub-14',
     team2: 'Selección Federativa',
+    title: 'PCFC Sub-14 vs Selección Federativa',
     date: '16 ago 2026',
     photoCount: 16,
     thumbnail: FALLBACK_POOL[3],
@@ -138,6 +146,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Pre-Formativas',
     team1: 'PCFC Sub-6',
     team2: 'Casa España',
+    title: 'PCFC Sub-6 vs Casa España',
     date: '9 ago 2026',
     photoCount: 10,
     thumbnail: FALLBACK_POOL[6],
@@ -155,6 +164,7 @@ export const FALLBACK_POSTS: MatchPost[] = [
     categoryLabel: 'Formativas Altas',
     team1: 'PCFC Sub-13',
     team2: 'Casa España',
+    title: 'PCFC Sub-13 vs Casa España',
     date: '2 sep 2026',
     photoCount: 14,
     thumbnail: FALLBACK_POOL[9],
@@ -184,6 +194,7 @@ export async function getAllPosts(): Promise<{
       categoryLabel: g.categoryLabel,
       team1: g.team1,
       team2: g.team2,
+      title: g.title,
       date: g.date,
       photoCount: g.photos.length,
       thumbnail: g.thumbnail,

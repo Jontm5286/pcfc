@@ -12,6 +12,7 @@ import type { ContentHookEvent, PluginContext } from "emdash/plugin";
 import {
   DEFAULT_OPTIONS,
   HARD_MAX_ITEMS,
+  reindex,
   type GalleryItem,
   type GalleryOptions,
 } from "./schema.js";
@@ -45,13 +46,23 @@ export function createGalleryBeforeSave() {
       }
 
       await assertMediaResolves(ctx, where, items);
+
+      // Sin duplicadas al guardar (cubre ediciones por API o valores viejos):
+      // misma fila, misma clave o mismo contenido (blurhash). Se conserva la
+      // primera aparición y se reindexa; si algo cambió se reescribe el campo.
+      const deduped = dedupeGalleryItems(items);
+      if (deduped.length !== items.length) {
+        event.content[fieldSlug] = deduped;
+        ctx.log?.info?.(
+          `pcfc-media-gallery: ${items.length - deduped.length} foto(s) duplicada(s) eliminadas en ${where}`
+        );
+      }
     }
     // Returning nothing leaves the content unchanged.
   };
 }
 
-async function assertMediaResolves(
-  ctx: PluginContext,
+async function assertMediaResolves(  ctx: PluginContext,
   where: string,
   items: GalleryItem[],
 ): Promise<void> {
@@ -90,4 +101,26 @@ async function assertMediaResolves(
       `pcfc-media-gallery: el storageKey no coincide con su fila de medios en ${where}: ${mismatched.join(", ")}`,
     );
   }
+}
+
+/**
+ * Elimina duplicadas conservando la primera aparición de cada foto.
+ * Misma señal que el widget (`samePhoto`): mediaId, storageKey o blurhash.
+ * Exportada para tests.
+ */
+export function dedupeGalleryItems(items: GalleryItem[]): GalleryItem[] {
+  const seenIds = new Set<string>();
+  const seenKeys = new Set<string>();
+  const seenHash = new Set<string>();
+  const out: GalleryItem[] = [];
+  for (const it of items) {
+    if (seenIds.has(it.mediaId)) continue;
+    if (it.storageKey && seenKeys.has(it.storageKey)) continue;
+    if (it.blurhash && seenHash.has(it.blurhash)) continue;
+    seenIds.add(it.mediaId);
+    if (it.storageKey) seenKeys.add(it.storageKey);
+    if (it.blurhash) seenHash.add(it.blurhash);
+    out.push(it);
+  }
+  return out.length === items.length ? items : reindex(out);
 }

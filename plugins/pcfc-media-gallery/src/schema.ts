@@ -76,7 +76,9 @@ export interface GalleryOptions {
 
 /** Default options, merged under whatever the field declares. */
 export const DEFAULT_OPTIONS: GalleryOptions = {
-  maxItems: 20,
+  // Sin límite práctico por defecto (= tope absoluto): el club sube galerías
+  // de partidos completas (50-200 fotos) sin topar con el botón +Añadir.
+  maxItems: 200,
   minItems: 0,
   allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
   perItemFields: [],
@@ -176,6 +178,24 @@ export function mediaProxyUrl(key: unknown, base = "/_emdash/api/media/file/"): 
 
 function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((x) => typeof x === "string");
+}
+
+/**
+ * Misma foto por cualquier señal disponible: id de fila, clave de archivo o
+ * hash perceptivo (blurhash). El blurhash cubre el caso "misma foto subida
+ * 2 veces por error": otra fila y otra clave, idéntico contenido.
+ * La usa el widget al añadir y el hook server al guardar.
+ */
+export function samePhoto(
+  item: Pick<GalleryItem, "mediaId"> & { storageKey?: string; blurhash?: string },
+  mediaId: string,
+  storageKey?: string,
+  blurhash?: string
+): boolean {
+  if (item.mediaId === mediaId) return true;
+  if (storageKey && item.storageKey === storageKey) return true;
+  if (blurhash && item.blurhash === blurhash) return true;
+  return false;
 }
 
 function clampInt(v: unknown, fallback: number, min: number, max: number): number {

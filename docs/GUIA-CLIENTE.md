@@ -10,10 +10,15 @@ en esta guía, **no lo toques**: pide ayuda al equipo técnico.
 
 Cada partido con fotos es una entrada. Campos:
 
-- **Name\***: nombre interno, ej. `PCFC Sub-15 vs Canay FC — 24 ago`.
+- **Name\***: **es el título que se ve en el sitio** (ej. `Copa Real 2010` o
+  `PCFC Sub-15 vs Canay FC — 24 ago`). Si lo dejas vacío, el sitio arma
+  `Equipo local vs Equipo visitante` con Home/Away Team.
 - **Home Team / Away Team**: nombres de los equipos. **Home Score / Away Score**: resultado.
 - **Date**: fecha del partido (texto, ej. `2026-08-24`).
-- **Images**: las fotos. Botón **“Añadir a la galería”**, hasta 50 por partido.
+- **Images**: las fotos. Botón **“Añadir a la galería”** — puedes elegir muchas
+  de una vez y reordenarlas arrastrando. **Sin límite práctico** (hasta 200 por
+  partido). Si una foto ya está en la galería, se omite sola y avisa
+  (“duplicada omitida”) — no importa si la subiste 2 veces por error.
   Cada foto admite **alt** (descripción) y **caption** (pie de foto).
 - **Portada**: la foto principal que se ve en `/fotos` y en tarjetas.
 - **Mostrar en hero (`show_in_hero`)**: actívalo solo en 1–3 partidos con las mejores
@@ -31,6 +36,11 @@ Cada partido con fotos es una entrada. Campos:
 
 Regla de oro: **sin fotos no hay galería** — `/fotos` y `/calendario` solo muestran
 partidos publicados **con fotos**.
+
+> **Nota (una sola vez)**: si el botón “+ Añadir” deja de aceptar fotos antes de
+> tiempo, abre la configuración del campo **Images** (Schema → Match Photos →
+> Images) y pon **Máx. elementos = 200**. La colección vieja `Partidos` no se usa
+> en el sitio — no agregues nada ahí.
 
 ## 2. Jugadores (`Jugadores`)
 
