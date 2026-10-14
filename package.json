@@ -35,8 +35,8 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "astro": "^7.2.9",
-    "pcfc-media-gallery": "file:./plugins/pcfc-media-gallery",
-    "pcfc-email-resend": "file:./plugins/pcfc-email-resend",
+    "pcfc-media-gallery": "link:./plugins/pcfc-media-gallery",
+    "pcfc-email-resend": "link:./plugins/pcfc-email-resend",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
