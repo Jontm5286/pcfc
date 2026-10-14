@@ -152,7 +152,7 @@ export function isRecord(v: unknown): v is Record<string, unknown> {
 /**
  * A storage key is only ever a relative key inside the media bucket (e.g.
  * `products/abc/0.jpeg`). Reject anything that could escape that namespace or
- * inject a different scheme once turned into a `/api/media/<key>` URL: a leading
+ * inject a different scheme once turned into a `/_emdash/api/media/file/<key>` URL: a leading
  * slash, a `..` path segment, a colon (blocks `http:`/`javascript:` and
  * protocol-relative paths), or control characters. This bounds what a stored
  * value can reference even if it was tampered with.
@@ -168,8 +168,8 @@ export function isSafeStorageKey(key: unknown): key is string {
   return true;
 }
 
-/** Build the `/api/media/<key>` proxy URL for a safe storage key (else null). */
-export function mediaProxyUrl(key: unknown, base = "/api/media/"): string | null {
+/** Build the `/_emdash/api/media/file/<key>` proxy URL for a safe storage key (else null). */
+export function mediaProxyUrl(key: unknown, base = "/_emdash/api/media/file/"): string | null {
   if (!isSafeStorageKey(key)) return null;
   return base + key.split("/").map(encodeURIComponent).join("/");
 }

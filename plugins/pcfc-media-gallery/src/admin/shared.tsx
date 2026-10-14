@@ -9,7 +9,7 @@ import { PLUGIN_ID } from "../schema.js";
 
 /** Build the public media proxy URL EmDash serves from a storage key. */
 export function urlFromStorageKey(storageKey: string): string {
-  return "/api/media/" + storageKey.split("/").map(encodeURIComponent).join("/");
+  return "/_emdash/api/media/file/" + storageKey.split("/").map(encodeURIComponent).join("/");
 }
 
 /** A row returned by the host's search endpoint. */

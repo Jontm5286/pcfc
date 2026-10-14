@@ -93,7 +93,7 @@ describe("hydrateMediaGallery", () => {
     ];
     const out = await hydrateMediaGallery(value, lookup);
     expect(out.map((i) => i.mediaId)).toEqual(["m1"]);
-    expect(out[0]!.url).toBe("/api/media/products/1.jpg");
+    expect(out[0]!.url).toBe("/_emdash/api/media/file/products/1.jpg");
     expect(out[0]!.alt).toBe("item alt"); // item meta wins over row alt
     expect(primaryImage(out)?.mediaId).toBe("m1");
   });
@@ -221,7 +221,7 @@ describe("storage key safety", () => {
   });
 
   it("mediaProxyUrl encodes safe keys and refuses unsafe ones", () => {
-    expect(mediaProxyUrl("products/a b/0.jpeg")).toBe("/api/media/products/a%20b/0.jpeg");
+    expect(mediaProxyUrl("products/a b/0.jpeg")).toBe("/_emdash/api/media/file/products/a%20b/0.jpeg");
     expect(mediaProxyUrl("../x")).toBeNull();
     expect(mediaProxyUrl("//evil.example")).toBeNull();
   });

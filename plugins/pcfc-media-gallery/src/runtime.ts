@@ -49,7 +49,7 @@ export interface HydratedImage {
 export interface HydrateOptions {
   /**
    * Build the public URL for a media row. Defaults to the EmDash media proxy
-   * convention: `/api/media/<storage_key>`.
+   * convention: `/_emdash/api/media/file/<storage_key>`.
    */
   buildUrl?: (row: MediaRow) => string | null;
   /** Which `meta` key to use as the fallback alt. Default `"alt"`. */
