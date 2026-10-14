@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MediaPickerModal } from "@emdash-cms/admin";
+import { MediaPickerModal, fetchMediaFolders, fetchMediaList } from "@emdash-cms/admin";
 import { type GalleryItem, reindex, resolveOptions, samePhoto } from "../schema.js";
 import { validateGallery } from "../validate.js";
-import { SearchPicker, urlFromStorageKey, useSearchEndpoint } from "./shared.js";
+import {
+  SearchPicker,
+  urlFromStorageKey,
+  useSearchEndpoint,
+} from "./shared.js";
+import { collectFolderImagePicks } from "../bulk.js";
 
 interface MediaPick {
   id: string;
@@ -37,6 +42,9 @@ export default function GalleryField(props: FieldWidgetProps) {
   const [urls, setUrls] = useState<Record<string, string>>({});
   const [failed, setFailed] = useState<Record<string, boolean>>({});
   const [notice, setNotice] = useState<string | null>(null);
+  const [folders, setFolders] = useState<Array<{ id: string; name: string }>>([]);
+  const [bulkFolder, setBulkFolder] = useState<string>("");
+  const [bulkBusy, setBulkBusy] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -102,7 +110,8 @@ export default function GalleryField(props: FieldWidgetProps) {
     addMediaMany([picked]);
   }
 
-  function addMediaMany(pickedItems: MediaPick[]) {
+  /** Añade en lote; devuelve cuántas entraron y cuántas se omitieron por dupe. */
+  function addMediaMany(pickedItems: MediaPick[]): { added: number; skipped: number } {
     const newUrls: Record<string, string> = {};
     const newItems: GalleryItem[] = [];
     let skippedDupes = 0;
@@ -134,11 +143,52 @@ export default function GalleryField(props: FieldWidgetProps) {
           : `${skippedDupes} fotos duplicadas omitidas (ya están en la galería).`
       );
     }
-    if (newItems.length === 0) return;
+    if (newItems.length === 0) return { added: 0, skipped: skippedDupes };
     if (Object.keys(newUrls).length > 0) setUrls((u) => ({ ...u, ...newUrls }));
     const next = [...items, ...newItems];
     commit(next);
     setPickerOpen(false);
+    return { added: newItems.length, skipped: skippedDupes };
+  }
+
+  // Carpetas de la librería (para "Añadir todas de la carpeta").
+  useEffect(() => {
+    let cancelled = false;
+    fetchMediaFolders()
+      .then((res) => {
+        if (!cancelled) setFolders((res.items ?? []).map((f) => ({ id: f.id, name: f.name })));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /** Un clic: trae todas las imágenes (de la carpeta elegida) y las añade. */
+  async function addAllFromFolder() {
+    if (bulkBusy || atLimit) return;
+    setBulkBusy(true);
+    setNotice(null);
+    try {
+      const picks = await collectFolderImagePicks(fetchMediaList, {
+        folderId: bulkFolder || null,
+      });
+      const { added, skipped } = addMediaMany(picks);
+      const where = bulkFolder
+        ? `de “${folders.find((f) => f.id === bulkFolder)?.name ?? "la carpeta"}”`
+        : "de la librería";
+      setNotice(
+        added === 0 && skipped === 0
+          ? `No hay imágenes ${where}.`
+          : `${added} foto(s) añadidas ${where}` +
+              (skipped > 0 ? ` (${skipped} duplicadas omitidas)` : "") +
+              "."
+      );
+    } catch {
+      setNotice("No se pudieron cargar las imágenes de la librería. Intenta de nuevo.");
+    } finally {
+      setBulkBusy(false);
+    }
   }
 
   function removeImage(mediaId: string) {
@@ -218,6 +268,34 @@ export default function GalleryField(props: FieldWidgetProps) {
       {notice ? (
         <div style={styles.notice} role="status">
           {notice}
+        </div>
+      ) : null}
+
+      {!atLimit ? (
+        <div style={styles.bulkRow}>
+          {folders.length > 0 ? (
+            <select
+              value={bulkFolder}
+              onChange={(e) => setBulkFolder(e.target.value)}
+              style={styles.bulkSelect}
+              aria-label="Carpeta para añadir en lote"
+            >
+              <option value="">Toda la librería</option>
+              {folders.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
+          ) : null}
+          <button
+            type="button"
+            style={styles.bulkBtn}
+            onClick={addAllFromFolder}
+            disabled={bulkBusy}
+          >
+            {bulkBusy ? "Añadiendo…" : "Añadir todas de una vez"}
+          </button>
         </div>
       ) : null}
 
@@ -373,6 +451,31 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "4px 8px",
     background: "rgba(241,196,15,0.12)",
     borderRadius: 3,
+  },
+  bulkRow: {
+    display: "flex",
+    gap: 8,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  bulkSelect: {
+    fontSize: 12,
+    padding: "5px 8px",
+    borderRadius: 4,
+    border: "1px solid #444",
+    background: "#1c1c1c",
+    color: "#eee",
+    maxWidth: 220,
+  },
+  bulkBtn: {
+    fontSize: 12,
+    fontWeight: 600,
+    padding: "6px 12px",
+    borderRadius: 4,
+    border: "1px solid #2e7d32",
+    background: "rgba(46,125,50,0.15)",
+    color: "#a5d6a7",
+    cursor: "pointer",
   },
   validationInfo: {
     fontSize: 12,

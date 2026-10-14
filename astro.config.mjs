@@ -51,6 +51,20 @@ export default defineConfig({
     },
   },
   integrations: [
+    // Seguridad primero (order pre): fija el CSP por fuera del middleware
+    // de EmDash para que sobreviva también en /_emdash/*. Ver
+    // src/security-headers.ts.
+    {
+      name: 'pcfc-security-headers',
+      hooks: {
+        'astro:config:setup': ({ addMiddleware }) => {
+          addMiddleware({
+            order: 'pre',
+            entrypoint: new URL('./src/security-headers.ts', import.meta.url),
+          });
+        },
+      },
+    },
     sitemap(),
     react(), // Requerido antes de EmDash para renderizar el Admin UI
     emdash(

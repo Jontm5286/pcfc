@@ -3,6 +3,7 @@ import { type GalleryItem, DEFAULT_OPTIONS, resolveOptions, toRawArray, reindex,
 import { collectMediaIds, looksLikeGallery, validateGallery } from "../src/validate.js";
 import { hydrateMediaGallery, primaryImage, type MediaRow } from "../src/runtime.js";
 import { dedupeGalleryItems } from "../src/hook.js";
+import { collectFolderImagePicks } from "../src/bulk.js";
 
 const opts = DEFAULT_OPTIONS;
 
@@ -278,5 +279,32 @@ describe("storage key safety", () => {
       { mediaId: "m2", sortOrder: 1, isPrimary: false, meta: {} },
     ];
     expect(dedupeGalleryItems(items)).toBe(items);
+  });
+
+  it("collectFolderImagePicks paginates and maps to picks", async () => {
+    const calls: Array<Record<string, unknown>> = [];
+    const pages = [
+      { items: [{ id: "a", storageKey: "a.jpg", width: 10, height: 10, blurhash: "H" }], nextCursor: "c1" },
+      { items: [{ id: "b", storageKey: "b.jpg" }] },
+    ];
+    let n = 0;
+    const out = await collectFolderImagePicks(
+      async (opts) => {
+        calls.push({ ...opts });
+        return pages[n++] ?? { items: [] };
+      },
+      { folderId: "f1" }
+    );
+    expect(out).toHaveLength(2);
+    expect(out[0]).toMatchObject({ id: "a", storageKey: "a.jpg", blurhash: "H" });
+    expect(calls[0]).toMatchObject({ mimeType: "image/", folderId: "f1", limit: 100 });
+    expect(calls[1]).toMatchObject({ cursor: "c1" });
+  });
+
+  it("collectFolderImagePicks stops on repeated cursor and empty pages", async () => {
+    const loop = await collectFolderImagePicks(async () => ({ items: [], nextCursor: "same" }));
+    expect(loop).toEqual([]);
+    const empty = await collectFolderImagePicks(async () => ({ items: [] }));
+    expect(empty).toEqual([]);
   });
 });

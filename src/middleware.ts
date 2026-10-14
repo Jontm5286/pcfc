@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { CSP_HEADER } from './lib/csp.js';
 
 /**
  * PCFC — Middleware de seguridad
@@ -35,20 +36,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (context.url.pathname.startsWith('/api/')) return response;
 
   // Content Security Policy — protección contra XSS e inyección
-  response.headers.set(
-    'Content-Security-Policy',
-    [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://static.cloudflareinsights.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: https://images.unsplash.com https://picsum.photos https://images.emdash.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://server.arcgisonline.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join('; ')
-  );
+  // (valor en src/lib/csp.ts; el middleware `pre` lo re-aplica por fuera
+  // del middleware de EmDash para que sobreviva en /_emdash/*).
+  response.headers.set('Content-Security-Policy', CSP_HEADER);
 
   // Prevenir clickjacking
   response.headers.set('X-Frame-Options', 'DENY');
