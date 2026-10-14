@@ -32,22 +32,19 @@ lo que cambia cada semana (partidos, fotos) vive en DB + feed.
 
 **Decisión.** La colección canónica de galerías es **`match_photos`**
 (flag `show_in_hero` alimenta el hero; widget `pcfc-media-gallery:gallery`,
-máx. 50 imágenes con `alt`+`caption` por item). Slugs deterministas con
+hasta 200 imágenes con `alt`+`caption` por item). Slugs deterministas con
 `buildMatchSlug` en `src/lib/match-photos.ts`
 (`pcfc-<equipo>-vs-<rival>-<DDmmm>`, ej. `pcfc-sub10-vs-canay-24ago`).
 
 **Contexto.** Existió una colección rival `partidos` (definición archivada en
-`docs/archive/schema.partidos.json`; tabla `ec_partidos` aún en `data/emdash.db`).
-El lector (`academy-feed.ts:119-123`) ya apunta a `match_photos`.
+`docs/archive/schema.partidos.json`). En oct-2026 se purgaron de prod las
+colecciones sin lector `partidos`, `teams`, `gallery` y `calendar` (vía
+`POST /api/admin/purge-collection`, allowlist explícita en código) y se
+quitaron de `.emdash/seed.json` para que el seed no las recree.
 
-**⚠️ Discrepancia conocida (no corregir en FASE 4 — solo docs):**
-`scripts/sync-match-photos.mjs` (líneas 6, 69–72) y el comentario de cabecera de
-`src/lib/fotos-posts.ts` todavía nombran la colección **`partidos`**, y el script
-escribe `repo.findBySlug('partidos', …)` / `type: 'partidos'`. Es decir: **lo que
-genera el sync no lo lee el sitio**. Además el comentario de `match-photos.ts`
-dice que el sync crea `src/content/match_photos/<slug>.md`, pero ese directorio
-no existe y `match_photos` no está en `src/content.config.ts` (es solo DB).
-Antes de volver a usar `pnpm sync:match-photos`, alinear script ↔ `match-photos.ts`.
+**Resuelto oct-2026:** había una discrepancia (el sync nombraba `partidos`
+mientras el sitio leía `match_photos`). Hoy `scripts/sync-match-photos.mjs`
+escribe `match_photos` y el comentario de `match-photos.ts` está alineado.
 
 ## ADR-3 — Colecciones aprovisionadas sin lector (`staff`, `products`, `faqs`, `teams`)
 

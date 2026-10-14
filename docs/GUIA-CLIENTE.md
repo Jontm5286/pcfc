@@ -39,8 +39,8 @@ partidos publicados **con fotos**.
 
 > **Nota (una sola vez)**: si el botón “+ Añadir” deja de aceptar fotos antes de
 > tiempo, abre la configuración del campo **Images** (Schema → Match Photos →
-> Images) y pon **Máx. elementos = 200**. La colección vieja `Partidos` no se usa
-> en el sitio — no agregues nada ahí.
+> Images) y pon **Máx. elementos = 200**. Las colecciones viejas `Partidos`,
+> `Teams`, `Gallery` y `Calendar` fueron eliminadas — si ves alguna, avisa.
 
 ## 2. Jugadores (`Jugadores`)
 
@@ -87,8 +87,9 @@ Campos: **Title\***, **Image**, **Alt**, **Equipo ID** (normalmente vacío).
 - **Preguntas frecuentes, tienda/productos y textos de “staff”**: están en el código.
   (Existen `staff`, `products` y `faqs` en la base de datos, pero **ninguna página
   los muestra todavía** y **no aparecen en el admin** — no los uses.)
-- **La colección `partidos`**: es la versión antigua de `Match Photos`. No crear ni
-  editar nada ahí; la canónica es **`Match Photos`**.
+- **Las colecciones `partidos`, `teams`, `gallery` y `calendar`**: eliminadas
+  (eran versiones antiguas o vacías sin lector). Si alguna reaparece, avisa
+  al equipo en vez de usarla; la canónica de fotos es **`Match Photos`**.
 
 ## Qué NO tocar nunca
 

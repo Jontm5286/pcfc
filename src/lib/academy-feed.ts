@@ -119,9 +119,8 @@ export async function fetchAcademyFeed(timeoutMs = 3000): Promise<AcademyFeed> {
 // Galerías EmDash — COLECCIÓN CANÓNICA: `match_photos` (FASE 2).
 // Una entrada = una galería. Solo published + con fotos enlaza/renderiza.
 // `partido` es el slug (para /fotos#<slug>); cae a entry.id si viene vacío.
-// NOTA: la colección rival `partidos` quedó archivada como definición
-// (docs/archive/schema.partidos.json); su lector (scripts/sync-match-photos.mjs)
-// se conserva solo como fallback/legacy y NO es fuente de verdad.
+// NOTA: las colecciones legacy `partidos`/`teams`/`gallery`/`calendar` se
+// purgaron de prod y se quitaron de `.emdash/seed.json` (oct-2026); no recrear.
 // ─────────────────────────────────────────────────────────
 
 const ES_MONTHS_LONG = [
