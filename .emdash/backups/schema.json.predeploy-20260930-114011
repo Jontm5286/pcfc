@@ -1,0 +1,460 @@
+{
+  "version": "0.36.0",
+  "collections": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "labelSingular": "Hero",
+      "titleField": "title",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "subtitle",
+          "label": "Subtitle",
+          "type": "string",
+          "required": false,
+          "searchable": true
+        },
+        {
+          "slug": "image",
+          "label": "Image",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "imageAlt",
+          "label": "Image Alt",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "ctaPrimary",
+          "label": "CTA Primary",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "ctaSecondary",
+          "label": "CTA Secondary",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "ctaPrimaryHref",
+          "label": "CTA Primary Href",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "ctaSecondaryHref",
+          "label": "CTA Secondary Href",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "slides",
+          "label": "Slides",
+          "type": "json",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "categories",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "titleField": "name",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "item_slug",
+          "label": "Item Slug",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "badge",
+          "label": "Badge",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "ages",
+          "label": "Ages",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "copy",
+          "label": "Copy",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "focus",
+          "label": "Focus",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "format",
+          "label": "Format",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "schedule",
+          "label": "Schedule",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "description",
+          "label": "Description",
+          "type": "text",
+          "required": false
+        },
+        {
+          "slug": "cta_href",
+          "label": "CTA Href",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "gallery",
+      "label": "Gallery",
+      "labelSingular": "Gallery",
+      "titleField": "title",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "image",
+          "label": "Image",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "alt",
+          "label": "Alt",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "equipoId",
+          "label": "Equipo ID",
+          "type": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "sponsors",
+      "label": "Sponsors",
+      "labelSingular": "Sponsor",
+      "titleField": "name",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "logo",
+          "label": "Logo",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "alt",
+          "label": "Alt",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "url",
+          "label": "URL",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "published",
+          "label": "Published",
+          "type": "boolean",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "stats_pillars",
+      "label": "Stats Pillars",
+      "labelSingular": "Stats Pillar",
+      "titleField": "label",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "label",
+          "label": "Label",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "value",
+          "label": "Value",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "icon",
+          "label": "Icon",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
+        }
+      ]
+    },
+    {
+      "slug": "match_photos",
+      "label": "Match Photos",
+      "labelSingular": "Match Photo",
+      "titleField": "name",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "homeTeam",
+          "label": "Home Team",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "homeScore",
+          "label": "Home Score",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "awayTeam",
+          "label": "Away Team",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "awayScore",
+          "label": "Away Score",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "date",
+          "label": "Date",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "images",
+          "label": "Images",
+          "type": "json",
+          "required": false,
+          "widget": "pcfc-media-gallery:gallery",
+          "options": {
+            "maxItems": 50,
+            "perItemFields": [
+              "alt",
+              "caption"
+            ]
+          }
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
+        },
+        {
+          "slug": "partido",
+          "label": "Partido",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "portada",
+          "label": "Portada",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "show_in_hero",
+          "label": "Mostrar en hero",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": 0
+        }
+      ]
+    },
+    {
+      "slug": "players",
+      "label": "Jugadores",
+      "labelSingular": "Jugador",
+      "titleField": "name",
+      "supports": [
+        "drafts"
+      ],
+      "routable": false,
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "slug",
+          "label": "Slug",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "position",
+          "label": "Position",
+          "type": "select",
+          "options": [
+            "Portero",
+            "Defensa",
+            "Centrocampista",
+            "Atacante"
+          ],
+          "required": false
+        },
+        {
+          "slug": "number",
+          "label": "Number",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "photo",
+          "label": "Photo",
+          "type": "image",
+          "required": false
+        },
+        {
+          "slug": "photoAlt",
+          "label": "Photo Alt",
+          "type": "string",
+          "required": false
+        },
+        {
+          "slug": "category",
+          "label": "Category",
+          "type": "select",
+          "options": [
+            "pre",
+            "form-baja",
+            "form-alta",
+            "elite"
+          ],
+          "required": false
+        },
+        {
+          "slug": "featured",
+          "label": "Featured",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "slug": "order",
+          "label": "Order",
+          "type": "number",
+          "required": false
+        },
+        {
+          "slug": "matches",
+          "label": "Matches",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "goals",
+          "label": "Goals",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "assists",
+          "label": "Assists",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "slug": "season",
+          "label": "Season",
+          "type": "string",
+          "required": false
+        }
+      ]
+    }
+  ]
+}
