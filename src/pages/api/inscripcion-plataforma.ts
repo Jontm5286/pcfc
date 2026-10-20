@@ -65,6 +65,7 @@ const SEDE_ID_POR_SLUG: Record<string, string> = {
   'village-pcis': 'sede-village-pcis',
   'village-club': 'sede-village-club',
   bbs: 'sede-bbs',
+  'rd-complex': 'sede-rd-complex',
 };
 
 interface EmailBinding {

@@ -289,6 +289,7 @@ const isCurrent = (href: string) =>
     const menu = navbar.querySelector<HTMLElement>('#mobile-menu');
 
     toggle?.addEventListener('click', () => {
+      if (typeof window.gtag === 'function') window.gtag('event', 'navigation_toggle');
       const open = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', String(!open));
       toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');

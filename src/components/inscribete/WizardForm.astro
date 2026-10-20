@@ -291,7 +291,7 @@ const { sedes, sedePreseleccionada } = Astro.props;
       <label for="wiz-sitio">Sitio web</label>
       <input type="text" id="wiz-sitio" tabindex="-1" autocomplete="off" />
     </div>
-    <p class="wiz-err" id="wiz-e4" role="alert" hidden></p>
+    <p class="wiz-err" id="wiz-e4" role="alert" hidden style="color:#b91c1c!important;font-weight:700;"></p>
     <div class="wiz-nav">
       <button type="button" class="btn btn--secondary wiz-nav__back" data-go="3">Atrás</button>
       <button type="button" id="wiz-send" class="btn btn--primary btn--lg wiz-nav__next"
@@ -804,6 +804,7 @@ const { sedes, sedePreseleccionada } = Astro.props;
         if (okmsg)
           okmsg.textContent = `${payload.firstName} quedó preinscrito en ${sedeNombre || sede} (${category}, provisional). Te contactaremos por WhatsApp en menos de 48 horas.`;
         go(5);
+        if (typeof window.gtag === 'function') window.gtag('event', 'submit_inscription');
       } else {
         showErr(4, out?.error ?? 'No pudimos enviar tu inscripción. Inténtalo de nuevo.');
       }

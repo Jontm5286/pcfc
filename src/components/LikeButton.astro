@@ -156,6 +156,7 @@ const { photoKey, label = 'Me gusta esta foto' } = Astro.props;
           else liked.delete(k);
           saveLiked(liked);
           paint(btn, likes, isLiked);
+          if (typeof window.gtag === 'function') window.gtag('event', 'toggle_like', { photo_key: k });
         } finally {
           btn.disabled = false;
         }

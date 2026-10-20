@@ -413,6 +413,9 @@ const { defaultGalleryId } = Astro.props;
       open(e.detail.photos, e.detail.index, e.detail.galleryId);
     });
 
+    downloadEl.addEventListener('click', () => {
+      if (typeof window.gtag === 'function') window.gtag('event', 'download_photo', { gallery_id: state?.galleryId, photo_index: state?.index });
+    });
     closeBtns.forEach((btn) => btn.addEventListener('click', close));
     // Clic afuera de la foto (directo en el contenedor) también cierra.
     // El backdrop queda tapado por .lightbox__content (100%×100%), por eso
