@@ -11,6 +11,7 @@ import GalleryGrid from '../components/GalleryGrid.astro';
 import { getAllPosts } from '../lib/fotos-posts';
 import { getLikesStore, resolveD1Binding } from '../lib/foto-likes-db';
 import { pickDestacadas, photoKey } from '../lib/foto-likes-key';
+import Lightbox from '../components/Lightbox.astro';
 
 export const prerender = false;
 
@@ -166,4 +167,6 @@ const description =
       </p>
     </div>
   </section>
+
+  <Lightbox />
 </Base>

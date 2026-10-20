@@ -8,6 +8,7 @@
  */
 import Base from '../../layouts/Base.astro';
 import GalleryGrid from '../../components/GalleryGrid.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { getAllPosts } from '../../lib/fotos-posts';
 
 export const prerender = false;
@@ -95,4 +96,6 @@ const description = post
       </section>
     )
   }
+
+  <Lightbox />
 </Base>
