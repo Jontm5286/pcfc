@@ -143,7 +143,7 @@ in the `content:beforeSave` hook, which aborts a save when:
 
 A storage key is rejected unless it is a relative key with no leading slash, no `..` path
 segment, no colon (which blocks `http:`, `javascript:`, and protocol-relative values), and no
-control characters. URLs are encoded per path segment. The plugin declares only the `read:media`
+control characters. URLs are encoded per path segment. The plugin declares only the `media:read`
 capability and makes no network requests of its own.
 
 To report a vulnerability, see [SECURITY.md](./SECURITY.md).

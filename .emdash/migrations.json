@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"emdashVersion": "0.36.0",
+	"emdashVersion": "1.3.1",
 	"migrationSet": {
 		"names": [
 			"001_initial",
@@ -74,14 +74,32 @@
 			"070_collection_routable",
 			"071_restore_content_bylines_table",
 			"072_media_folders",
-			"073_media_focal_point"
+			"073_media_focal_point",
+			"074_content_deleted_scheduled_index",
+			"075_entry_edit_locks",
+			"076_collection_nav_group",
+			"077_plugin_storage_revisions",
+			"078_menu_item_translation_groups",
+			"079_datetime_normalization",
+			"080_content_translation_locale_unique",
+			"081_redirect_write_guards",
+			"082_taxonomy_translation_locale_unique",
+			"083_block_types",
+			"084_site_transfer",
+			"085_taxonomy_def_groups",
+			"086_relations_structural",
+			"087_reference_field_relations",
+			"088_cron_oneshot_utc",
+			"089_auto_seed_completion",
+			"090_redirect_enable_loop_guard",
+			"091_redirect_artifacts"
 		],
-		"fingerprint": "a24e4870dbf95e951c0df1cd63ff81252c97a01473367dac24242a3960949b32"
+		"fingerprint": "cc301e91e93fc35e39ef7e57e6a3e084a066bbefc563223383de65b1d0e6e5aa"
 	},
 	"i18n": null,
 	"database": {
 		"type": "sqlite",
-		"executorEntrypoint": "@emdash-cms/cloudflare/db/d1-migrations",
+		"executorEntrypoint": "@emdash-cms/cloudflare/internal/db/d1-migrations",
 		"executorConfig": {
 			"binding": "DB"
 		}

@@ -37,7 +37,8 @@ const PROTECTED = new Set([
 const SLUG_RE = /^[a-z][a-z0-9_]{0,62}$/;
 
 function isAdmin(locals: unknown): boolean {
-  const user = (locals as Record<string, unknown> | null)?.user as Record<string, unknown> | undefined;
+  const user = (locals as Record<string, unknown> | null)?.user as
+    Record<string, unknown> | undefined;
   return user?.role === 50 || user?.role === 'admin';
 }
 
@@ -64,9 +65,16 @@ async function openDb(): Promise<{ db: DbExec; close: () => Promise<void> }> {
       | undefined;
     if (d1) {
       const db: DbExec = {
-        run: (sql, params = []) => d1.prepare(sql).bind(...params).run(),
-        first: <T,>(sql: string, params: unknown[] = []) =>
-          d1.prepare(sql).bind(...params).first<T>(),
+        run: (sql, params = []) =>
+          d1
+            .prepare(sql)
+            .bind(...params)
+            .run(),
+        first: <T>(sql: string, params: unknown[] = []) =>
+          d1
+            .prepare(sql)
+            .bind(...params)
+            .first<T>(),
       };
       return { db, close: async () => {} };
     }
@@ -86,7 +94,7 @@ async function openDb(): Promise<{ db: DbExec; close: () => Promise<void> }> {
   };
   const db: DbExec = {
     run: async (sql, params = []) => sqlite.prepare(sql).run(...params),
-    first: async <T,>(sql: string, params: unknown[] = []) =>
+    first: async <T>(sql: string, params: unknown[] = []) =>
       (sqlite.prepare(sql).get(...params) as T | undefined) ?? null,
   };
   return { db, close: async () => sqlite.close() };
@@ -131,10 +139,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       liveEntries = 0; // sin tabla de contenido: nada que contar
     }
     if (liveEntries > 0 && !force) {
-      return Response.json(
-        { success: false, error: 'has-content', liveEntries },
-        { status: 409 }
-      );
+      return Response.json({ success: false, error: 'has-content', liveEntries }, { status: 409 });
     }
 
     const summary: Record<string, unknown> = { slug, liveEntries };
