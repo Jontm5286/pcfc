@@ -4,7 +4,7 @@ Panel: **`/_emdash/admin`** (en local: `http://localhost:4321/_emdash/admin`).
 Todo lo que edites aquí se publica en la web **sin tocar código**. Si algo no aparece
 en esta guía, **no lo toques**: pide ayuda al equipo técnico.
 
-> Campos verificados contra `.emdash/schema.json`. Los marcados con **\*** son obligatorios.
+> Campos verificados contra la base de datos de EmDash. Los marcados con **\*** son obligatorios.
 
 ## 1. Fotos de partidos (`Match Photos`) — la colección más importante
 
@@ -29,18 +29,20 @@ Cada partido con fotos es una entrada. Campos:
 
 1. Entra a `/_emdash/admin` → **Match Photos** → **crear** (o abre el draft del partido).
 2. Completa equipos, resultado y fecha. El **Name** debe ser claro y único.
-3. Sube las fotos en **Images** (JPG/PNG/WebP; si pesan mucho, el equipo las convierte
-   a WebP con `pnpm images:webp`).
+3. Sube las fotos en **Images**: puedes seleccionar muchas a la vez o **arrastrar
+   una carpeta completa** (el admin la sube y la conserva como carpeta en Medios).
+   Formatos JPG/PNG/WebP; si pesan mucho, el equipo las convierte con `pnpm images:webp`.
+   Si ya tienes una carpeta en Medios, usa **“Añadir todas de una carpeta”** en el
+   mismo campo para traerlas en bloque.
 4. Elige la **Portada**. Marca **show_in_hero** solo si las fotos son destacadas.
 5. **Publica** el draft (en borrador NO sale en `/fotos` ni en `/calendario`).
 
 Regla de oro: **sin fotos no hay galería** — `/fotos` y `/calendario` solo muestran
 partidos publicados **con fotos**.
 
-> **Nota (una sola vez)**: si el botón “+ Añadir” deja de aceptar fotos antes de
-> tiempo, abre la configuración del campo **Images** (Schema → Match Photos →
-> Images) y pon **Máx. elementos = 200**. Las colecciones viejas `Partidos`,
-> `Teams`, `Gallery` y `Calendar` fueron eliminadas — si ves alguna, avisa.
+> Límite del campo **Images**: 200 fotos por partido (lo aplica el widget, no hay
+> que configurar nada en Schema). La colección canónica es **Match Photos**; si ves
+> `Partidos`, `Teams`, `Gallery` o `Calendar`, avisa — no se usan.
 
 ## 2. Jugadores (`Jugadores`)
 
@@ -63,6 +65,8 @@ partidos publicados **con fotos**.
 
 - **Name\***, **Logo** (SVG o WebP sobre fondo transparente, idealmente), **Alt**.
 - **URL**: web del patrocinador. **Published**: debe estar activado para que se vea.
+- Hoy la web toma los logos de código (`src/assets/sponsors/`), así que **esta
+  colección todavía no cambia el sitio**: pide al equipo para actualizar logos.
 
 ## 5. Hero (`Hero`)
 
@@ -71,25 +75,15 @@ partidos publicados **con fotos**.
 - **CTA Primary Href / CTA Secondary Href**: destinos (ej. `/inscribete`, `/categorias`).
 - **Slides** (avanzado): no tocar sin ayuda técnica.
 
-## 6. Cifras y pilares (`Stats Pillars`)
-
-- **Label\*** (ej. `Jugadores formados`), **Value** (ej. `+350`), **Icon**, **Order**.
-
-## 7. Galería general (`Gallery`)
-
-Fotos sueltas que no son de un partido (instalaciones, entrenamientos).
-Campos: **Title\***, **Image**, **Alt**, **Equipo ID** (normalmente vacío).
-
 ## Lo que NO puedes editar desde el admin (pide al equipo técnico)
 
 - **Historia del club, entrenadores, próximos partidos del calendario y blog**:
   viven en archivos (`src/content/`) y los edita el equipo.
-- **Preguntas frecuentes, tienda/productos y textos de “staff”**: están en el código.
-  (Existen `staff`, `products` y `faqs` en la base de datos, pero **ninguna página
-  los muestra todavía** y **no aparecen en el admin** — no los uses.)
-- **Las colecciones `partidos`, `teams`, `gallery` y `calendar`**: eliminadas
-  (eran versiones antiguas o vacías sin lector). Si alguna reaparece, avisa
-  al equipo en vez de usarla; la canónica de fotos es **`Match Photos`**.
+- **Preguntas frecuentes, tienda/productos, staff, historia, calendario y cifras**:
+  están en el código. Esas colecciones existen en la base de datos pero están
+  **ocultas en el admin** y ninguna página las lee.
+- **`Stats Pillars` y `Gallery`**: no existen como colecciones editables; las cifras
+  y fotos generales salen de código. La canónica de fotos es **`Match Photos`**.
 
 ## Qué NO tocar nunca
 
