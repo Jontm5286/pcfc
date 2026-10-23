@@ -18,6 +18,8 @@ src/assets/partidos-prueba/*.jpg
 # Generated
 .cache/
 .tmp/
+.astro/
+.wrangler/
 *.local
 
 # OS / editor

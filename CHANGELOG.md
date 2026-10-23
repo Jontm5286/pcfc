@@ -7,6 +7,20 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [No Publicado]
 
+### Actualizado — EmDash 1.3.1 + limpieza (2026-10-22)
+
+- **EmDash 1.3.1** (antes 0.36): 18 migraciones automáticas (`074`–`091`), subida
+  nativa por carpetas, borrado de colecciones con guard, media-usage activo.
+- **Retirado** `POST /api/admin/purge-collection` (workaround ya innecesario),
+  `.emdash/schema.json` (sin lectores y desincronizado), script de provisión F2 y
+  `db:dev`/`db:build`. `db:clean` apunta a `data/emdash.db`; `predev` compila el
+  admin del widget de galería.
+- **Admin**: ocultas las colecciones sin lector; quedan `hero`, `categories`,
+  `match_photos`, `players` (+ `sponsors`, aún estático).
+- **Repo**: fuera `package-lock.json`, `.wrangler/**` y `.astro/**` del control de
+  versiones; peer deps de plugins a `>=1.3.1`; CSP sin orígenes muertos.
+- **Docs**: README/PROYECTO/ARQUITECTURA/GUIA alineados a 1.3.1 y al flujo real.
+
 ### Agregado — FASE 4 (documentación de cierre, 2026-10-02)
 
 #### Documentación reescrita

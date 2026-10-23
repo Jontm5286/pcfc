@@ -28,7 +28,7 @@ const plugin = definePlugin({
   id: PLUGIN_ID,
   version: VERSION,
   // Mínimo privilegio: solo necesitamos leer la tabla media para verificar referencias.
-  capabilities: ["read:media", "content:write"],
+  capabilities: ["media:read", "content:write"],
   admin: {
     // Lo carga el bundle del admin; ver el export "./admin" del paquete.
     entry: "pcfc-media-gallery/admin",
@@ -86,7 +86,7 @@ export function pcfcMediaGalleryPlugin(): PluginDescriptor {
     version: VERSION,
     entrypoint: ENTRYPOINT,
     adminEntry: ADMIN_ENTRY,
-    capabilities: ["read:media", "content:write"],
+    capabilities: ["media:read", "content:write"],
     settingsSchema: {
       searchEndpoint: {
         type: "url",

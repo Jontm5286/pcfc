@@ -71,7 +71,7 @@ async function assertMediaResolves(  ctx: PluginContext,
   if (!ctx.media) {
     // Capability missing — fail closed rather than silently accept unverifiable ids.
     throw new Error(
-      `pcfc-media-gallery: no se puede verificar el medio en ${where} — el plugin necesita la capacidad "read:media"`,
+      `pcfc-media-gallery: no se puede verificar el medio en ${where} — el plugin necesita la capacidad "media:read"`,
     );
   }
 

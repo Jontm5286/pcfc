@@ -1,6 +1,6 @@
 # Punta Cana FC — Sitio Web Oficial
 
-Sitio web de la academia Punta Cana FC. **Astro 7 en modo SSR** + **EmDash CMS 0.36** + **Tailwind CSS v4**.
+Sitio web de la academia Punta Cana FC. **Astro 7 en modo SSR** + **EmDash CMS 1.3.1** + **Tailwind CSS v4**.
 
 - Producción: `https://puntacanafc.com` (Cloudflare Workers + D1 `pcfc-db` + R2 `pcfc-media`)
 - Desarrollo: Node standalone + SQLite `data/emdash.db`, admin en `http://localhost:4321/_emdash/admin`
@@ -10,7 +10,7 @@ Sitio web de la academia Punta Cana FC. **Astro 7 en modo SSR** + **EmDash CMS 0
 | Capa | Tecnología | Detalle verificado |
 |---|---|---|
 | Framework | Astro 7 (`output: 'server'`) | SSR obligatorio — EmDash expone endpoints `/_emdash/*` |
-| CMS | EmDash 0.36 (`emdash/astro`) | Admin UI en `/_emdash/admin`; schemas Astro en `src/content.config.ts` |
+| CMS | EmDash 1.3.1 (`emdash/astro`) | Admin UI en `/_emdash/admin`; schemas Astro en `src/content.config.ts` |
 | Admin UI | React 19 | Requerido **antes** de EmDash en `astro.config.mjs` |
 | Estilos | Tailwind CSS v4 (plugin Vite) | Sin config JS; utilidades + `src/styles/global.css` |
 | Dev adapter | `@astrojs/node` (`mode: standalone`) | Activo cuando `DEPLOY_TARGET != 'cloudflare'` |
@@ -62,8 +62,7 @@ pnpm dev            # http://localhost:4321
 ├── src/assets/               # Fotos y logos propios (sponsors, gallery, players, facilities)
 ├── plugins/pcfc-media-gallery/ # Widget de galería vendorizado como código propio
 ├── scripts/                  # Vivos: build-pcfc-gallery-admin, sync-match-photos,
-│   │                         # convert-to-webp, verify.sh, emdash-db.mjs,
-│   │                         # provision-fase2-collections.mjs
+│   │                         # convert-to-webp, verify.sh, emdash-db.mjs
 │   └── archive/              # Scripts de un solo uso ya ejecutados (no borrar historia)
 ├── migrations/               # SQL D1 (p. ej. 0003_photo_likes.sql)
 ├── data/                     # SQLite dev (emdash.db, foto-likes.db) + media local — NO commitear
@@ -81,11 +80,12 @@ Hay **dos sistemas de contenido** conviviendo:
 `blog`, `calendar` (next + past-*.json), `categories`, `club-history`, `gallery`,
 `hero`, `next-match`, `players`, `stats-pillars`.
 
-**B) Colecciones EmDash en DB** (admin `/_emdash/admin`, declaradas en `.emdash/schema.json`):
-`hero`, `categories`, `gallery`, `sponsors`, `stats_pillars`, `match_photos` (canónica
-para galerías, con flag `show_in_hero`), `players`.
-La DB dev además contiene `staff`, `products`, `faqs`, `partidos` (legacy) y `teams`
-(ver discrepancias en `docs/ARQUITECTURA.md`): existen pero **ninguna página las lee**.
+**B) Colecciones EmDash en DB** (admin `/_emdash/admin`; la DB es la fuente de verdad):
+`hero`, `categories`, `match_photos` (canónica para galerías, con flag `show_in_hero`)
+y `players` son las **4 visibles** y las únicas que lee el sitio. `sponsors` sigue en el
+admin pero la web usa datos estáticos. El resto (`calendar`, `club_history`, `faqs`,
+`next_match`, `products`, `staff`, `teams`, `stats_pillars`) está oculto (ver
+`docs/ARQUITECTURA.md`).
 
 ### Tabla página → fuente
 
@@ -109,12 +109,11 @@ Las páginas nunca tumban por una fuente caída (cada fuente lleva `.catch` con 
 
 | Script | Comando | Qué hace |
 |---|---|---|
-| `build-pcfc-gallery-admin.mjs` | (auto en `build`/`build:cf`) | Compila el admin del widget galería a JSX-runtime de producción (evita `_jsxDEV is not a function`) |
-| `sync-match-photos.mjs` | `pnpm sync:match-photos` | Crea drafts de galería por partido jugado del feed — ⚠️ escribe en `partidos`, ver discrepancia en ARQUITECTURA.md |
+| `build-pcfc-gallery-admin.mjs` | (auto en `dev`/`build`/`build:cf`) | Compila el admin del widget galería a JSX-runtime de producción (evita `_jsxDEV is not a function`) |
+| `sync-match-photos.mjs` | `pnpm sync:match-photos` | Crea drafts de galería (`match_photos`) por partido jugado del feed |
 | `convert-to-webp.mjs` | `pnpm images:webp` | JPG/PNG → WebP (max 2000px, q82) |
 | `verify.sh` | `pnpm verify` | check + lint + format:check + build + archivos críticos |
 | `emdash-db.mjs` | (librería) | `openRepo()` compartido: abre `data/emdash.db` con kysely+better-sqlite3 |
-| `provision-fase2-collections.mjs` | manual una vez | Crea `staff/products/faqs` en DB si faltan (idempotente) |
 
 El resto vive en `scripts/archive/` (un solo uso, histórico).
 

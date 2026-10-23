@@ -1,7 +1,7 @@
 # Arquitectura PCFC — Decisiones (ADR ligero)
 
 > Verificado contra `astro.config.mjs`, `wrangler.jsonc`, `.env.example`,
-> `.emdash/schema.json`, `src/lib/*`, `src/data/*`, `src/content.config.ts` y `package.json`.
+> `.emdash/seed.json`, `src/lib/*`, `src/data/*`, `src/content.config.ts` y `package.json`.
 
 ## ADR-1 — Astro SSR file-based + EmDash DB + feed Academy + fallbacks locales
 
@@ -38,26 +38,31 @@ hasta 200 imágenes con `alt`+`caption` por item). Slugs deterministas con
 
 **Contexto.** Existió una colección rival `partidos` (definición archivada en
 `docs/archive/schema.partidos.json`). En oct-2026 se purgaron de prod las
-colecciones sin lector `partidos`, `teams`, `gallery` y `calendar` (vía
-`POST /api/admin/purge-collection`, allowlist explícita en código) y se
-quitaron de `.emdash/seed.json` para que el seed no las recree.
+colecciones sin lector `partidos`, `teams`, `gallery` y `calendar` y se quitaron
+de `.emdash/seed.json` para que el seed no las recree. El endpoint temporal
+`POST /api/admin/purge-collection` se retiró al subir a EmDash 1.3.1: esa versión
+borra colecciones nativamente (media-usage activo + `CollectionDeletionGuard`,
+soportado por `@emdash-cms/cloudflare`).
 
 **Resuelto oct-2026:** había una discrepancia (el sync nombraba `partidos`
 mientras el sitio leía `match_photos`). Hoy `scripts/sync-match-photos.mjs`
 escribe `match_photos` y el comentario de `match-photos.ts` está alineado.
 
-## ADR-3 — Colecciones aprovisionadas sin lector (`staff`, `products`, `faqs`, `teams`)
+## ADR-3 — Colecciones sin lector ocultas en el admin
 
-**Hecho.** `scripts/provision-fase2-collections.mjs` creó en `data/emdash.db` las
-tablas `ec_staff`, `ec_products`, `ec_faqs` (y existe `ec_teams`), pero:
-ninguna está declarada en `.emdash/schema.json` (el admin muestra solo 7
-colecciones: `hero`, `categories`, `gallery`, `sponsors`, `stats_pillars`,
-`match_photos`, `players`) y **ninguna página las lee** (`grep` de
-`getEmDashCollection` solo pide `match_photos`, `players`, `hero`, `categories`).
-FAQs, tienda y staff son hoy contenido hardcodeado en código.
+**Hecho.** La DB arrastra colecciones de fases anteriores. En dev: `staff`,
+`products`, `faqs`, `teams`, `calendar`, `next_match`, `club_history` y
+`stats_pillars`. En prod: `partidos`, `gallery` y `equipos`.
+Ninguna página las lee (solo se leen `match_photos`, `players`, `hero` y
+`categories` con `getEmDashCollection`; `sponsors` se sirve estático desde
+`homeData.ts`). Algunas conservan datos huérfanos (`club_history` 1, `faqs` 2,
+`products` 2, `staff` 2, `stats_pillars` 4).
 
-**Decisión.** No borrar (datos + tablas existen) y no documentar como editables.
-Si se activan, alinear en este orden: `.emdash/schema.json` → `src/content.config.ts`
+**Decisión.** No borrar datos: se marcan con `hidden = 1` en
+`_emdash_collections` para que el admin muestre solo las 4 colecciones vivas
+(+ `sponsors`, que queda visible aunque hoy no cambie el sitio). Aplicado en dev
+por SQL y en prod con `wrangler d1 execute pcfc-db --remote` (reversible). Si se
+activan, alinear en este orden: `.emdash/seed.json` → `src/content.config.ts`
 → lector en `src/lib/` → `docs/GUIA-CLIENTE.md`.
 
 ## ADR-4 — Deploy dual (Node dev / Workers prod)
@@ -91,9 +96,13 @@ Fuentes: `.env.example` (plantilla) × `grep` de uso real en `src/`, `scripts/`,
 | `PLATFORM_URL` / `PLATFORM_API_KEY` | `src/pages/api/inscripcion-plataforma.ts` | puente web → plataforma (`POST {URL}/api/public/preinscriptions`, header `x-web-key`) | ✅ vigente (solo secrets en prod) |
 | `SPONSOR_EMAIL` / `SPONSOR_FROM` | endpoint `contacto-patrocinio` + `wrangler.jsonc` vars | destino/remitente form sponsors | ✅ vigente |
 | `ADMISSION_EMAIL` / `ADMISSION_FROM` | endpoint `inscripcion` + `wrangler.jsonc` vars | destino/remitente form inscripción | ✅ vigente |
-| `DATABASE_URL` | **ningún uso en código** | — | ⚠️ **obsoleta** (solo plantilla; la que vale es `EMDASH_DATABASE_URL`) |
-| `EMDASH_DEV_AUTH` | **ningún uso en código** | — | ⚠️ **obsoleta** (el modo auth lo decide `NODE_ENV`) |
 
-**Discrepancia de plantilla:** `.env.example` sugiere `file:./data.db`; el default
-real del código es `file:./data/emdash.db`. Vale el código. No se modifica
-`.env.example` en esta fase (contrato vigente: solo lectura aquí).
+## EmDash 1.3.1 (oct-2026)
+
+- Migraciones `074`–`091` se aplican solas al arrancar (`data/emdash.db` en dev,
+  D1 `pcfc-db` en prod). No requieren token ni paso manual.
+- Subida nativa por carpetas en la biblioteca de medios; el widget
+  `pcfc-media-gallery` ya las consume (`fetchMediaFolders`).
+- CSP con `blob:` en `img-src`/`connect-src` y `media-src 'self' blob:`
+  (previews y subida desde el admin).
+- Borrado de colecciones nativo (ya no existe `purge-collection`).

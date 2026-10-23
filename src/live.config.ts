@@ -12,15 +12,15 @@
  * Luego `getEmDashCollection('sponsors')` filtra por tipo específico.
  *
  * El nombre "_emdash" (con guión bajo) está hardcodeado internamente
- * en EmDash v0.36 (ver: node_modules/emdash/dist/query-D18vTdha.mjs).
+ * en EmDash (nombre interno estable; no depende de la versión).
  *
- * Ref: emdash v0.36 Live Content API docs.
+ * Ref: emdash Live Content API docs.
  */
 import { defineLiveCollection } from 'astro:content';
 import { emdashLoader } from 'emdash/runtime';
 
 // Live Collection proxy para EmDash CMS.
-// Nombre "_emdash" es REQUERIDO (interno de EmDash v0.36).
+// Nombre "_emdash" es REQUERIDO (interno de EmDash).
 export const collections = {
   _emdash: defineLiveCollection({
     loader: emdashLoader(),

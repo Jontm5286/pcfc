@@ -56,6 +56,6 @@ Secrets de prod solo vía `wrangler secret put <NOMBRE>`. Nunca plaintext.
 - **No editar `DESIGN.md`, `MANUAL-DE-MARCA.md`, `docs/convocatorias-api-contract.md`,
   `.env.example`** sin pedirlo: son fuente de verdad / contratos vigentes.
 - **No añadir colecciones EmDash ni campos del schema** desde código sin alinear
-  `.emdash/schema.json` + `src/content.config.ts` + `docs/GUIA-CLIENTE.md`.
+  `.emdash/seed.json` + `src/content.config.ts` + `docs/GUIA-CLIENTE.md`.
 - **No usar la colección legacy `partidos`** para features nuevas (ver `docs/ARQUITECTURA.md`).
 - **No commitear `PLATFORM_URL`/`*_API_KEY` reales** — en prod son secrets de Cloudflare.

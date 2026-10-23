@@ -201,7 +201,7 @@ const nextMatchCollection = defineCollection({
 // los 4 .md de src/content/blog/ — se validan aquí con defaults opcionales
 // en vez de reescribir los .md (lado que menos rompe).
 // `coverImage` acepta "" (3 posts la traen vacía → sin cover).
-// Local file-based: NO pasa por EmDash (queda fuera de .emdash/schema.json).
+// Local file-based: NO pasa por EmDash (queda fuera de EmDash).
 const blogCollection = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
