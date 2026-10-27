@@ -4,18 +4,32 @@ import type { SedeContacto } from '../../data/sedes';
 interface Props {
   sedes: SedeContacto[];
   sedePreseleccionada: string;
+  /** Flujo de clase de prueba (?prueba=1): cambia copy y mensaje de éxito. */
+  modoPrueba?: boolean;
 }
 
-const { sedes, sedePreseleccionada } = Astro.props;
+const { sedes, sedePreseleccionada, modoPrueba = false } = Astro.props;
 ---
 
 <div
   id="formulario"
   class="bg-white rounded-2xl border border-navy-10 p-8 lg:p-10 shadow-[0_4px_24px_rgba(0,40,92,0.08)]"
   data-sede-preselect={sedePreseleccionada}
+  data-modo-prueba={modoPrueba ? '1' : '0'}
 >
-  <p class="wiz-eyebrow">Inscripción · 4 pasos cortos</p>
-  <h2 class="h-card mb-2">Inscribe a tu hijo</h2>
+  <p class="wiz-eyebrow">
+    {modoPrueba ? 'Clase de prueba · 4 pasos cortos' : 'Inscripción · 4 pasos cortos'}
+  </p>
+  <h2 class="h-card mb-2">
+    {modoPrueba ? 'Reserva su clase de prueba' : 'Inscribe a tu hijo'}
+  </h2>
+  {
+    modoPrueba && (
+      <p class="wiz-trial">
+        Incluye una clase de prueba gratis. El coordinador de la sede te contacta para agendar.
+      </p>
+    )
+  }
   <p class="wiz-sub">Tu progreso se guarda solo en este dispositivo.</p>
 
   <!-- Barra de progreso -->
@@ -302,7 +316,7 @@ const { sedes, sedePreseleccionada } = Astro.props;
     <div class="wiz-nav">
       <button type="button" class="btn btn--secondary wiz-nav__back" data-go="3">Atrás</button>
       <button type="button" id="wiz-send" class="btn btn--primary btn--lg wiz-nav__next"
-        >Enviar inscripción</button
+        >{modoPrueba ? 'Solicitar clase de prueba' : 'Enviar inscripción'}</button
       >
     </div>
   </section>
@@ -311,9 +325,13 @@ const { sedes, sedePreseleccionada } = Astro.props;
   <section class="wiz-step" data-step="5" aria-label="Inscripción recibida" hidden>
     <div class="wiz-ok">
       <div class="wiz-ok__big" aria-hidden="true">✓</div>
-      <h3 class="wiz-title">¡Inscripción recibida!</h3>
+      <h3 class="wiz-title">{modoPrueba ? '¡Solicitud recibida!' : '¡Inscripción recibida!'}</h3>
       <p class="wiz-hint" id="wiz-okmsg">
-        Te contactaremos por WhatsApp en menos de 48 horas para la prueba de nivel.
+        {
+          modoPrueba
+            ? 'Te contactaremos por WhatsApp en menos de 48 horas para agendar la clase de prueba gratis.'
+            : 'Te contactaremos por WhatsApp en menos de 48 horas para la prueba de nivel.'
+        }
       </p>
     </div>
     <div class="wiz-nav">
@@ -809,9 +827,16 @@ const { sedes, sedePreseleccionada } = Astro.props;
         document.getElementById('wiz-draft')?.setAttribute('hidden', '');
         const okmsg = document.getElementById('wiz-okmsg');
         if (okmsg)
-          okmsg.textContent = `${payload.firstName} quedó preinscrito en ${sedeNombre || sede} (${category}, provisional). Te contactaremos por WhatsApp en menos de 48 horas.`;
+          okmsg.textContent =
+            root?.dataset.modoPrueba === '1'
+              ? `${payload.firstName} quedó preinscrito en ${sedeNombre || sede} (${category}, provisional). Te contactaremos por WhatsApp para agendar la clase de prueba gratis.`
+              : `${payload.firstName} quedó preinscrito en ${sedeNombre || sede} (${category}, provisional). Te contactaremos por WhatsApp en menos de 48 horas.`;
         go(5);
-        if (typeof window.gtag === 'function') window.gtag('event', 'submit_inscription');
+        if (typeof window.gtag === 'function')
+          window.gtag(
+            'event',
+            root?.dataset.modoPrueba === '1' ? 'submit_trial' : 'submit_inscription'
+          );
       } else {
         showErr(4, out?.error ?? 'No pudimos enviar tu inscripción. Inténtalo de nuevo.');
       }
@@ -837,6 +862,17 @@ const { sedes, sedePreseleccionada } = Astro.props;
     letter-spacing: 0.08em;
     color: var(--color-sky);
     margin: 0 0 0.5rem;
+  }
+
+  .wiz-trial {
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--color-sky-10);
+    color: var(--color-navy);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-weight: 600;
   }
 
   .wiz-sub {
