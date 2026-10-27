@@ -210,8 +210,8 @@ export function getStatsData(): Stat[] {
   return [
     { value: '500+', label: 'Futbolistas' },
     { value: '10+', label: 'Entrenadores' },
-    { value: '7', label: 'Categorías' },
-    { value: '10+', label: 'Años' },
+    { value: '4', label: 'Categorías' },
+    { value: '9', label: 'Años formando' },
   ];
 }
 
