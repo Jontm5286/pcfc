@@ -130,10 +130,25 @@ function fechaValida(fecha: string): boolean {
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
 }
 
-function readEnv(locals: unknown, key: string): string {
-  const fromRuntime = (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)
-    ?.runtime?.env?.[key];
-  if (typeof fromRuntime === 'string' && fromRuntime.trim()) return fromRuntime.trim();
+// Astro 7 (Cloudflare) eliminó `Astro.locals.runtime.env`: leerlo lanzaba 500.
+// El binding se obtiene con el import dinámico de `cloudflare:workers`, igual
+// que src/lib/foto-likes-db.ts. En `astro dev` puede no existir y se cae a
+// import.meta.env / process.env.
+async function workerEnv(): Promise<Record<string, unknown>> {
+  try {
+    const cf = (await import(/* @vite-ignore */ 'cloudflare:workers')) as unknown as {
+      env?: Record<string, unknown>;
+    };
+    if (cf?.env) return cf.env;
+  } catch {
+    /* dev sin runtime de Workers */
+  }
+  return {};
+}
+
+async function readEnv(key: string): Promise<string> {
+  const fromWorker = (await workerEnv())[key];
+  if (typeof fromWorker === 'string' && fromWorker.trim()) return fromWorker.trim();
   try {
     const fromMeta = (import.meta as unknown as { env?: Record<string, unknown> })?.env?.[key];
     if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim();
@@ -355,10 +370,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   }
 
-  const runtimeEnv =
-    (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)?.runtime?.env ?? {};
-  const platformUrl = readEnv(locals, 'PLATFORM_URL') || PLATFORM_URL_DEFAULT;
-  const platformKey = readEnv(locals, 'PLATFORM_API_KEY');
+  const runtimeEnv = await workerEnv();
+  const platformUrl = (await readEnv('PLATFORM_URL')) || PLATFORM_URL_DEFAULT;
+  const platformKey = await readEnv('PLATFORM_API_KEY');
 
   if (!platformKey) {
     console.error('[inscripcion-plataforma] Sin PLATFORM_API_KEY: fallback email directo.');
