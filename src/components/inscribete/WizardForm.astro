@@ -806,6 +806,9 @@ const { sedes, sedePreseleccionada, modoPrueba = false } = Astro.props;
             }
           : null,
       sitio_web: val('wiz-sitio'),
+      // Clase de prueba: la plataforma lo usa para avisar al coordinador de la
+      // sede elegida. El padre no escoge día; el club agenda.
+      trial: root?.dataset.modoPrueba === '1',
       terminos: true,
     };
 

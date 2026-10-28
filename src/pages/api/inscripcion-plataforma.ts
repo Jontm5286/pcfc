@@ -164,6 +164,7 @@ async function enviarFallbackEmail(opts: {
   secondGuardian: SecondGuardian | null;
   school: string;
   parentOccupation: string;
+  trial: boolean;
   motivo: string;
 }): Promise<boolean> {
   const {
@@ -183,6 +184,7 @@ async function enviarFallbackEmail(opts: {
     secondGuardian,
     school,
     parentOccupation,
+    trial,
     motivo,
   } = opts;
   const destino =
@@ -190,7 +192,7 @@ async function enviarFallbackEmail(opts: {
   const remitente =
     (typeof env.ADMISSION_FROM === 'string' && env.ADMISSION_FROM.trim()) || REMITENTE_DEFAULT;
 
-  const subject = `[WEB fallback] Preinscripción — ${firstName} ${lastName} (${category}, sede ${sedeNombre})`;
+  const subject = `[WEB fallback] ${trial ? 'Clase de prueba' : 'Preinscripción'} — ${firstName} ${lastName} (${category}, sede ${sedeNombre})`;
   const text = [
     `Preinscripción web NO registrada en plataforma (${motivo}).`,
     `Sede: ${sedeNombre} (${sedeSlug})`,
@@ -198,6 +200,7 @@ async function enviarFallbackEmail(opts: {
     `Jugador: ${firstName} ${lastName}`,
     `Fecha de nacimiento: ${birthDate}`,
     `Categoría: ${category}`,
+    `Clase de prueba: ${trial ? 'SÍ — el coordinador de la sede agenda' : 'no'}`,
     school ? `Colegio: ${school}` : `Colegio: (no indicado)`,
     ``,
     `Tutor: ${parentName} (${parentRelationship})`,
@@ -218,6 +221,7 @@ async function enviarFallbackEmail(opts: {
     `<li><strong>Jugador:</strong> ${esc(firstName)} ${esc(lastName)}</li>`,
     `<li><strong>Fecha de nacimiento:</strong> ${esc(birthDate)}</li>`,
     `<li><strong>Categoría:</strong> ${esc(category)}</li>`,
+    `<li><strong>Clase de prueba:</strong> ${trial ? 'SÍ — el coordinador de la sede agenda' : 'no'}</li>`,
     school
       ? `<li><strong>Colegio:</strong> ${esc(school)}</li>`
       : `<li><strong>Colegio:</strong> (no indicado)</li>`,
@@ -298,6 +302,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const school = str(body.school, MAX.school);
   const parentOccupation = str(body.parentOccupation, MAX.parentOccupation);
   const terminos = body.terminos === true;
+  // Clase de prueba: solo cambia el aviso al coordinador (`?prueba=1` en la web).
+  const trial = body.trial === true;
   const secondGuardian = parseSecondGuardian(body.secondGuardian);
   if (secondGuardian?.relationship && !PARENTESCOS.has(secondGuardian.relationship)) {
     return json(
@@ -373,6 +379,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       secondGuardian,
       school,
       parentOccupation,
+      trial,
       motivo: 'sin PLATFORM_API_KEY configurada',
     });
     if (ok) return json({ ok: true, fallback: 'email' });
@@ -403,6 +410,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         school: school || undefined,
         parentOccupation: parentOccupation || undefined,
         secondGuardian: secondGuardian || undefined,
+        trial: trial || undefined,
         source: 'web',
         sedeNombre: sedeInfo.nombre,
       }),
@@ -427,6 +435,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       secondGuardian,
       school,
       parentOccupation,
+      trial,
       motivo: 'plataforma inalcanzable',
     });
     if (ok) return json({ ok: true, fallback: 'email' });
@@ -467,6 +476,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     secondGuardian,
     school,
     parentOccupation,
+    trial,
     motivo: `plataforma respondió ${platformRes.status}${detail ? `: ${detail}` : ''}`,
   });
   if (ok) return json({ ok: true, fallback: 'email' });
