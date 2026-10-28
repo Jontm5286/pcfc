@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { workerEnv } from '../../lib/worker-env';
 
 /**
  * POST /api/contacto-patrocinio
@@ -37,12 +38,10 @@ function json(body: Record<string, unknown>, status = 200): Response {
   });
 }
 
-function getEnv(locals: unknown): { env: Record<string, unknown> } {
-  const runtime = (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)?.runtime;
-  return { env: runtime?.env ?? {} };
-}
+// El binding del Worker se lee con cloudflare:workers (Astro 7 eliminó
+// locals.runtime.env y lanzaba 500 en cada envío).
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -72,7 +71,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ ok: false, error: 'Debes aceptar los términos y condiciones.' }, 400);
   }
 
-  const { env } = getEnv(locals);
+  const env = await workerEnv();
   const destino =
     (typeof env.SPONSOR_EMAIL === 'string' && env.SPONSOR_EMAIL.trim()) || DESTINO_DEFAULT;
   const remitente =

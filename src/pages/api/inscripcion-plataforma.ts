@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getSedes } from '../../data/sedes';
+import { readEnv, workerEnv } from '../../lib/worker-env';
 
 /**
  * POST /api/inscripcion-plataforma
@@ -128,38 +129,6 @@ function fechaValida(fecha: string): boolean {
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   const dt = new Date(Date.UTC(y, m - 1, d));
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
-}
-
-// Astro 7 (Cloudflare) eliminó `Astro.locals.runtime.env`: leerlo lanzaba 500.
-// El binding se obtiene con el import dinámico de `cloudflare:workers`, igual
-// que src/lib/foto-likes-db.ts. En `astro dev` puede no existir y se cae a
-// import.meta.env / process.env.
-async function workerEnv(): Promise<Record<string, unknown>> {
-  try {
-    const cf = (await import(/* @vite-ignore */ 'cloudflare:workers')) as unknown as {
-      env?: Record<string, unknown>;
-    };
-    if (cf?.env) return cf.env;
-  } catch {
-    /* dev sin runtime de Workers */
-  }
-  return {};
-}
-
-async function readEnv(key: string): Promise<string> {
-  const fromWorker = (await workerEnv())[key];
-  if (typeof fromWorker === 'string' && fromWorker.trim()) return fromWorker.trim();
-  try {
-    const fromMeta = (import.meta as unknown as { env?: Record<string, unknown> })?.env?.[key];
-    if (typeof fromMeta === 'string' && fromMeta.trim()) return fromMeta.trim();
-  } catch {
-    /* import.meta.env no disponible */
-  }
-  const fromProcess =
-    typeof process !== 'undefined'
-      ? (process.env as Record<string, string | undefined>)[key]
-      : undefined;
-  return typeof fromProcess === 'string' ? fromProcess.trim() : '';
 }
 
 async function enviarFallbackEmail(opts: {

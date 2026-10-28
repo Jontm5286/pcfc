@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { workerEnv } from '../../lib/worker-env';
 
 /**
  * POST /api/inscripcion
@@ -58,12 +59,9 @@ function json(body: Record<string, unknown>, status = 200): Response {
   });
 }
 
-function getEnv(locals: unknown): { env: Record<string, unknown> } {
-  const runtime = (locals as { runtime?: { env?: Record<string, unknown> } } | undefined)?.runtime;
-  return { env: runtime?.env ?? {} };
-}
+// Binding del Worker vía cloudflare:workers (Astro 7 eliminó locals.runtime.env).
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -116,7 +114,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return json({ ok: false, error: 'Debes aceptar los términos y condiciones.' }, 400);
   }
 
-  const { env } = getEnv(locals);
+  const env = await workerEnv();
   const destino =
     (typeof env.ADMISSION_EMAIL === 'string' && env.ADMISSION_EMAIL.trim()) || DESTINO_DEFAULT;
   const remitente =
