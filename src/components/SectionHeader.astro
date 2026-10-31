@@ -9,6 +9,7 @@
  *   - subtitle?: string             Párrafo descriptivo opcional
  *   - onDark?: boolean              Si true, texto blanco (sección navy)
  *   - align?: "left" | "center"     Default "left"
+ *   - headingLevel?: "h1" | "h2"  Default "h2" (usar "h1" solo si es el único título de la página)
  */
 
 interface Props {
@@ -17,9 +18,11 @@ interface Props {
   subtitle?: string;
   onDark?: boolean;
   align?: 'left' | 'center';
+  headingLevel?: 'h1' | 'h2';
 }
 
-const { eyebrow, title, subtitle, onDark = false, align = 'left' } = Astro.props;
+const { eyebrow, title, subtitle, onDark = false, align = 'left', headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
 
 const alignment = align === 'center' ? 'text-center mx-auto' : 'text-left';
 const maxWidth = align === 'center' ? 'max-w-[720px]' : 'max-w-[720px]';
@@ -27,8 +30,8 @@ const maxWidth = align === 'center' ? 'max-w-[720px]' : 'max-w-[720px]';
 
 <header class={`${alignment} ${maxWidth} mb-[clamp(2.5rem,5vw,4rem)]`}>
   <p class={`eyebrow ${onDark ? 'eyebrow--on-navy' : ''}`}>{eyebrow}</p>
-  <h2 class={`h-section ${onDark ? 'h-section--on-navy' : ''}`}>
+  <Heading class={`h-section ${onDark ? 'h-section--on-navy' : ''}`}>
     <Fragment set:html={title} />
-  </h2>
+  </Heading>
   {subtitle && <p class={`lede mt-4 ${onDark ? 'lede--on-navy' : ''}`}>{subtitle}</p>}
 </header>

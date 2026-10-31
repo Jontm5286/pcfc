@@ -94,7 +94,7 @@ function postUrl(p: (typeof allPosts)[number]): string {
                     </>
                   </svg>
                 </div>
-                <h3>Sin artículos en esta categoría.</h3>
+                <h2>Sin artículos en esta categoría.</h2>
                 <p>No hay publicaciones con este filtro. Explora el resto del blog.</p>
                 <a href="/blog" class="btn btn--primary">
                   Ver todos
@@ -112,9 +112,9 @@ function postUrl(p: (typeof allPosts)[number]): string {
                         {formatDate(p.data.publishedAt)}
                       </time>
                     </div>
-                    <h3 class="blog-card__title">
+                    <h2 class="blog-card__title">
                       <a href={postUrl(p)}>{p.data.title}</a>
-                    </h3>
+                    </h2>
                     {p.data.excerpt && <p class="blog-card__excerpt">{p.data.excerpt}</p>}
                     <a href={postUrl(p)} class="blog-card__link">
                       Leer artículo <span aria-hidden="true">→</span>
@@ -129,7 +129,7 @@ function postUrl(p: (typeof allPosts)[number]): string {
         <!-- Sidebar -->
         <aside class="blog-sidebar">
           <div class="sidebar-card">
-            <h4 class="sidebar-heading">Categorías</h4>
+            <h3 class="sidebar-heading">Categorías</h3>
             <ul class="sidebar-list">
               <li>
                 <a
@@ -161,7 +161,7 @@ function postUrl(p: (typeof allPosts)[number]): string {
           </div>
 
           <div class="sidebar-card">
-            <h4 class="sidebar-heading">Síguenos</h4>
+            <h3 class="sidebar-heading">Síguenos</h3>
             <div class="social-links">
               <a
                 href="https://instagram.com/puntacanafc"
@@ -205,7 +205,7 @@ function postUrl(p: (typeof allPosts)[number]): string {
           </div>
 
           <div class="sidebar-card cta-sidebar">
-            <h4 class="sidebar-heading sidebar-heading--light">¿Quieres Unirte?</h4>
+            <h3 class="sidebar-heading sidebar-heading--light">¿Quieres Unirte?</h3>
             <p class="cta-desc">Las inscripciones están abiertas para todas las categorías.</p>
             <a href="/inscribete" class="btn btn--sky btn--on-navy btn--lg cta-btn">Inscribirse</a>
           </div>

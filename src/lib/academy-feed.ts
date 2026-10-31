@@ -23,6 +23,11 @@ export interface AcademyMatch {
   meetingTime?: string | null;
   location?: string | null;
   isHome: boolean;
+  /** Sede organizadora + rival intersedes (feed /api/public/matches). */
+  sedeId?: string | null;
+  sedeName?: string | null;
+  opponentSedeId?: string | null;
+  opponentSedeName?: string | null;
   status: 'convocada' | 'jugada' | 'suspendida';
   result?: { home: number; away: number } | null;
 }
@@ -56,6 +61,19 @@ export function academyCategoryToWeb(category: string): WebCategory {
     return { slug: 'form-alta', label: 'Femenino', short };
   }
   return { slug: 'form-alta', label: 'Formativas Altas', short };
+}
+
+/** Línea de sede para el calendario:
+ * "📍 Village PCIS · Intersedes vs Village Club" o "📍 Village PCIS".
+ * Vacío si el feed no trae sede (respaldo local). */
+export function matchSedeLine(m: AcademyMatch): string {
+  const own = (m.sedeName || '').trim();
+  const rival = (m.opponentSedeName || '').trim();
+  if (!own && !rival) return '';
+  if (rival && rival.toLowerCase() !== own.toLowerCase()) {
+    return own ? `📍 ${own} · Intersedes vs ${rival}` : `📍 Intersedes vs ${rival}`;
+  }
+  return `📍 ${own}`;
 }
 
 /** "2026-09-13" -> "Sáb 13 sep". */

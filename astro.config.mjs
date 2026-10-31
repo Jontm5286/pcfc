@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import sitemap from '@astrojs/sitemap';
 import emdash, { local } from 'emdash/astro';
 import { sqlite } from 'emdash/db';
 import { d1, r2 } from '@emdash-cms/cloudflare';
@@ -28,7 +27,7 @@ const isCloudflare = process.env.DEPLOY_TARGET === 'cloudflare';
 
 export default defineConfig({
   site: 'https://puntacanafc.com',
-  trailingSlash: 'ignore',
+  trailingSlash: 'never',
   output: 'server', // EmDash requiere SSR para endpoints /_emdash/*
   adapter: isCloudflare
     ? cloudflare({
@@ -65,7 +64,6 @@ export default defineConfig({
         },
       },
     },
-    sitemap(),
     react(), // Requerido antes de EmDash para renderizar el Admin UI
     emdash(
       isCloudflare

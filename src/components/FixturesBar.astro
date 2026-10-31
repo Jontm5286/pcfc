@@ -24,6 +24,7 @@ import {
   formatDisplayDate,
   formatMatchDate,
   formatMatchTime,
+  matchSedeLine,
 } from '../lib/academy-feed';
 
 type Outcome = 'win' | 'draw' | 'loss';
@@ -108,12 +109,14 @@ const upcomingCards: UpcomingCard[] =
           when: [formatMatchDate(m.matchDate), formatMatchTime(m.matchTime)]
             .filter(Boolean)
             .join(' · '),
+          sedeLine: matchSedeLine(m) || undefined,
         };
       })
     : fallbackFixtures.map((f) => ({
         key: String(f.id),
         opponent: f.team2.name,
         when: `${f.date} · ${formatMatchTime(f.time) ?? f.time}`,
+        sedeLine: undefined as string | undefined,
       }));
 
 // ── SPONSOR · mismos logos que la home, orden mezclado en cada carga ─────
@@ -242,6 +245,11 @@ const durSmS = `${(copyWSm / SPEED_SM).toFixed(1)}s`;
                   </div>
                   <div class="fx-match">PCFC vs {slot.card.opponent}</div>
                   <div class="fx-when">{slot.card.when}</div>
+                  {
+                    'sedeLine' in slot.card && slot.card.sedeLine && (
+                      <div class="fx-sede">{slot.card.sedeLine}</div>
+                    )
+                  }
                 </div>
               );
             }
@@ -437,6 +445,14 @@ const durSmS = `${(copyWSm / SPEED_SM).toFixed(1)}s`;
   .fx-when {
     font: 600 11px/1.2 var(--font-body, system-ui, sans-serif);
     color: var(--color-sky, #429ac0); /* 4.54:1 sobre navy ✓ AA */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fx-sede {
+    font: 600 10.5px/1.2 var(--font-body, system-ui, sans-serif);
+    color: #ffffff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
