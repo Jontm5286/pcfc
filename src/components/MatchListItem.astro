@@ -14,6 +14,7 @@
  *   - team1: string                 Nombre equipo PCFC
  *   - team2: string                 Nombre equipo rival
  *   - venue: string                Ubicación
+ *   - sedeLine?: string           Sede organizadora (feed Academy) — bajo la ubicación
  *   - photosHref?: string          Enlace a fotos (si existe, muestra el botón)
  *   - past?: boolean               Si true, es un partido jugado (muestra "Ver fotos")
  *   - score?: string               Marcador opcional para partidos jugados (e.g. "3 - 1")
@@ -28,6 +29,7 @@ interface Props {
   team1: string;
   team2: string;
   venue: string;
+  sedeLine?: string;
   photosHref?: string;
   past?: boolean;
   score?: string;
@@ -42,6 +44,7 @@ const {
   team1,
   team2,
   venue,
+  sedeLine,
   photosHref,
   past = false,
   score,
@@ -98,22 +101,31 @@ const {
       </span>
     </div>
 
-    <!-- Ubicación -->
-    <div class="flex items-center gap-1.5 sm:min-w-[160px]">
-      <svg
-        width="13"
-        height="13"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        class="shrink-0 text-navy-60"
-        aria-hidden="true"
-      >
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-        <circle cx="12" cy="10" r="3"></circle>
-      </svg>
-      <span class="text-[0.8rem] text-navy-60 whitespace-nowrap">{venue}</span>
+    <!-- Ubicación + sede -->
+    <div class="flex flex-col sm:min-w-[160px]">
+      <div class="flex items-center gap-1.5">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="shrink-0 text-navy-60"
+          aria-hidden="true"
+        >
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span class="text-[0.8rem] text-navy-60 whitespace-nowrap">{venue}</span>
+      </div>
+      {
+        sedeLine && (
+          <span class="text-[0.75rem] font-semibold text-navy mt-0.5 pl-[19px]">
+            {sedeLine}
+          </span>
+        )
+      }
     </div>
 
     <!-- Acciones -->
