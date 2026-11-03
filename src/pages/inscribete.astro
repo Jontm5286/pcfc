@@ -17,6 +17,9 @@ const sedeSlugs = new Set(getSedes().map((s) => s.slug));
 const sedePreseleccionada = sedeSlugs.has(sedeParam) ? sedeParam : '';
 const sedes = getSedes();
 
+// Clase de prueba gratis: /inscribete?prueba=1 (desde /club y sedes).
+const modoPrueba = Astro.url.searchParams.get('prueba') === '1';
+
 // NOTA: ya no se pide categoría en el formulario (decisión del club).
 // El wizard deriva una categoría PROVISIONAL desde la fecha de nacimiento
 // solo para cumplir el contrato del endpoint de plataforma (CategoryType),
@@ -37,9 +40,13 @@ const sedes = getSedes();
        HERO — section con SectionHeader eyebrow + título + subtitle
        ============================================================ -->
   <PageHero
-    eyebrow="Inscripciones abiertas · Temporada 2026"
-    title="Únete a la academia<br />del Caribe"
-    lede="Da el primer paso. Completa el formulario y un entrenador de PCFC se pondrá en contacto en menos de 24 horas."
+    eyebrow={modoPrueba
+      ? 'Clase de prueba gratis · Temporada 2026'
+      : 'Inscripciones abiertas · Temporada 2026'}
+    title={modoPrueba ? 'Reserva su clase<br />de prueba' : 'Únete a la academia<br />del Caribe'}
+    lede={modoPrueba
+      ? 'Completa el formulario y el coordinador de la sede te contacta para agendar la clase de prueba gratis. Sin compromiso.'
+      : 'Da el primer paso. Completa el formulario y un entrenador de PCFC se pondrá en contacto en menos de 24 horas.'}
     image="jugadores-cancha"
     alt="Jugadores de Punta Cana FC entrenando en cancha al atardecer"
     titleClass="text-[clamp(2.5rem,6.5vw,4.75rem)] mb-5"
@@ -58,7 +65,11 @@ const sedes = getSedes();
         </div>
 
         <!-- ── Columna derecha: wizard de inscripción ── -->
-        <WizardForm sedes={sedes} sedePreseleccionada={sedePreseleccionada} />
+        <WizardForm
+          sedes={sedes}
+          sedePreseleccionada={sedePreseleccionada}
+          modoPrueba={modoPrueba}
+        />
       </div>
     </div>
   </section>
@@ -94,9 +105,9 @@ const sedes = getSedes();
     title="¿Listo para unirte? Primero resolvemos tus dudas"
     faqs={[
       {
-        question: '¿Cuándo abren las pruebas para la temporada 2026?',
+        question: '¿Cómo funciona la clase de prueba?',
         answer:
-          'Las pruebas de admisión se realizan durante enero y febrero. Tras recibir tu solicitud de inscripción, un entrenador de PCFC se pondrá en contacto para agendarte una fecha y hora.',
+          'La clase de prueba es gratis. Se agenda con el coordinador de la sede: completa el formulario, elige la sede y te contactamos por WhatsApp para confirmar día y hora. No necesitas experiencia previa.',
       },
       {
         question: '¿Cuál es la mensualidad y qué incluye?',

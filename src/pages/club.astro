@@ -1,41 +1,135 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import TwoColMedia from '../components/TwoColMedia.astro';
+import SedeCards from '../components/SedeCards.astro';
+import SedesMap from '../components/SedesMap.astro';
+import FaqSection from '../components/FaqSection.astro';
+import FinalCta from '../components/FinalCta.astro';
 import { Image } from 'astro:assets';
 import luisFlores from '../assets/luis-flores.jpg';
 import anaFlores from '../assets/ana-flores.jpg';
+import galleryEntrenamiento from '../assets/gallery/entrenamiento-sub15.jpg';
+import { getSedes } from '../data/sedes';
+import { AWARDS, CLUB_FAQS, CURRENT_COMPETITION, TIMELINE, TRUST_STATS } from '../data/clubData';
+
+const sedes = getSedes();
+
+const title = 'Academia de fútbol en Punta Cana';
+const description =
+  'Academia de fútbol para niños y jóvenes de 4 a 19 años en Punta Cana y Bávaro. 4 sedes, formación integral, plataforma para padres y clase de prueba gratis.';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://puntacanafc.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Club', item: 'https://puntacanafc.com/club' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: CLUB_FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  },
+];
+
+const why = [
+  {
+    n: '01',
+    title: 'Formación integral',
+    copy: 'Trabajamos técnica, táctica, físico y psicología en un mismo plan. El objetivo no es solo formar mejores jugadores: es formar niños más seguros, disciplinados y capaces de trabajar en equipo.',
+  },
+  {
+    n: '02',
+    title: 'Seguimiento real',
+    copy: 'Las familias acceden a nuestra plataforma interna para ver asistencias, convocatorias y comunicación con el cuerpo técnico. Además, entregamos informes deportivos semestrales y damos seguimiento a las notas escolares.',
+  },
+  {
+    n: '03',
+    title: 'Salud y seguridad',
+    copy: 'Cada jugador pasa evaluaciones médicas y físicas con nutrición, medicina general, kinesiología y preparadores físicos. Entrenar bien empieza por cuidar el cuerpo.',
+  },
+  {
+    n: '04',
+    title: 'Competencia con propósito',
+    copy: 'Participamos en ligas inter-sedes, ligas regionales, torneos nacionales y copas internacionales. Competimos para crecer, no para presionar a los niños.',
+  },
+];
 ---
 
-<Base
-  title="Club"
-  description="Conoce la historia, misión y visión de Punta Cana FC. Más de 10 años formando campeones en el Caribe."
->
-  <!-- Hero -->
+<Base title={title} description={description} jsonLd={jsonLd}>
   <PageHero
-    eyebrow="Nuestro Club"
-    title="Conoce Punta Cana FC"
-    lede="Más de 10 años dedicados a formar no solo futbolistas, sino personas de bien."
+    eyebrow="Nuestro club"
+    title="Academia de fútbol<br />en Punta Cana desde 2017"
+    lede="Formamos futbolistas y personas en Bávaro y Punta Cana. Cuatro sedes, cuerpo técnico con experiencia y un acompañamiento real a cada familia."
     image="historia"
-    alt="Jugadores de Punta Cana FC entrenando — más de 10 años formando campeones en el Caribe"
+    alt="Jugadores de Punta Cana FC entrenando en cancha"
+    contentClass="max-w-[760px]"
   />
 
+  <!-- Prueba social -->
+  <section class="bg-navy text-white" aria-label="Punta Cana FC en cifras">
+    <div class="container-x py-8 md:py-10">
+      <dl class="grid grid-cols-2 gap-6 md:grid-cols-4">
+        {
+          TRUST_STATS.map((stat) => (
+            <div class="text-center md:text-left">
+              <dt class="font-display text-[2rem] leading-none text-sky">{stat.value}</dt>
+              <dd class="mt-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/70">
+                {stat.label}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Por qué elegir PCFC -->
+  <section class="section bg-pure-white" id="por-que-pcfc">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Por qué PCFC"
+        title="Lo que hace diferente a nuestra academia"
+        subtitle="Elegir academia es elegir el entorno donde tu hijo va a crecer. Estos son los compromisos que sostienen nuestro trabajo."
+      />
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {
+          why.map((item) => (
+            <article class="rounded-2xl border border-navy/10 bg-white p-7 transition-[border-color,box-shadow] duration-200 hover:border-navy/25 hover:shadow-[0_4px_20px_rgba(0,40,92,0.08)]">
+              <span class="font-display text-[2.25rem] leading-none text-sky">{item.n}</span>
+              <h3 class="h-card mt-4 mb-3">{item.title}</h3>
+              <p class="text-[0.95rem] leading-[1.7] text-navy-60">{item.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
   <!-- Historia -->
-  <section class="section" id="historia">
+  <section class="section bg-navy-05" id="historia">
     <div class="container-x">
       <TwoColMedia
-        eyebrow="Nuestra Historia"
-        title="De Un Sueño a la Realidad"
+        eyebrow="Nuestra historia"
+        title="De un sueño a una academia con cuatro sedes"
         paragraphs={[
-          'Punta Cana FC nació con la visión de crear la academia de fútbol de clase mundial en el Caribe. Desde un pequeño grupo de jugadores ha crecido hasta convertirse en la academia de fútbol más importante de la región.',
-          'A lo largo de nuestros más de 10 años de trayectoria, hemos formado cientos de jugadores que han llegado a competir en ligas profesionales nacionales e internacionales.',
+          'Punta Cana FC nació el 20 de enero de 2017 de la mano de los hermanos Luis “El Tata” Flores y Ana Clara Flores, con la idea de crear un club que representara la pasión de Punta Cana.',
+          'Lo que empezó como un proyecto familiar es hoy una academia con cuatro sedes y cientos de familias que confían en nosotros para acompañar el crecimiento de sus hijos dentro y fuera de la cancha.',
         ]}
       >
-        <a href="/inscribete" class="btn btn--sky">Únete al Club</a>
+        <a href="/inscribete?prueba=1" class="btn btn--sky">Reservar clase de prueba</a>
         <div slot="media" class="historia-collage">
           <img
             src="/images/historia/fundador-mate-bn.jpg"
-            alt="Fundador de Punta Cana FC tomando mate — retrato en blanco y negro"
+            alt="Luis Flores, fundador de Punta Cana FC, retrato en blanco y negro"
             class="historia-collage__main"
             loading="lazy"
             width={1920}
@@ -43,7 +137,7 @@ import anaFlores from '../assets/ana-flores.jpg';
           />
           <img
             src="/images/historia/entrenador-gorra.jpg"
-            alt="Entrenador de Punta Cana FC con gorra del club en la cancha"
+            alt="Entrenador de Punta Cana FC en la cancha"
             class="historia-collage__overlap"
             loading="lazy"
             width={1200}
@@ -51,127 +145,209 @@ import anaFlores from '../assets/ana-flores.jpg';
           />
         </div>
       </TwoColMedia>
+
+      <ol
+        class="mt-16 grid list-none grid-cols-1 gap-5 md:grid-cols-2"
+        aria-label="Línea de tiempo"
+      >
+        {
+          TIMELINE.map((item) => (
+            <li class="rounded-xl border border-navy/10 bg-white p-6">
+              <span class="font-display text-xl text-sky">{item.year}</span>
+              <h3 class="h-card mt-2 mb-2">{item.title}</h3>
+              <p class="text-[0.95rem] leading-[1.65] text-navy-60">{item.copy}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
-  <!-- Mision Vision Valores -->
-  <section class="section mv-section" id="mision">
+  <!-- Fundadores -->
+  <section class="section bg-pure-white" id="fundadores">
     <div class="container-x">
-      <p class="eyebrow eyebrow--on-navy">Misión, Visión y Valores</p>
-      <h2 class="h-section h-section--on-navy">Formando campeones dentro y fuera de la cancha</h2>
-      <div class="mv-grid">
-        <div class="mv-card">
-          <div class="mv-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <circle cx="12" cy="12" r="6"></circle>
-              <circle cx="12" cy="12" r="2"></circle>
-            </svg>
-          </div>
-          <h3 class="h-card h-card--on-navy">Misión</h3>
-          <p class="mv-desc">
-            Formar futbolistas de excelencia a través de un entrenamiento profesional, integral y
-            basado en valores, contribuyendo al desarrollo deportivo del Caribe.
-          </p>
-        </div>
-        <div class="mv-card">
-          <div class="mv-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </div>
-          <h3 class="h-card h-card--on-navy">Visión</h3>
-          <p class="mv-desc">
-            Ser reconocida como la academia de fútbol líder en América Latina, formando campeones
-            dentro y fuera de la cancha.
-          </p>
-        </div>
-        <div class="mv-card">
-          <div class="mv-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-              ></path>
-            </svg>
-          </div>
-          <h3 class="h-card h-card--on-navy">Valores</h3>
-          <p class="mv-desc">
-            Disciplina, respeto, trabajo en equipo, perseverancia y pasión. Estos son los pilares
-            que guían a cada jugador de PCFC.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Equipo Directivo -->
-  <section class="section" id="equipo-directivo">
-    <div class="container-x">
-      <p class="eyebrow">Equipo Directivo</p>
-      <h2 class="h-section">Liderazgo con Visión</h2>
-      <div class="team-grid">
-        <div class="team-member">
+      <SectionHeader
+        eyebrow="Fundadores"
+        title="Las personas detrás del proyecto"
+        subtitle="Un club construido desde la cancha y desde la familia."
+      />
+      <div class="mx-auto grid max-w-[900px] grid-cols-1 gap-12 md:grid-cols-2">
+        <article class="text-center">
           <Image
             src={luisFlores}
-            alt="Luis Flores, Director General de Punta Cana FC"
-            class="team-photo"
+            alt="Luis Flores, fundador y CEO de Punta Cana FC"
+            class="mx-auto mb-5 aspect-[4/5] w-full max-w-[340px] rounded-2xl object-cover"
             loading="lazy"
             width={640}
             height={800}
             widths={[320, 640]}
             sizes="(max-width: 768px) 100vw, 340px"
           />
-          <h3 class="team-name">Luis Flores</h3>
-          <p class="team-role">Director General</p>
-        </div>
-        <div class="team-member">
+          <h3 class="team-name">Luis “El Tata” Flores</h3>
+          <p class="team-role">Fundador y CEO</p>
+          <p class="mt-4 text-[0.95rem] leading-[1.7] text-navy-60">
+            Con más de 15 años de experiencia en la industria deportiva dominicana. Ha liderado
+            torneos de fútbol sala y fútbol playa, clínicas, conferencias y la gestión de academias.
+          </p>
+        </article>
+        <article class="text-center">
           <Image
             src={anaFlores}
-            alt="Ana Flores, Directora Deportiva de Punta Cana FC"
-            class="team-photo"
+            alt="Ana Clara Flores, cofundadora y coordinadora de las sedes Village de Punta Cana FC"
+            class="mx-auto mb-5 aspect-[4/5] w-full max-w-[340px] rounded-2xl object-cover"
             loading="lazy"
             width={640}
             height={800}
             widths={[320, 640]}
             sizes="(max-width: 768px) 100vw, 340px"
           />
-          <h3 class="team-name">Ana Flores</h3>
-          <p class="team-role">Directora Deportiva</p>
-        </div>
+          <h3 class="team-name">Ana Clara Flores</h3>
+          <p class="team-role">Cofundadora · Coordinadora de las sedes Village</p>
+          <p class="mt-4 text-[0.95rem] leading-[1.7] text-navy-60">
+            Ha liderado la coordinación administrativa del club y fue la impulsora del plan de
+            inclusión social para que más niños pudieran acceder al fútbol.
+          </p>
+        </article>
       </div>
     </div>
   </section>
+
+  <!-- Metodología -->
+  <section class="section bg-navy-dark text-white" id="metodologia">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Cómo formamos"
+        title="Tres ejes, un mismo acompañamiento"
+        subtitle="El modelo integra Academia, Selecciones y Punta Cana FC Social. En cancha trabajamos técnica, táctica, físico y psicología; fuera de cancha acompañamos salud, colegio y familia."
+        onDark
+      />
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {
+          [
+            {
+              title: 'Academia',
+              copy: 'Formación por etapas, de 4 a 19 años, con evaluación inicial y objetivos claros por categoría.',
+            },
+            {
+              title: 'Selecciones',
+              copy: 'Equipos que representan al club en ligas y torneos. Hoy nuestra Sub-23 compite en LDF Expansión.',
+            },
+            {
+              title: 'PCFC Social',
+              copy: 'Inclusión, disciplina y pertenencia. El fútbol como herramienta para construir comunidad.',
+            },
+          ].map((axis) => (
+            <article class="rounded-2xl border border-white/15 bg-white/5 p-7">
+              <h3 class="h-card h-card--on-navy mb-3">{axis.title}</h3>
+              <p class="text-[0.95rem] leading-[1.7] text-white/80">{axis.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+      <ul
+        class="mt-10 grid list-none grid-cols-1 gap-3 text-[0.95rem] text-white/80 md:grid-cols-2"
+      >
+        <li>• Evaluaciones médicas y físicas con nutrición, medicina general y kinesiología.</li>
+        <li>• Seguimiento de notas escolares e informes deportivos semestrales.</li>
+        <li>• Plataforma para padres con asistencias y convocatorias.</li>
+        <li>• Metodología global y repetición sistemática del gesto técnico.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Palmarés -->
+  <section class="section bg-pure-white" id="palmares">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Palmarés"
+        title="Títulos que construyeron el camino"
+        subtitle="Un recorrido por los primeros años de competencia del club."
+      />
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {
+          AWARDS.map((group) => (
+            <article class="rounded-2xl border border-navy/10 bg-white p-7">
+              <span class="font-display text-3xl text-sky">{group.year}</span>
+              <ul class="mt-4 list-none space-y-3 text-[0.95rem] leading-[1.6] text-navy-60">
+                {group.items.map((item) => (
+                  <li>• {item}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+      <p class="mt-8 rounded-xl bg-navy-05 p-5 text-[0.95rem] leading-[1.7] text-navy">
+        {CURRENT_COMPETITION}
+      </p>
+    </div>
+  </section>
+
+  <!-- Sedes -->
+  <section class="section bg-navy-05" id="sedes">
+    <div class="container-x">
+      <SectionHeader
+        eyebrow="Dónde entrenamos"
+        title="Cuatro sedes en Punta Cana y Bávaro"
+        subtitle="Elige la más cercana y agenda la clase de prueba con su coordinador."
+      />
+      <SedeCards sedes={sedes} variant="inscribete" prueba />
+      <div class="mt-10">
+        <SedesMap />
+      </div>
+    </div>
+  </section>
+
+  <!-- Impacto social -->
+  <section class="section bg-pure-white" id="plan-padrino">
+    <div class="container-x">
+      <TwoColMedia
+        eyebrow="Impacto social"
+        title="El fútbol también abre puertas"
+        paragraphs={[
+          'Entre 30 y 50 niños han recibido apoyo para integrarse al club. Hoy estamos reactivando el Plan Padrino para que más familias puedan acceder a la formación deportiva de sus hijos.',
+          'Con USD 100 al mes apadrinas la formación de un niño. Abrimos 20 cupos para esta primera etapa y cada aporte se destina a mensualidad, uniforme o transporte.',
+        ]}
+        reverse
+      >
+        <a
+          href="https://wa.me/18292464756?text=Hola%2C%20quiero%20ser%20padrino%20de%20Punta%20Cana%20FC"
+          class="btn btn--primary"
+          target="_blank"
+          rel="noopener">Quiero ser padrino</a
+        >
+        <div slot="media">
+          <Image
+            src={galleryEntrenamiento}
+            alt="Jugadores de Punta Cana FC durante un entrenamiento"
+            class="w-full rounded-2xl object-cover"
+            loading="lazy"
+            width={800}
+            height={600}
+            widths={[400, 800]}
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+        </div>
+      </TwoColMedia>
+    </div>
+  </section>
+
+  <FaqSection
+    eyebrow="Dudas de padres"
+    title="Preguntas antes de elegir academia"
+    subtitle="Si no encuentras tu respuesta, escríbenos y te ayudamos a decidir."
+    faqs={CLUB_FAQS}
+  />
+
+  <FinalCta
+    eyebrow="Siguiente paso"
+    title="RESERVA SU CLASE DE PRUEBA GRATIS"
+    lede="Completa el formulario y el coordinador de la sede te contacta para agendar la prueba. Sin compromiso."
+    primaryLabel="Reservar clase de prueba"
+    primaryHref="/inscribete?prueba=1"
+    secondaryLabel="Ver categorías"
+    secondaryHref="/categorias"
+  />
 </Base>
 
 <style>
@@ -200,89 +376,12 @@ import anaFlores from '../assets/ana-flores.jpg';
     box-shadow: 0 16px 48px rgba(0, 40, 92, 0.22);
     position: relative;
   }
-
-  .mv-section {
-    background: var(--color-navy-dark);
-  }
-
-  .mv-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
-  .mv-card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
-    text-align: center;
-    padding: 3rem 2rem;
-    transition:
-      background-color 200ms ease,
-      border-color 200ms ease;
-  }
-
-  .mv-card:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.24);
-  }
-
-  .mv-icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 1.5rem;
-    background: var(--color-sky-10);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-sky);
-  }
-
-  .h-card--on-navy {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-  }
-
-  .mv-desc {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.95rem;
-    line-height: 1.7;
-  }
-
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3rem 2rem;
-    margin-top: 3rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .team-member {
-    text-align: center;
-  }
-
-  .team-photo {
-    width: 100%;
-    max-width: 340px;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 20px;
-    display: block;
-    margin: 0 auto 1.25rem;
-  }
-
   .team-name {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--color-navy);
   }
-
   .team-role {
     color: var(--color-sky);
     font-size: 0.85rem;
@@ -290,7 +389,6 @@ import anaFlores from '../assets/ana-flores.jpg';
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-
   @media (max-width: 992px) {
     .historia-collage__main {
       width: 100%;
@@ -298,12 +396,6 @@ import anaFlores from '../assets/ana-flores.jpg';
     .historia-collage__overlap {
       width: 78%;
       margin-top: -14%;
-    }
-    .mv-grid {
-      grid-template-columns: 1fr;
-    }
-    .team-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -10,6 +10,8 @@ interface Props {
   description?: string;
   showFixtures?: boolean;
   noindex?: boolean;
+  /** JSON-LD adicional de la página (BreadcrumbList, FAQPage, etc.). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
@@ -17,6 +19,7 @@ const {
   description = 'Academia premium de fútbol en Punta Cana. Entrenamiento profesional, formación integral y desarrollo de alto rendimiento para jugadores de 4 a 19 años.',
   showFixtures = false,
   noindex = false,
+  jsonLd,
 } = Astro.props;
 ---
 
@@ -116,24 +119,31 @@ const {
       is:inline
       set:html={JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'SportsOrganization',
+        '@type': 'SportsClub',
         name: 'Punta Cana FC',
         alternateName: 'PCFC',
         url: Astro.site?.href,
         logo: new URL('/Logo-PCFC.svg', Astro.site).href,
         description: description,
-        telephone: '+1-809-000-0000',
+        telephone: '+1-829-246-4756',
         email: 'info@puntacanafc.com',
+        foundingDate: '2017-01-20',
+        founder: [
+          { '@type': 'Person', name: 'Luis Flores' },
+          { '@type': 'Person', name: 'Ana Clara Flores' },
+        ],
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Punta Cana',
           addressRegion: 'La Altagracia',
           addressCountry: 'DO',
         },
+        areaServed: ['Punta Cana', 'Bávaro', 'La Altagracia'],
         sport: 'Football',
         sameAs: ['https://www.instagram.com/puntacanafc', 'https://www.facebook.com/puntacanafc'],
       })}
     />
+    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar al contenido</a>

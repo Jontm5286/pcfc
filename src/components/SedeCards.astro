@@ -19,10 +19,13 @@ import type { SedeContacto } from '../data/sedes';
 interface Props {
   sedes: SedeContacto[];
   variant?: 'inscribete' | 'area';
+  /** Añade ?prueba=1 al CTA del formulario (clase de prueba gratis). */
+  prueba?: boolean;
 }
 
-const { sedes, variant = 'area' } = Astro.props;
+const { sedes, variant = 'area', prueba = false } = Astro.props;
 const isForm = variant === 'inscribete';
+const trialParam = prueba ? '&prueba=1' : '';
 ---
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -57,7 +60,11 @@ const isForm = variant === 'inscribete';
         </p>
         <footer class:list={['pt-2 mt-auto flex flex-wrap gap-3', { 'items-center': !isForm }]}>
           <a
-            href={isForm ? `/inscribete?sede=${s.slug}#formulario` : `/inscribete?sede=${s.slug}`}
+            href={
+              isForm
+                ? `/inscribete?sede=${s.slug}${trialParam}#formulario`
+                : `/inscribete?sede=${s.slug}`
+            }
             class="btn btn--primary"
             aria-label={
               isForm ? `Elegir la sede ${s.nombre} en el formulario` : `Inscríbete en ${s.nombre}`

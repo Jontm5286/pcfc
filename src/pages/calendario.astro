@@ -17,6 +17,7 @@ import {
   academyCategoryToWeb,
   formatMatchDate,
   formatMatchTime,
+  matchSedeLine,
   type AcademyMatch,
   type WebCategorySlug,
 } from '../lib/academy-feed';
@@ -36,6 +37,7 @@ interface CalendarMatchItem {
   team1: string;
   team2: string;
   venue: string;
+  sedeLine?: string;
   photosHref?: string;
   past: boolean;
   score?: string;
@@ -51,7 +53,8 @@ function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
     time: formatMatchTime(m.matchTime),
     team1: `PCFC ${cat.short}`,
     team2: m.opponent || 'Rival por confirmar',
-    venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : 'Por confirmar'),
+    venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : (m.opponentSedeName?.trim() || m.sedeName?.trim() || 'Por confirmar')),
+    sedeLine: matchSedeLine(m) || undefined,
     photosHref: undefined,
     past,
     score: m.result ? `${m.result.home} - ${m.result.away}` : undefined,
@@ -280,6 +283,7 @@ const displayPast: CalendarMatchItem[] = livePlayed.length > 0 ? livePlayed : fa
               team1={match.team1}
               team2={match.team2}
               venue={match.venue}
+              sedeLine={match.sedeLine}
               photosHref={match.photosHref}
               past={match.past}
               score={match.score}
@@ -317,6 +321,7 @@ const displayPast: CalendarMatchItem[] = livePlayed.length > 0 ? livePlayed : fa
               team1={match.team1}
               team2={match.team2}
               venue={match.venue}
+              sedeLine={match.sedeLine}
               photosHref={match.photosHref}
               past={match.past}
               score={match.score}
