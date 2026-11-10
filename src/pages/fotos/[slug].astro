@@ -11,7 +11,7 @@ import GalleryGrid from '../../components/GalleryGrid.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import { getAllPosts } from '../../lib/fotos-posts';
 
-export const prerender = true;
+export const prerender = false;
 
 /** Slugs prerenderizados en build (EmDash vía getAllPosts). */
 export async function getStaticPaths() {
