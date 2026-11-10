@@ -11,11 +11,21 @@ import GalleryGrid from '../../components/GalleryGrid.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import { getAllPosts } from '../../lib/fotos-posts';
 
-export const prerender = false;
+export const prerender = true;
 
+/** Slugs prerenderizados en build (EmDash vía getAllPosts). */
+export async function getStaticPaths() {
+  const { posts } = await getAllPosts();
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+}
+
+type Props = { post?: Awaited<ReturnType<typeof getAllPosts>>['posts'][number] };
+
+// En build llega por props; en runtime (slugs nuevos tras el build) se
+// resuelve on-demand y mantiene el 404 si no existe.
 const slug = Astro.params.slug ?? '';
-const { posts } = await getAllPosts();
-const post = posts.find((p) => p.id === slug);
+const post =
+  (Astro.props as Props).post ?? (await getAllPosts()).posts.find((p) => p.id === slug);
 
 if (!post) {
   Astro.response.status = 404;

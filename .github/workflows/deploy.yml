@@ -1,0 +1,48 @@
+# PCFC — deploy a Cloudflare al publicar en EmDash
+#
+# Lo dispara el plugin pcfc-deploy-dispatch (hook content:afterPublish),
+# que hace POST a /repos/Jontm5286/pcfc/dispatches con event_type emdash-publish.
+# Secrets requeridos en GitHub (repo Settings → Secrets → Actions):
+#   CLOUDFLARE_API_TOKEN  (API Tokens → plantilla Edit Cloudflare Workers)
+#   CLOUDFLARE_ACCOUNT_ID (Workers → Overview → Account ID)
+name: Deploy a Cloudflare (EmDash publish)
+
+on:
+  repository_dispatch:
+    types: [emdash-publish]
+
+# Publicaciones seguidas no se pisan: se encolan en orden.
+concurrency:
+  group: pcfc-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (Cloudflare)
+        run: pnpm build:cf
+
+      - name: Deploy a Cloudflare Workers
+        run: pnpm exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

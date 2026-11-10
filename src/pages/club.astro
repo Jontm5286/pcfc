@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import SectionHeader from '../components/SectionHeader.astro';
@@ -9,7 +11,7 @@ import FaqSection from '../components/FaqSection.astro';
 import FinalCta from '../components/FinalCta.astro';
 import { Image } from 'astro:assets';
 import luisFlores from '../assets/luis-flores.jpg';
-import anaFlores from '../assets/ana-flores.jpg';
+import anaFlores from '../assets/ana-flores.webp';
 import galleryEntrenamiento from '../assets/gallery/entrenamiento-sub15.jpg';
 import { getSedes } from '../data/sedes';
 import { AWARDS, CLUB_FAQS, CURRENT_COMPETITION, TIMELINE, TRUST_STATS } from '../data/clubData';

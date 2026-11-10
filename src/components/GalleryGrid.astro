@@ -117,29 +117,37 @@ const keyFor = (index: number): string => photoKeys[index] ?? `${galleryId}:${in
     }>;
   };
 
-  document.querySelectorAll<HTMLElement>('[data-component="gallery-grid"]').forEach((grid) => {
-    const galleryId = grid.dataset.galleryId;
-    if (!galleryId) return;
-
-    const photos: PhotoEventDetail['photos'] = [];
-    grid.querySelectorAll<HTMLButtonElement>('.gallery-item').forEach((btn) => {
-      const img = btn.querySelector('img');
-      if (!img) return;
-      const captionEl = btn.querySelector<HTMLElement>('span.absolute.bottom-2.left-2');
-      photos.push({
-        src: img.getAttribute('src') ?? '',
-        alt: img.getAttribute('alt') ?? '',
-        caption: captionEl?.textContent?.trim() || undefined,
-        downloadName: img.getAttribute('download') || undefined,
-      });
-    });
-
-    grid.addEventListener('click', (event) => {
-      const target = (event.target as HTMLElement).closest<HTMLButtonElement>('.gallery-item');
+  // Delegación global idempotente en `document`: cubre también los grids
+  // añadidos después por "Cargar más" (/fotos, /fotos/todas). Las fotos se
+  // leen del DOM en el momento del click, no en la carga.
+  const w = window as unknown as Record<string, unknown>;
+  if (!w.__pcfcGalleryBound) {
+    w.__pcfcGalleryBound = true;
+    document.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest?.(
+        'button.gallery-item'
+      ) as HTMLElement | null;
       if (!target) return;
-      const index = Number(target.dataset.photoIndex ?? '0');
+      const grid = target.closest('[data-component="gallery-grid"]');
+      const galleryId = grid?.getAttribute('data-gallery-id');
+      if (!grid || !galleryId) return;
+
+      const photos: PhotoEventDetail['photos'] = [];
+      grid.querySelectorAll('button.gallery-item').forEach((btn) => {
+        const img = btn.querySelector('img');
+        if (!img) return;
+        const captionEl = btn.querySelector('span.absolute.bottom-2.left-2');
+        photos.push({
+          src: img.getAttribute('src') ?? '',
+          alt: img.getAttribute('alt') ?? '',
+          caption: captionEl?.textContent?.trim() || undefined,
+          downloadName: img.getAttribute('download') || undefined,
+        });
+      });
+
+      const index = Number(target.getAttribute('data-photo-index') ?? '0');
       const detail: PhotoEventDetail = { galleryId, index, photos };
       document.dispatchEvent(new CustomEvent<PhotoEventDetail>('photo:open', { detail }));
     });
-  });
+  }
 </script>

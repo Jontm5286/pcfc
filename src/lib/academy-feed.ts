@@ -270,16 +270,27 @@ let playersCache: { at: number; players: PublishedPlayer[] } | null = null;
 let heroCache: { at: number; hero: PublishedHero | null } | null = null;
 let categoriesCache: { at: number; categories: PublishedCategory[] } | null = null;
 
-/** Galerías publicadas con fotos desde EmDash. Vacío si falla. */
-export async function fetchPublishedGalleries(): Promise<{
+/** Galerías publicadas con fotos desde EmDash. Vacío si falla.
+ * Acepta paginación opcional (`limit`/`offset`, ejecutada en D1 vía
+ * EmDash). La caché en memoria solo aplica a la consulta completa
+ * (sin paginar) para no contaminarla con páginas parciales.
+ * El respaldo local se rebana según `limit`/`offset` cuando se pide
+ * una página, para que el total y las páginas sean coherentes. */
+export async function fetchPublishedGalleries(opts?: { limit?: number; offset?: number }): Promise<{
   galleries: PublishedGallery[];
   cacheHint?: unknown;
 }> {
+  const pageLimit = opts?.limit;
+  const pageOffset = opts?.offset ?? 0;
+  const paged = pageLimit !== undefined || pageOffset > 0;
+  const fallbackSlice = <T>(arr: T[]): T[] =>
+    paged ? arr.slice(pageOffset, pageLimit !== undefined ? pageOffset + pageLimit : undefined) : arr;
   try {
     const { getEmDashCollection } = await import('emdash');
     const { entries, cacheHint } = await getEmDashCollection('match_photos', {
       status: 'published',
-      limit: 100,
+      limit: pageLimit ?? 100,
+      ...(pageOffset > 0 ? { offset: pageOffset } : {}),
       orderBy: { published_at: 'desc' },
     });
     const galleries: PublishedGallery[] = [];
@@ -351,10 +362,11 @@ export async function fetchPublishedGalleries(): Promise<{
         showInHero: parseShowInHero(d.show_in_hero),
       });
     }
-    galleriesCache = { at: Date.now(), galleries, cacheHint };
+    if (!paged) galleriesCache = { at: Date.now(), galleries, cacheHint };
     return { galleries, cacheHint };
   } catch {
-    return galleriesCache ? { galleries: galleriesCache.galleries } : { galleries: [] };
+    if (galleriesCache) return { galleries: fallbackSlice(galleriesCache.galleries) };
+    return { galleries: [] };
   }
 }
 
@@ -618,4 +630,45 @@ export async function fetchPublishedCategories(): Promise<PublishedCategory[]> {
   } catch {
     return categoriesCache?.categories ?? [];
   }
+}
+
+/* ── Item de calendario (lo usan /calendario y GET /api/feed-vivo) ── */
+
+/** Fila de partido lista para renderizar (próximo o jugado). */
+export interface CalendarMatchItem {
+  categorySlug: WebCategorySlug;
+  categoryLabel: string;
+  date: string;
+  time?: string;
+  team1: string;
+  team2: string;
+  venue: string;
+  sedeLine?: string;
+  photosHref?: string;
+  /** Slug de galería resuelto (academy_id → slug, o slug calculado). */
+  slug?: string;
+  past: boolean;
+  score?: string;
+  opponentLogo?: string;
+}
+
+/** AcademyMatch → fila de calendario (sin photosHref; lo resuelve el llamador). */
+export function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
+  const cat = academyCategoryToWeb(m.category);
+  return {
+    categorySlug: cat.slug,
+    categoryLabel: cat.label,
+    date: formatMatchDate(m.matchDate),
+    time: formatMatchTime(m.matchTime),
+    team1: `PCFC ${cat.short}`,
+    team2: m.opponent || 'Rival por confirmar',
+    venue:
+      m.location ||
+      (m.isHome ? 'Cancha Principal · PCFC' : m.opponentSedeName?.trim() || m.sedeName?.trim() || 'Por confirmar'),
+    sedeLine: matchSedeLine(m) || undefined,
+    photosHref: undefined,
+    past,
+    score: m.result ? `${m.result.home} - ${m.result.away}` : undefined,
+    opponentLogo: m.opponentLogo || undefined,
+  };
 }

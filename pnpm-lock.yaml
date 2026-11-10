@@ -26,6 +26,9 @@ importers:
       astro:
         specifier: ^7.2.9
         version: 7.3.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.0)(jiti@2.7.0)(yaml@2.9.0)
+      pcfc-deploy-dispatch:
+        specifier: link:./plugins/pcfc-deploy-dispatch
+        version: link:plugins/pcfc-deploy-dispatch
       pcfc-email-resend:
         specifier: link:./plugins/pcfc-email-resend
         version: link:plugins/pcfc-email-resend
@@ -5064,13 +5067,13 @@ snapshots:
     dependencies:
       '@atcute/cid': 2.4.2
       '@atcute/multibase': 1.2.5
-      '@atcute/uint8array': 1.1.5
+      '@atcute/uint8array': 1.2.0
 
   '@atcute/cbor@2.3.6(@atcute/cid@2.5.0)':
     dependencies:
       '@atcute/cid': 2.5.0
       '@atcute/multibase': 1.2.5
-      '@atcute/uint8array': 1.1.5
+      '@atcute/uint8array': 1.2.0
 
   '@atcute/cid@2.4.2':
     dependencies:

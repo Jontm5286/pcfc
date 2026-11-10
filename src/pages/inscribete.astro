@@ -9,16 +9,18 @@ import WizardForm from '../components/inscribete/WizardForm.astro';
 import TrustSignals from '../components/inscribete/TrustSignals.astro';
 import { getSedes } from '../data/sedes';
 
-// Sede preseleccionada vía ?sede=<slug> (desde las tarjetas de sede en
-// /area-deportiva o en esta misma página → "Elegir esta sede").
-// Solo se aceptan slugs de getSedes(); cualquier otro valor se ignora.
-const sedeParam = (Astro.url.searchParams.get('sede') ?? '').trim().toLowerCase();
-const sedeSlugs = new Set(getSedes().map((s) => s.slug));
-const sedePreseleccionada = sedeSlugs.has(sedeParam) ? sedeParam : '';
+export const prerender = true;
+
 const sedes = getSedes();
 
+// Prerender: se sirve el estado por defecto; ?sede= y ?prueba= se aplican en
+// cliente con el <script> al final de esta página (paridad con el SSR previo).
+// Sede preseleccionada vía ?sede=<slug> (desde /area-deportiva o "Elegir esta
+// sede"); solo slugs de getSedes(), el resto se ignora (validado en cliente).
+const sedePreseleccionada = '';
+
 // Clase de prueba gratis: /inscribete?prueba=1 (desde /club y sedes).
-const modoPrueba = Astro.url.searchParams.get('prueba') === '1';
+const modoPrueba = false;
 
 // NOTA: ya no se pide categoría en el formulario (decisión del club).
 // El wizard deriva una categoría PROVISIONAL desde la fecha de nacimiento
@@ -133,4 +135,87 @@ const modoPrueba = Astro.url.searchParams.get('prueba') === '1';
     contactEmail="admisiones@puntacanafc.com"
     contactPhone="+1 829-246-4756"
   />
+
+  <!-- ?sede= / ?prueba= en cliente (página prerenderizada): aplica la misma
+       preselección y copy que antes se resolvía en servidor. Sin params, la
+       página queda en su estado por defecto. NOTA: los textos deben coincidir
+       con las props de PageHero/WizardForm de arriba y la clave del borrador
+       con WizardForm.astro (DRAFT_KEY). -->
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const sedeParam = (params.get('sede') ?? '').trim().toLowerCase();
+      const esPrueba = params.get('prueba') === '1';
+      if (!sedeParam && !esPrueba) return;
+
+      const root = document.getElementById('formulario');
+
+      // Sede: solo slugs con botón real; el borrador guardado manda (paridad
+      // con el SSR, donde loadDraft() ganaba a la preselección del servidor).
+      if (sedeParam) {
+        const btn = document.querySelector<HTMLElement>(
+          '#wiz-sedes button[data-slug="' + CSS.escape(sedeParam) + '"]'
+        );
+        let draftSede = '';
+        try {
+          const d = JSON.parse(
+            window.localStorage.getItem('pcfc-inscripcion-draft-v1') ?? '{}'
+          );
+          if (d && typeof d.sede === 'string') draftSede = d.sede;
+        } catch {
+          /* almacenamiento no disponible */
+        }
+        const draftValido =
+          !!draftSede &&
+          !!document.querySelector(
+            '#wiz-sedes button[data-slug="' + CSS.escape(draftSede) + '"]'
+          );
+        if (btn && !draftValido) {
+          if (root) root.dataset.sedePreselect = sedeParam;
+          btn.click();
+        }
+      }
+
+      // Modo prueba (?prueba=1): mismo copy del servidor.
+      if (esPrueba) {
+        if (root) root.dataset.modoPrueba = '1';
+        const hero = document.querySelector('.hero-with-image');
+        if (hero) {
+          const eyebrow = hero.querySelector('.eyebrow');
+          if (eyebrow)
+            eyebrow.textContent = 'Clase de prueba gratis · Temporada 2026';
+          const h1 = hero.querySelector('h1');
+          if (h1) h1.innerHTML = 'Reserva su clase<br />de prueba';
+          const lede = hero.querySelector('.lede');
+          if (lede)
+            lede.innerHTML =
+              'Completa el formulario y el coordinador de la sede te contacta para agendar la clase de prueba gratis. Sin compromiso.';
+        }
+        if (root) {
+          const wizEyebrow = root.querySelector('.wiz-eyebrow');
+          if (wizEyebrow)
+            wizEyebrow.textContent = 'Clase de prueba · 4 pasos cortos';
+          const h2 = root.querySelector('h2');
+          if (h2) h2.textContent = 'Reserva su clase de prueba';
+          if (!root.querySelector('.wiz-trial')) {
+            const trial = document.createElement('p');
+            trial.className = 'wiz-trial';
+            trial.textContent =
+              'Incluye una clase de prueba gratis. El coordinador de la sede te contacta para agendar.';
+            const sub = root.querySelector('.wiz-sub');
+            if (sub) sub.before(trial);
+            else root.prepend(trial);
+          }
+          const send = document.getElementById('wiz-send');
+          if (send) send.textContent = 'Solicitar clase de prueba';
+          const okTitle = root.querySelector('[data-step="5"] .wiz-title');
+          if (okTitle) okTitle.textContent = '¡Solicitud recibida!';
+          const okMsg = document.getElementById('wiz-okmsg');
+          if (okMsg)
+            okMsg.textContent =
+              'Te contactaremos por WhatsApp en menos de 48 horas para agendar la clase de prueba gratis.';
+        }
+      }
+    })();
+  </script>
 </Base>

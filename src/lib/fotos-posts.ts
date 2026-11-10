@@ -5,7 +5,7 @@
  * hardcodeado cuando EmDash viene vacío.
  */
 import type { Photo } from '../components/GalleryGrid.astro';
-import { fetchPublishedGalleries } from './academy-feed';
+import { fetchPublishedGalleries, type PublishedGallery } from './academy-feed';
 
 export interface MatchPost {
   id: string;
@@ -177,6 +177,28 @@ export const FALLBACK_POSTS: MatchPost[] = [
   },
 ];
 
+/** Mapeo único galería EmDash → MatchPost (lo usan getAllPosts y getPostsPage). */
+function mapGalleryToPost(g: PublishedGallery): MatchPost {
+  return {
+    id: g.slug,
+    categorySlug: g.categorySlug,
+    categoryLabel: g.categoryLabel,
+    team1: g.team1,
+    team2: g.team2,
+    title: g.title,
+    date: g.date,
+    photoCount: g.photos.length,
+    thumbnail: g.thumbnail,
+    thumbnailAlt: g.thumbnailAlt,
+    photos: g.photos.map((ph, i) => ({
+      src: ph.src,
+      alt: ph.alt,
+      caption: ph.caption,
+      downloadName: `${g.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
+    })),
+  };
+}
+
 /**
  * Todos los posts: EmDash (recientes primero, orderBy published_at desc)
  * o respaldo local si EmDash viene vacío.
@@ -187,26 +209,56 @@ export async function getAllPosts(): Promise<{
 }> {
   const { galleries: emdashGalleries, cacheHint } = await fetchPublishedGalleries();
   if (emdashGalleries.length === 0) return { posts: FALLBACK_POSTS };
+  return { posts: emdashGalleries.map(mapGalleryToPost), cacheHint };
+}
+
+// ──────────────────────────────────────────────────────────────
+// Paginación servidor (GET /api/fotos + páginas híbridas).
+// La página de items se lee con LIMIT/OFFSET en D1; el total se
+// cachea 5 min en memoria para no pagar un full-scan por request.
+// ──────────────────────────────────────────────────────────────
+const TOTAL_TTL_MS = 5 * 60 * 1000;
+let totalCache: { at: number; total: number } | null = null;
+
+async function getGalleriesTotal(): Promise<number> {
+  if (totalCache && Date.now() - totalCache.at < TOTAL_TTL_MS) return totalCache.total;
+  const { galleries } = await fetchPublishedGalleries();
+  const total = galleries.length === 0 ? FALLBACK_POSTS.length : galleries.length;
+  totalCache = { at: Date.now(), total };
+  return total;
+}
+
+export interface PostsPage {
+  posts: MatchPost[];
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+}
+
+/**
+ * Una página de posts. `page` se sujeta a >= 1; páginas más allá
+ * del total devuelven `posts: []` (no rompen).
+ */
+export async function getPostsPage(page: number, perPage: number): Promise<PostsPage> {
+  const safePage = Number.isFinite(page) && page >= 1 ? Math.floor(page) : 1;
+  const safePerPage =
+    Number.isFinite(perPage) && perPage >= 1 ? Math.min(Math.floor(perPage), 50) : 10;
+  const offset = (safePage - 1) * safePerPage;
+  const [total, { galleries }] = await Promise.all([
+    getGalleriesTotal(),
+    fetchPublishedGalleries({ limit: safePerPage, offset }),
+  ]);
+  const posts =
+    galleries.length === 0
+      ? FALLBACK_POSTS.slice(offset, offset + safePerPage)
+      : galleries.map(mapGalleryToPost);
   return {
-    posts: emdashGalleries.map((g) => ({
-      id: g.slug,
-      categorySlug: g.categorySlug,
-      categoryLabel: g.categoryLabel,
-      team1: g.team1,
-      team2: g.team2,
-      title: g.title,
-      date: g.date,
-      photoCount: g.photos.length,
-      thumbnail: g.thumbnail,
-      thumbnailAlt: g.thumbnailAlt,
-      photos: g.photos.map((ph, i) => ({
-        src: ph.src,
-        alt: ph.alt,
-        caption: ph.caption,
-        downloadName: `${g.slug}-${String(i + 1).padStart(2, '0')}.jpg`,
-      })),
-    })),
-    cacheHint,
+    posts,
+    page: safePage,
+    perPage: safePerPage,
+    total,
+    totalPages: Math.max(1, Math.ceil(total / safePerPage)),
   };
 }
 

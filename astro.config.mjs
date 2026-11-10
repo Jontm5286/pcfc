@@ -13,6 +13,8 @@ import { pcfcMediaGalleryPlugin } from 'pcfc-media-gallery';
 // Proveedor de email transaccional vía Resend (plugins/pcfc-email-resend).
 // Solo prod (Workers): habilita el magic link donde no hay proveedor de consola.
 import { pcfcEmailResendPlugin } from 'pcfc-email-resend';
+// Dispara el deploy a Cloudflare vía GitHub Actions al publicar (plugins/pcfc-deploy-dispatch).
+import { pcfcDeployDispatchPlugin } from 'pcfc-deploy-dispatch';
 
 // ============================================================
 // PCFC — Astro 7 + EmDash CMS + Tailwind v4 + Cloudflare
@@ -72,7 +74,7 @@ export default defineConfig({
             storage: r2({ binding: 'MEDIA' }),
             // Resend SOLO en prod: en dev el proveedor de consola basta
             // y no hay API key configurada.
-            plugins: [pcfcMediaGalleryPlugin(), pcfcEmailResendPlugin()],
+            plugins: [pcfcMediaGalleryPlugin(), pcfcEmailResendPlugin(), pcfcDeployDispatchPlugin()],
           }
         : {
             // Alineado con el comentario: apunta a data/emdash.db para evitar el error 'unable to open database file'
@@ -83,7 +85,7 @@ export default defineConfig({
               directory: './data/media',
               baseUrl: '/_emdash/api/media/file',
             }),
-            plugins: [pcfcMediaGalleryPlugin()],
+            plugins: [pcfcMediaGalleryPlugin(), pcfcDeployDispatchPlugin()],
           },
     ),
   ],

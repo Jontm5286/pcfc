@@ -16,6 +16,8 @@ import CategoryList, { type Category } from '../components/CategoryList.astro';
 import FinalCta from '../components/FinalCta.astro';
 import { fetchPublishedCategories, type PublishedCategory } from '../lib/academy-feed';
 
+export const prerender = true;
+
 // Respaldo local (idéntico al hardcodeado previo): se usa si EmDash viene
 // vacío o falla. Patrón index.astro (fetchPublishedGalleries + fallback).
 const fallbackCategories = [

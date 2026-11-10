@@ -14,13 +14,12 @@ import { buildMatchSlug } from '../lib/match-photos';
 import {
   fetchAcademyFeed,
   fetchPublishedGalleries,
-  academyCategoryToWeb,
-  formatMatchDate,
-  formatMatchTime,
-  matchSedeLine,
+  toCalendarItem,
   type AcademyMatch,
-  type WebCategorySlug,
+  type CalendarMatchItem,
 } from '../lib/academy-feed';
+
+export const prerender = true;
 
 // ---------------------------------------------------------------------------
 // Feed en vivo: convocatorias de la app de gestión (FutbolPro Academy).
@@ -28,39 +27,6 @@ import {
 // Sin auth y con CORS abierto; solo expone datos aptos para publicar.
 // Si el feed falla o viene vacío, se usan los arreglos locales de respaldo.
 // ---------------------------------------------------------------------------
-
-interface CalendarMatchItem {
-  categorySlug: WebCategorySlug;
-  categoryLabel: string;
-  date: string;
-  time?: string;
-  team1: string;
-  team2: string;
-  venue: string;
-  sedeLine?: string;
-  photosHref?: string;
-  past: boolean;
-  score?: string;
-  opponentLogo?: string;
-}
-
-function toCalendarItem(m: AcademyMatch, past: boolean): CalendarMatchItem {
-  const cat = academyCategoryToWeb(m.category);
-  return {
-    categorySlug: cat.slug,
-    categoryLabel: cat.label,
-    date: formatMatchDate(m.matchDate),
-    time: formatMatchTime(m.matchTime),
-    team1: `PCFC ${cat.short}`,
-    team2: m.opponent || 'Rival por confirmar',
-    venue: m.location || (m.isHome ? 'Cancha Principal · PCFC' : (m.opponentSedeName?.trim() || m.sedeName?.trim() || 'Por confirmar')),
-    sedeLine: matchSedeLine(m) || undefined,
-    photosHref: undefined,
-    past,
-    score: m.result ? `${m.result.home} - ${m.result.away}` : undefined,
-    opponentLogo: m.opponentLogo || undefined,
-  };
-}
 
 // NOTA: el fetch del feed en vivo y las listas display van DESPUÉS de los
 // arreglos de respaldo (const no admite uso anticipado).
@@ -307,6 +273,7 @@ const displayPast: CalendarMatchItem[] = livePlayed.length > 0 ? livePlayed : fa
       />
 
       <ul
+        id="match-list-past"
         class="list-none bg-white border border-navy/10 rounded-lg overflow-hidden"
         role="list"
         aria-label="Partidos jugados"
@@ -340,3 +307,89 @@ const displayPast: CalendarMatchItem[] = livePlayed.length > 0 ? livePlayed : fa
     </div>
   </section>
 </Base>
+
+<script>
+  // ── Hidratación viva: re-render con GET /api/feed-vivo ────────────────────
+  // El shell prerenderizado queda como fallback. Si el endpoint responde con
+  // listas no vacías, se reconcilian los photosHref contra /api/fotos
+  // (set de slugs publicados; por academy_id vía `slug`, con fallback al
+  // href que trae el servidor) y se re-renderizan las listas.
+  // Con API caída o respuesta vacía: no se toca el DOM, nunca se rompe.
+  interface CalendarItem {
+    categorySlug: string;
+    categoryLabel: string;
+    date: string;
+    time?: string;
+    team1: string;
+    team2: string;
+    venue: string;
+    sedeLine?: string;
+    photosHref?: string;
+    slug?: string;
+    past: boolean;
+    score?: string;
+    opponentLogo?: string;
+  }
+
+  async function hydrateCalendario() {
+    let feed: { upcoming?: CalendarItem[]; played?: CalendarItem[] } | undefined;
+    try {
+      const res = await fetch('/api/feed-vivo', { headers: { Accept: 'application/json' } });
+      if (!res.ok) return;
+      feed = await res.json();
+    } catch {
+      return;
+    }
+    if (!feed || (!feed.upcoming?.length && !feed.played?.length)) return;
+
+    // Set de galerías publicadas hoy (para reconciliar "Ver fotos").
+    let published: Set<string> | null = null;
+    try {
+      const res = await fetch('/api/fotos?page=1&limit=50', { headers: { Accept: 'application/json' } });
+      if (res.ok) {
+        const data = await res.json();
+        published = new Set((data.posts ?? []).map((p: { id: string }) => p.id));
+      }
+    } catch {
+      published = null;
+    }
+
+    const esc = (s: unknown): string =>
+      String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const pinSvg =
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0 text-navy-60" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
+    const camSvg =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>';
+
+    const renderItem = (m: CalendarItem): string => {
+      const photosHref =
+        published && m.slug
+          ? published.has(m.slug)
+            ? `/fotos#${m.slug}`
+            : undefined
+          : m.photosHref;
+      const action = m.past
+        ? photosHref
+          ? `<a href="${esc(photosHref)}" class="inline-flex items-center gap-1.5 text-[0.8rem] font-semibold text-sky hover:text-navy transition-colors duration-150 whitespace-nowrap" aria-label="Ver fotos del partido ${esc(m.team1)} vs ${esc(m.team2)}">${camSvg}Ver fotos</a>`
+          : '<span class="text-[0.8rem] text-navy-60 italic">Sin fotos</span>'
+        : '<span class="badge badge--sky text-[0.7rem]">Próximo</span>';
+      return `<li class="match-item border-b border-navy/10 last:border-b-0 bg-white hover:bg-sky-05 transition-colors duration-150" data-category="${esc(m.categorySlug)}"><div class="container-x flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-4"><div class="flex items-center gap-3 sm:min-w-[160px]"><span class="badge badge--${esc(m.categorySlug)}">${esc(m.categoryLabel)}</span><div class="flex flex-col"><span class="text-[0.8rem] font-semibold text-navy tracking-wide">${esc(m.date)}</span>${m.time ? `<span class="text-[0.75rem] text-navy-60 font-normal">${esc(m.time)}</span>` : ''}</div></div><div class="flex-1 flex items-center gap-3 min-w-0"><span class="font-body font-semibold text-[0.95rem] text-navy shrink-0">${esc(m.team1)}</span>${m.score ? `<span class="text-[0.8rem] font-bold text-navy bg-sky-05 border border-navy/10 rounded px-1.5 py-0.5 shrink-0">${esc(m.score)}</span>` : '<span class="text-navy-60 text-[0.75rem] font-semibold shrink-0">vs</span>'}<span class="font-body font-semibold text-[0.95rem] text-navy-60 shrink-0 min-w-0 truncate inline-flex items-center gap-1.5">${m.opponentLogo ? `<img src="${esc(m.opponentLogo)}" alt="Escudo de ${esc(m.team2)}" loading="lazy" width="20" height="20" class="w-5 h-5 rounded-full object-cover shrink-0" />` : ''}${esc(m.team2)}</span></div><div class="flex flex-col sm:min-w-[160px]"><div class="flex items-center gap-1.5">${pinSvg}<span class="text-[0.8rem] text-navy-60 whitespace-nowrap">${esc(m.venue)}</span></div>${m.sedeLine ? `<span class="text-[0.75rem] font-semibold text-navy mt-0.5 pl-[19px]">${esc(m.sedeLine)}</span>` : ''}</div><div class="flex items-center gap-3 sm:shrink-0">${action}</div></div></li>`;
+    };
+
+    if (feed.upcoming?.length) {
+      const ul = document.getElementById('match-list');
+      if (ul) ul.innerHTML = feed.upcoming.map(renderItem).join('');
+    }
+    if (feed.played?.length) {
+      const ul = document.getElementById('match-list-past');
+      if (ul) ul.innerHTML = feed.played.map(renderItem).join('');
+    }
+  }
+
+  hydrateCalendario();
+</script>

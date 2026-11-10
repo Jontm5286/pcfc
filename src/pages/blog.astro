@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import { getCollection } from 'astro:content';
 
+export const prerender = true;
+
 // FASE 3: índice real desde la colección local `blog` (file-based, sin EmDash).
 const allPosts = (await getCollection('blog'))
   .filter((p) => p.data.published !== false)
@@ -27,11 +29,10 @@ for (const p of allPosts) {
 }
 const categories = [...catMap.entries()].map(([slug, v]) => ({ slug, ...v }));
 
-// Filtrado funcional vía ?categoria=<slug> (output: server → por request).
-const activeCat = Astro.url.searchParams.get('categoria') ?? '';
-const posts = activeCat
-  ? allPosts.filter((p) => slugify(p.data.category || 'Noticias') === activeCat)
-  : allPosts;
+// Página estática (prerender): se renderizan TODOS los posts en build y el
+// filtro ?categoria=<slug> se aplica en cliente (script al final del archivo),
+// así los deep links /blog?categoria=x siguen funcionando sin SSR por request.
+const posts = allPosts;
 
 function badgeClass(label: string): string {
   const s = slugify(label);
@@ -72,9 +73,28 @@ function postUrl(p: (typeof allPosts)[number]): string {
       <div class="blog-layout">
         <!-- Main Content -->
         <div class="blog-main">
-          {
-            posts.length === 0 ? (
-              <div class="blog-empty">
+          <div class="blog-grid" id="blog-grid">
+            {posts.map((p) => (
+              <article class="blog-card" data-cat={slugify(p.data.category || 'Noticias')}>
+                <div class="blog-card__top">
+                  <span class={`badge ${badgeClass(p.data.category || 'Noticias')}`}>
+                    {p.data.category || 'Noticias'}
+                  </span>
+                  <time datetime={p.data.publishedAt} class="blog-card__date">
+                    {formatDate(p.data.publishedAt)}
+                  </time>
+                </div>
+                <h2 class="blog-card__title">
+                  <a href={postUrl(p)}>{p.data.title}</a>
+                </h2>
+                {p.data.excerpt && <p class="blog-card__excerpt">{p.data.excerpt}</p>}
+                <a href={postUrl(p)} class="blog-card__link">
+                  Leer artículo <span aria-hidden="true">→</span>
+                </a>
+              </article>
+            ))}
+          </div>
+          <div class="blog-empty" id="blog-empty" hidden>
                 <div class="empty-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -100,30 +120,6 @@ function postUrl(p: (typeof allPosts)[number]): string {
                   Ver todos
                 </a>
               </div>
-            ) : (
-              <div class="blog-grid">
-                {posts.map((p) => (
-                  <article class="blog-card">
-                    <div class="blog-card__top">
-                      <span class={`badge ${badgeClass(p.data.category || 'Noticias')}`}>
-                        {p.data.category || 'Noticias'}
-                      </span>
-                      <time datetime={p.data.publishedAt} class="blog-card__date">
-                        {formatDate(p.data.publishedAt)}
-                      </time>
-                    </div>
-                    <h2 class="blog-card__title">
-                      <a href={postUrl(p)}>{p.data.title}</a>
-                    </h2>
-                    {p.data.excerpt && <p class="blog-card__excerpt">{p.data.excerpt}</p>}
-                    <a href={postUrl(p)} class="blog-card__link">
-                      Leer artículo <span aria-hidden="true">→</span>
-                    </a>
-                  </article>
-                ))}
-              </div>
-            )
-          }
         </div>
 
         <!-- Sidebar -->
@@ -135,21 +131,19 @@ function postUrl(p: (typeof allPosts)[number]): string {
                 <a
                   href="/blog"
                   class="sidebar-link"
-                  aria-current={activeCat === '' ? 'page' : undefined}
+                  data-cat-link=""
+                  aria-current="page"
                 >
-                  <span class="badge badge--sky"
-                    >Todas{activeCat === '' ? ` (${allPosts.length})` : ''}</span
-                  >
-                  {activeCat !== '' && <span class="sidebar-count">{allPosts.length}</span>}
+                  <span class="badge badge--sky">Todas ({allPosts.length})</span>
                 </a>
               </li>
               {
                 categories.map((c) => (
                   <li>
                     <a
-                      href={activeCat === c.slug ? '/blog' : `/blog?categoria=${c.slug}`}
+                      href={`/blog?categoria=${c.slug}`}
                       class="sidebar-link"
-                      aria-current={activeCat === c.slug ? 'page' : undefined}
+                      data-cat-link={c.slug}
                     >
                       <span class={`badge ${badgeClass(c.label)}`}>{c.label}</span>
                       <span class="sidebar-count">{c.count}</span>
@@ -213,6 +207,36 @@ function postUrl(p: (typeof allPosts)[number]): string {
       </div>
     </div>
   </section>
+
+  <script>
+    // Filtro ?categoria=<slug> en cliente (la página es estática/prerender).
+    // Sin ?categoria= no hace nada (se muestran todos los posts del build).
+    // Con slug inexistente no rompe: muestra el estado vacío sensato.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var cat = params.get('categoria') || '';
+      if (!cat) return;
+      var cards = document.querySelectorAll<HTMLElement>('#blog-grid .blog-card');
+      var visible = 0;
+      cards.forEach(function (card) {
+        var match = card.getAttribute('data-cat') === cat;
+        card.hidden = !match;
+        if (match) visible += 1;
+      });
+      var empty = document.getElementById('blog-empty');
+      if (empty) empty.hidden = visible !== 0;
+      // Refleja el filtro activo en el sidebar (toggle-off → /blog).
+      document.querySelectorAll<HTMLAnchorElement>('[data-cat-link]').forEach(function (link) {
+        var slug = link.getAttribute('data-cat-link') || '';
+        if (slug === cat) {
+          link.setAttribute('aria-current', 'page');
+          if (slug !== '') link.setAttribute('href', '/blog');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    })();
+  </script>
 </Base>
 
 <style>

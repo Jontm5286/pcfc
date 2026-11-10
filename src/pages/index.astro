@@ -43,6 +43,8 @@ import {
 import { getCollection } from 'astro:content';
 import { getSeasonPills } from '../lib/content';
 
+export const prerender = true;
+
 // Load static datasets for home page sections
 // Fuentes vivas en PARALELO (una sola consulta D1 de galerías, compartida
 // entre hero y comunidad). Cada fuente con respaldo si falla: la página
@@ -226,3 +228,52 @@ const featuredPlayers: FeaturedPlayer[] =
   <!-- CTA INSCRIPCIÓN — acción: el siguiente paso -->
   <EnrollmentCta />
 </Base>
+
+<script>
+  // ── Hidratación viva: hero + últimas galerías contra /api/fotos ────────────
+  // El shell prerenderizado (fallback de build) queda intacto. Si el endpoint
+  // responde con posts, se sustituyen los <img> del rotador del hero y del
+  // mosaico de comunidad por los thumbnails más recientes (con enlace a
+  // /fotos#slug). Con API caída o sin posts: no se toca el DOM, nunca se rompe.
+  async function hydrateHome() {
+    let posts: Array<{ id: string; title: string; thumbnail: string; thumbnailAlt?: string }> = [];
+    try {
+      const res = await fetch('/api/fotos?page=1&limit=6', {
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      posts = data.posts ?? [];
+    } catch {
+      return;
+    }
+    if (!posts.length) return;
+
+    const swapInto = (
+      img: HTMLImageElement,
+      post: { id: string; title: string; thumbnail: string; thumbnailAlt?: string },
+    ): void => {
+      img.src = post.thumbnail;
+      if (post.thumbnailAlt) img.alt = post.thumbnailAlt;
+      const parent = img.closest('a, figure');
+      if (parent) {
+        if (parent.tagName === 'A') parent.setAttribute('href', `/fotos#${post.id}`);
+        parent.setAttribute('aria-label', `Ver galería: ${post.title}`);
+        const caption = parent.querySelector('figcaption span:last-child');
+        if (caption) caption.textContent = post.title;
+      }
+    };
+
+    const heroImgs = document.querySelectorAll<HTMLImageElement>('[data-rotator-grid] img');
+    heroImgs.forEach((img, i) => {
+      if (posts[i]) swapInto(img, posts[i]);
+    });
+
+    const mosaicImgs = document.querySelectorAll<HTMLImageElement>('[data-component="community-mosaic"] img');
+    mosaicImgs.forEach((img, i) => {
+      if (posts[i]) swapInto(img, posts[i]);
+    });
+  }
+
+  hydrateHome();
+</script>

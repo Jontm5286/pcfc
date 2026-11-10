@@ -105,9 +105,6 @@ const { photoKey, label = 'Me gusta esta foto' } = Astro.props;
     };
 
     const liked = loadLiked();
-    const buttons = [...document.querySelectorAll<HTMLButtonElement>('.like-btn[data-photo-key]')];
-    if (buttons.length === 0) return;
-    const keys = [...new Set(buttons.map((b) => b.dataset.photoKey ?? '').filter(Boolean))];
 
     const paint = (btn: HTMLButtonElement, count: number, isLiked: boolean) => {
       const countEl = btn.querySelector('[data-like-count]');
@@ -116,21 +113,7 @@ const { photoKey, label = 'Me gusta esta foto' } = Astro.props;
       btn.setAttribute('aria-label', `Me gusta esta foto (${count})`);
     };
 
-    // 1 request en lote por página.
-    try {
-      const res = await fetch(`/api/foto-likes?ids=${encodeURIComponent(keys.join(','))}`);
-      if (res.ok) {
-        const { counts } = (await res.json()) as { counts: Record<string, number> };
-        for (const btn of buttons) {
-          const k = btn.dataset.photoKey ?? '';
-          paint(btn, counts[k] ?? 0, liked.has(k));
-        }
-      }
-    } catch {
-      /* sin red: los botones quedan en 0 y el click lo intentará igual */
-    }
-
-    for (const btn of buttons) {
+    const wireButton = (btn: HTMLButtonElement) => {
       btn.addEventListener('click', async (event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -162,6 +145,38 @@ const { photoKey, label = 'Me gusta esta foto' } = Astro.props;
           btn.disabled = false;
         }
       });
-    }
+    };
+
+    // Cablea los botones no vinculados dentro de `scope` (document en carga
+    // inicial): 1 GET en lote para pintar + handler de voto por botón.
+    // Expuesta como `window.__pcfcBindLikes` para el contenido que añade
+    // "Cargar más" (/fotos, /fotos/todas).
+    const bindLikeButtons = async (scope: Document | Element) => {
+      const buttons = [...scope.querySelectorAll<HTMLButtonElement>('.like-btn[data-photo-key]')].filter(
+        (b) => !b.dataset.likesBound
+      );
+      if (buttons.length === 0) return;
+      for (const b of buttons) b.dataset.likesBound = '1';
+      const keys = [...new Set(buttons.map((b) => b.dataset.photoKey ?? '').filter(Boolean))];
+
+      // 1 request en lote por página.
+      try {
+        const res = await fetch(`/api/foto-likes?ids=${encodeURIComponent(keys.join(','))}`);
+        if (res.ok) {
+          const { counts } = (await res.json()) as { counts: Record<string, number> };
+          for (const btn of buttons) {
+            const k = btn.dataset.photoKey ?? '';
+            paint(btn, counts[k] ?? 0, liked.has(k));
+          }
+        }
+      } catch {
+        /* sin red: los botones quedan en 0 y el click lo intentará igual */
+      }
+
+      for (const btn of buttons) wireButton(btn);
+    };
+
+    await bindLikeButtons(document);
+    w.__pcfcBindLikes = bindLikeButtons;
   })();
 </script>

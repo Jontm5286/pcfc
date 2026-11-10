@@ -1,0 +1,14 @@
+{
+  "name": "pcfc-deploy-dispatch",
+  "version": "1.0.0",
+  "description": "Dispara el deploy a Cloudflare vía GitHub Actions (repository_dispatch) cuando se publica contenido en EmDash.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/plugin.ts"
+  },
+  "peerDependencies": {
+    "emdash": ">=1.3.1"
+  }
+}

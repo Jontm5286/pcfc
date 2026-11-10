@@ -8,14 +8,20 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import GalleryGrid from '../components/GalleryGrid.astro';
-import { getAllPosts } from '../lib/fotos-posts';
+import { getAllPosts, getPostsPage } from '../lib/fotos-posts';
 import { getLikesStore, resolveD1Binding } from '../lib/foto-likes-db';
 import { pickDestacadas, photoKey } from '../lib/foto-likes-key';
 import Lightbox from '../components/Lightbox.astro';
 
-export const prerender = false;
+export const prerender = true;
 
 const { posts } = await getAllPosts();
+
+// Híbrida: la página 1 se prerenderiza en build; las páginas 2+ llegan en
+// cliente vía GET /api/fotos (botón "Cargar más").
+const PER_PAGE = 10;
+const firstPage = await getPostsPage(1, PER_PAGE);
+const pagePosts = firstPage.posts;
 const featured = pickDestacadas(posts, 8);
 const featuredPhotos = featured.map((d) => ({ src: d.src, alt: d.alt, caption: d.caption }));
 const featuredKeys = featured.map((d) => photoKey(d.galleryId, d.index));
@@ -37,7 +43,7 @@ if (store) {
 }
 
 // Top-4 con más likes por partido (empates: índice original primero).
-const sections = posts.map((post) => {
+const sections = pagePosts.map((post) => {
   const ranked = post.photos
     .map((ph, i) => ({ ph, i, likes: counts[photoKey(post.id, i)] ?? 0 }))
     .sort((a, b) => b.likes - a.likes || a.i - b.i)
@@ -97,7 +103,9 @@ const description =
 
   <!-- ============================================ -->
   <!-- POR PARTIDO — top-4 con más likes + Ver todas -->
+  <!-- (página 1 prerenderizada; resto vía "Cargar más") -->
   <!-- ============================================ -->
+  <div id="partidos">
   {
     sections.map(({ post, photos, keys }) => (
       <section id={post.id} class="section bg-pure-white border-t border-navy/10">
@@ -139,6 +147,19 @@ const description =
       </section>
     ))
   }
+  </div>
+
+  <div
+    class="container-x text-center py-10"
+    id="cargar-mas-wrap"
+    data-total-pages={firstPage.totalPages}
+    hidden={firstPage.totalPages <= 1}
+  >
+    <button type="button" class="btn btn--outline btn--lg" id="cargar-mas">
+      Cargar más partidos
+    </button>
+    <p class="mt-3 text-[0.85rem] text-navy-60 font-medium" id="cargar-mas-estado"></p>
+  </div>
 
   <!-- ============================================ -->
   <!-- ARCHIVO — CTA final al paginado              -->
@@ -167,6 +188,166 @@ const description =
       </p>
     </div>
   </section>
+
+  <script>
+    // "Cargar más" — páginas 2+ de /fotos vía GET /api/fotos (híbrida).
+    // Respeta ?pagina=N en deep links (precarga 2..N). ?pagina=999 o inválido
+    // no rompe: se muestra la página 1 y el botón desaparece.
+    (function () {
+      type ApiPhoto = { src: string; alt?: string | null; caption?: string | null };
+      type ApiPost = {
+        id: string; title: string; date?: string | null; photoCount: number;
+        categorySlug: string; categoryLabel: string; photos?: ApiPhoto[];
+      };
+      type ApiPage = { posts?: ApiPost[]; totalPages?: number };
+      type TopPick = { ph: ApiPhoto; i: number; likes: number };
+      var wrap = document.getElementById('cargar-mas-wrap');
+      var btn = document.getElementById('cargar-mas') as HTMLButtonElement | null;
+      var estado = document.getElementById('cargar-mas-estado');
+      var list = document.getElementById('partidos');
+      if (!wrap || !btn || !list) return;
+      const wrapEl = wrap;
+      const btnEl = btn as HTMLButtonElement;
+      const listEl = list;
+      var PER_PAGE = 10;
+      var serverTotal = Number(wrapEl.getAttribute('data-total-pages') || '1');
+      var params = new URLSearchParams(window.location.search);
+      var raw = parseInt(params.get('pagina') || '1', 10);
+      var requested = isNaN(raw) || raw < 1 ? 1 : raw;
+      var page = 1;
+      var loading = false;
+
+      function esc(s: unknown): string {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c: string): string {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c];
+        });
+      }
+
+      function likeSvg() {
+        return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>';
+      }
+
+      function itemHtml(postId: string, ph: ApiPhoto, origIdx: number, position: number, total: number): string {
+        var alt = esc(ph.alt || ('Foto ' + position + ' de ' + total));
+        var caption = ph.caption
+          ? '<span class="absolute bottom-2 left-2 right-2 text-left caption text-white text-[0.7rem] leading-snug bg-navy/55 rounded px-1.5 py-0.5 line-clamp-2">' +
+            esc(ph.caption) + '</span>'
+          : '';
+        return (
+          '<div class="gallery-item-wrap group relative aspect-[4/5] overflow-hidden bg-navy-05 border border-navy/10 rounded-md transition-[box-shadow,border-color,transform] duration-200 hover:shadow-[0_4px_20px_rgba(0,40,92,0.12)] hover:border-navy/25 active:scale-[0.98]">' +
+          '<button type="button" class="gallery-item absolute inset-0 w-full h-full cursor-pointer" data-photo-index="' + position +
+          '" aria-label="Abrir foto ' + (position + 1) + ' de ' + total + ': ' + alt + '">' +
+          '<img src="' + esc(ph.src) + '" alt="' + alt + '" loading="lazy" ' +
+          'class="w-full h-full object-cover transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.03]" />' +
+          caption + '</button>' +
+          '<button type="button" class="like-btn" data-photo-key="' + esc(postId) + ':' + origIdx +
+          '" aria-pressed="false" aria-label="Me gusta esta foto" title="Me gusta">' +
+          likeSvg() + '<span class="like-count" data-like-count>0</span></button></div>'
+        );
+      }
+
+      function sectionHtml(post: ApiPost, top: TopPick[]): string {
+        var meta = [post.date, post.photoCount + ' fotos'].filter(Boolean).join(' · ');
+        var items = top
+          .map(function (t: TopPick, k: number): string { return itemHtml(post.id, t.ph, t.i, k, top.length); })
+          .join('');
+        return (
+          '<section id="' + esc(post.id) + '" class="section bg-pure-white border-t border-navy/10"><div class="container-x">' +
+          '<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-navy/10"><div>' +
+          '<span class="badge badge--' + esc(post.categorySlug) + ' mb-3">' + esc(post.categoryLabel) + '</span>' +
+          '<h2 class="h-section text-[clamp(1.5rem,3vw,2.25rem)] text-navy max-w-[22ch]">' + esc(post.title) + '</h2>' +
+          '<time datetime="' + esc(post.date) + '" class="mt-2 block text-[0.9rem] text-navy-60 font-medium">' + esc(meta) + '</time>' +
+          '</div></div>' +
+          '<div class="gallery-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" data-component="gallery-grid" data-gallery-id="top-' + esc(post.id) + '">' +
+          items + '</div>' +
+          '<div class="mt-8"><a href="/fotos/' + esc(post.id) + '" class="btn btn--primary">Ver todas las fotos de este partido ' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></a></div>' +
+          '</div></section>'
+        );
+      }
+
+      // Conteos en lote (trozos de 120 claves para no alargar la URL).
+      function fetchCounts(keys: string[]): Promise<Record<string, number>> {
+        var merged: Record<string, number> = {};
+        var chunks: string[][] = [];
+        for (var i = 0; i < keys.length; i += 120) chunks.push(keys.slice(i, i + 120));
+        var chain: Promise<void> = Promise.resolve();
+        chunks.forEach(function (chunk: string[]): void {
+          chain = chain.then(function (): Promise<void> {
+            return fetch('/api/foto-likes?ids=' + encodeURIComponent(chunk.join(',')))
+              .then(function (r: Response) { return r.ok ? r.json() : { counts: {} }; })
+              .then(function (j: any): void { Object.assign(merged, j.counts || {}); })
+              .catch(function (): void {});
+          });
+        });
+        return chain.then(function (): Record<string, number> { return merged; });
+      }
+
+      function syncUrl(n: number): void {
+        params.set('pagina', String(n));
+        history.replaceState(null, '', window.location.pathname + '?' + params.toString());
+      }
+
+      function loadPage(n: number): Promise<void> {
+        if (loading) return Promise.resolve();
+        loading = true;
+        if (btnEl) btnEl.disabled = true;
+        if (estado) estado.textContent = 'Cargando partidos…';
+        return fetch('/api/fotos?page=' + n + '&limit=' + PER_PAGE)
+          .then(function (res: Response): Promise<ApiPage> {
+            if (!res.ok) throw new Error('http ' + res.status);
+            return res.json();
+          })
+          .then(function (data: ApiPage): Promise<void> {
+            var totalPages = data.totalPages || serverTotal;
+            var apiPosts: ApiPost[] = data.posts || [];
+            var keys: string[] = [];
+            apiPosts.forEach(function (p: ApiPost): void {
+              (p.photos || []).forEach(function (_ph: ApiPhoto, i: number): void { keys.push(p.id + ':' + i); });
+            });
+            return fetchCounts(keys).then(function (counts: Record<string, number>): Promise<void> {
+              var html = apiPosts
+                .map(function (p: ApiPost): string {
+                  var top = (p.photos || [])
+                    .map(function (ph: ApiPhoto, i: number): TopPick { return { ph: ph, i: i, likes: counts[p.id + ':' + i] || 0 }; })
+                    .sort(function (a: TopPick, b: TopPick): number { return b.likes - a.likes || a.i - b.i; })
+                    .slice(0, 4);
+                  return sectionHtml(p, top);
+                })
+                .join('');
+              listEl.insertAdjacentHTML('beforeend', html);
+              var w = window as unknown as { __pcfcBindLikes?: (root?: ParentNode) => Promise<void> };
+              var bind = typeof w.__pcfcBindLikes === 'function' ? w.__pcfcBindLikes(listEl) : Promise.resolve();
+              return bind.then(function (): void {
+                page = n;
+                syncUrl(n);
+                if (estado) estado.textContent = '';
+                if (n >= totalPages) wrapEl.hidden = true;
+                else btnEl.disabled = false;
+              });
+            });
+          })
+          .catch(function (): void {
+            if (estado) estado.textContent = 'No se pudo cargar. Intenta de nuevo.';
+            btnEl.disabled = false;
+          })
+          .then(function (): void { loading = false; });
+      }
+
+      btnEl.addEventListener('click', function (): void { loadPage(page + 1); });
+
+      // Deep link ?pagina=N: precarga 2..N sin romper con valores absurdos.
+      var target = Math.min(requested, serverTotal);
+      if (target > 1) {
+        var chain: Promise<void> = Promise.resolve();
+        for (var n = 2; n <= target; n += 1) {
+          (function (nn: number): void { chain = chain.then(function (): Promise<void> { return loadPage(nn); }); })(n);
+        }
+      } else if (requested > serverTotal) {
+        wrapEl.hidden = true;
+      }
+    })();
+  </script>
 
   <Lightbox />
 </Base>
