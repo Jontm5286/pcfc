@@ -1,7 +1,7 @@
 ---
 /**
  * /fotos/todas — PCFC
- * Archivo de galerías por partido: página 1 prerenderizada + resto vía
+ * Archivo de galerías por partido: SSR contra la D1 en vivo + resto vía
  * botón "Cargar más" contra GET /api/fotos (respeta ?pagina=N).
  */
 import Base from '../../layouts/Base.astro';
@@ -9,14 +9,14 @@ import GalleryGrid from '../../components/GalleryGrid.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import { getAllPosts, getPostsPage } from '../../lib/fotos-posts';
 
-export const prerender = true;
+export const prerender = false;
 
 const PER_PAGE = 10;
 
 const { posts } = await getAllPosts();
 const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
 
-// Híbrida: la página 1 se prerenderiza en build; las páginas 2+ llegan en
+// SSR: cada request lee la D1 en vivo; las páginas 2+ llegan en
 // cliente vía GET /api/fotos (botón "Cargar más", respeta ?pagina=N).
 const pagePosts = (await getPostsPage(1, PER_PAGE)).posts;
 

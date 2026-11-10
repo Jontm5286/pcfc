@@ -13,11 +13,11 @@ import { getLikesStore, resolveD1Binding } from '../lib/foto-likes-db';
 import { pickDestacadas, photoKey } from '../lib/foto-likes-key';
 import Lightbox from '../components/Lightbox.astro';
 
-export const prerender = true;
+export const prerender = false;
 
 const { posts } = await getAllPosts();
 
-// Híbrida: la página 1 se prerenderiza en build; las páginas 2+ llegan en
+// SSR: cada request lee la D1 en vivo; las páginas 2+ llegan en
 // cliente vía GET /api/fotos (botón "Cargar más").
 const PER_PAGE = 10;
 const firstPage = await getPostsPage(1, PER_PAGE);
@@ -103,7 +103,7 @@ const description =
 
   <!-- ============================================ -->
   <!-- POR PARTIDO — top-4 con más likes + Ver todas -->
-  <!-- (página 1 prerenderizada; resto vía "Cargar más") -->
+  <!-- (página 1 SSR en vivo; resto vía "Cargar más") -->
   <!-- ============================================ -->
   <div id="partidos">
   {
@@ -190,7 +190,7 @@ const description =
   </section>
 
   <script>
-    // "Cargar más" — páginas 2+ de /fotos vía GET /api/fotos (híbrida).
+    // "Cargar más" — páginas 2+ de /fotos vía GET /api/fotos (SSR).
     // Respeta ?pagina=N en deep links (precarga 2..N). ?pagina=999 o inválido
     // no rompe: se muestra la página 1 y el botón desaparece.
     (function () {
