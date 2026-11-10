@@ -27,8 +27,14 @@ const plugin = definePlugin({
   capabilities: [...CAPABILITIES],
   allowedHosts: ["api.github.com"],
   hooks: {
-    // Publicación únicamente: drafts/saves no disparan deploy.
-    "content:afterPublish": createDeployDispatch(),
+    // Publicación explícita únicamente: drafts/autosaves nunca disparan
+    // deploy (ver filtro de `status` en dispatch.ts). `errorPolicy:
+    // "continue"` garantiza que, aunque el handler rechazara, el host
+    // jamás aborta el guardado/publicación por este plugin.
+    "content:afterPublish": {
+      handler: createDeployDispatch(),
+      errorPolicy: "continue",
+    },
   },
 });
 
