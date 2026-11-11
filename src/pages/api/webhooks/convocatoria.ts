@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { buildMatchSlug } from '../../../lib/match-photos';
+import { resolveD1Binding } from '../../../lib/foto-likes-db';
 import { readEnv } from '../../../lib/worker-env';
 
 export const prerender = false;
@@ -85,26 +86,7 @@ interface D1Binding {
   };
 }
 
-/** D1 del request (prod): binding en locals o en el env del Worker. */
-async function resolveD1(locals: unknown): Promise<D1Binding | null> {
-  const l = (locals ?? {}) as Record<string, unknown>;
-  if (l.DB && typeof (l.DB as D1Binding).prepare === 'function') return l.DB as D1Binding;
-  const maybeRuntime = (l.runtime ?? {}) as { env?: Record<string, unknown> };
-  const fromRuntime = maybeRuntime.env?.DB;
-  if (fromRuntime && typeof (fromRuntime as D1Binding).prepare === 'function') {
-    return fromRuntime as D1Binding;
-  }
-  try {
-    const cf = (await import(/* @vite-ignore */ 'cloudflare:workers')) as unknown as {
-      env?: Record<string, unknown>;
-    };
-    const db = cf.env?.DB;
-    if (db && typeof (db as D1Binding).prepare === 'function') return db as D1Binding;
-  } catch {
-    /* dev sin runtime de Workers */
-  }
-  return null;
-}
+/** D1 del request (prod): helper probado en src/lib/foto-likes-db.ts. */
 
 interface LocalDb {
   prepare(q: string): {
@@ -232,7 +214,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const id = ulidLocal();
     const row = [id, slug, now, now, slug, name, team1, team2, fecha, academyId, category || null, venue || null, null];
 
-    const d1 = await resolveD1(locals);
+    const d1 = (await resolveD1Binding(locals)) as D1Binding | null;
     if (d1) {
       const existing = (await d1
         .prepare(`SELECT id, slug FROM ${TABLE} WHERE slug = ? AND deleted_at IS NULL LIMIT 1`)
@@ -251,7 +233,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return json({ ok: true, slug, academy_id: academyId }, 201);
     }
 
-    const db = await openLocalDb();
+    let db: LocalDb;
+    try {
+      db = await openLocalDb();
+    } catch {
+      return json({ ok: false, error: 'webhook_no_configurado' }, 500);
+    }
     const existing = db
       .prepare(`SELECT id, slug FROM ${TABLE} WHERE slug = ? AND deleted_at IS NULL LIMIT 1`)
       .get(slug) as { id: string; slug: string } | undefined;
