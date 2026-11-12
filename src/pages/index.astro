@@ -275,5 +275,9 @@ const featuredPlayers: FeaturedPlayer[] =
     });
   }
 
-  hydrateHome();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrateHome, { once: true });
+  } else {
+    hydrateHome();
+  }
 </script>
