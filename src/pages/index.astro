@@ -253,9 +253,22 @@ const featuredPlayers: FeaturedPlayer[] =
       img: HTMLImageElement,
       post: { id: string; title: string; thumbnail: string; thumbnailAlt?: string },
     ): void => {
-      img.src = post.thumbnail;
-      if (post.thumbnailAlt) img.alt = post.thumbnailAlt;
-      const parent = img.closest('a, figure');
+      const replacement = document.createElement('img');
+      replacement.src = post.thumbnail;
+      replacement.alt = post.thumbnailAlt ?? img.alt;
+      replacement.className = img.className;
+      for (const attr of ['loading', 'decoding', 'fetchpriority', 'width', 'height', 'sizes']) {
+        const value = img.getAttribute(attr);
+        if (value) replacement.setAttribute(attr, value);
+      }
+      for (const attr of Array.from(img.attributes)) {
+        if (attr.name.startsWith('data-')) replacement.setAttribute(attr.name, attr.value);
+      }
+      const picture = img.closest('picture');
+      if (picture) picture.replaceWith(replacement);
+      else img.replaceWith(replacement);
+
+      const parent = replacement.closest('a, figure');
       if (parent) {
         if (parent.tagName === 'A') parent.setAttribute('href', `/fotos#${post.id}`);
         parent.setAttribute('aria-label', `Ver galería: ${post.title}`);
